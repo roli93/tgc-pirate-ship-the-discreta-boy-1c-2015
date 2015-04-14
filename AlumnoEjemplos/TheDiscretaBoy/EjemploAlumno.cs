@@ -37,7 +37,7 @@ namespace AlumnoEjemplos.TheDiscretaBoy
         /// </summary>
         public override string getDescription()
         {
-            return "MiIdea - Descripcion de la idea";
+            return "Pirate Ship";
         }
 
         /// <summary>
