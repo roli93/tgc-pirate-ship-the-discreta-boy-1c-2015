@@ -199,5 +199,5 @@ FakesAssemblies/
 *.dll
 *.exe
 *.pdb
-bin
-obj
+bin/*
+obj/*
