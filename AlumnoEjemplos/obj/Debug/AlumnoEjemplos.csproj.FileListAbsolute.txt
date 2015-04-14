@@ -1,9 +1,0 @@
-E:\Roli\Documentos\UTN\2015\TGC\TgcViewer\AlumnoEjemplos\obj\Debug\AlumnoEjemplos.csprojResolveAssemblyReference.cache
-E:\Roli\Documentos\UTN\2015\TGC\tgc-pirate-ship-the-discreta-boy-1c-2015\AlumnoEjemplos\obj\Debug\AlumnoEjemplos.csprojResolveAssemblyReference.cache
-E:\Roli\Documentos\UTN\2015\TGC\tgc-pirate-ship-the-discreta-boy-1c-2015\AlumnoEjemplos\obj\Debug\AlumnoEjemplos.dll
-E:\Roli\Documentos\UTN\2015\TGC\tgc-pirate-ship-the-discreta-boy-1c-2015\AlumnoEjemplos\obj\Debug\AlumnoEjemplos.pdb
-E:\Roli\Documentos\UTN\2015\TGC\tgc-pirate-ship-the-discreta-boy-1c-2015\AlumnoEjemplos\AlumnoEjemplos.dll
-E:\Roli\Documentos\UTN\2015\TGC\tgc-pirate-ship-the-discreta-boy-1c-2015\AlumnoEjemplos\AlumnoEjemplos.pdb
-E:\Roli\Documentos\UTN\2015\TGC\tgc-pirate-ship-the-discreta-boy-1c-2015\AlumnoEjemplos\TgcViewer.exe
-E:\Roli\Documentos\UTN\2015\TGC\tgc-pirate-ship-the-discreta-boy-1c-2015\AlumnoEjemplos\Ionic.Zip.dll
-E:\Roli\Documentos\UTN\2015\TGC\tgc-pirate-ship-the-discreta-boy-1c-2015\AlumnoEjemplos\TgcViewer.pdb
