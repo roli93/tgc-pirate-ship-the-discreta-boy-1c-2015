@@ -3,18 +3,28 @@ using System.Collections.Generic;
 using System.Text;
 using TgcViewer.Example;
 using TgcViewer;
+using Microsoft.DirectX;
 using Microsoft.DirectX.Direct3D;
 using System.Drawing;
-using Microsoft.DirectX;
+using TgcViewer.Utils.TgcGeometry;
 using TgcViewer.Utils.Modifiers;
-
-namespace AlumnoEjemplos.TheDiscretaBoy
+using TgcViewer.Utils.TgcSceneLoader;
+using TgcViewer.Utils.Input;
+using Microsoft.DirectX.DirectInput;
+using TgcViewer.Utils.TgcSkeletalAnimation;
+namespace AlumnoEjemplos.MiGrupo
 {
     /// <summary>
     /// Ejemplo del alumno
     /// </summary>
     public class EjemploAlumno : TgcExample
     {
+
+        TgcBox canon;
+        TgcBox water;
+        TgcBox ship;
+        TgcSkeletalMesh mesh;
+        Vector3 lastYposition = new Vector3(0, 0, 0);
         /// <summary>
         /// Categoría a la que pertenece el ejemplo.
         /// Influye en donde se va a haber en el árbol de la derecha de la pantalla.
@@ -29,7 +39,7 @@ namespace AlumnoEjemplos.TheDiscretaBoy
         /// </summary>
         public override string getName()
         {
-            return "The Discreta Boy";
+            return "Discreta Ship";
         }
 
         /// <summary>
@@ -37,7 +47,7 @@ namespace AlumnoEjemplos.TheDiscretaBoy
         /// </summary>
         public override string getDescription()
         {
-            return "Custom Pirate Ship";
+            return "Battle Ship";
         }
 
         /// <summary>
@@ -47,131 +57,119 @@ namespace AlumnoEjemplos.TheDiscretaBoy
         /// </summary>
         public override void init()
         {
-            //GuiController.Instance: acceso principal a todas las herramientas del Framework
-
-            //Device de DirectX para crear primitivas
-            Device d3dDevice = GuiController.Instance.D3dDevice;
-
-            //Carpeta de archivos Media del alumno
-            string alumnoMediaFolder = GuiController.Instance.AlumnoEjemplosMediaDir;
-
-
-            ///////////////USER VARS//////////////////
-
-            //Crear una UserVar
-            GuiController.Instance.UserVars.addVar("variablePrueba");
-
-            //Cargar valor en UserVar
-            GuiController.Instance.UserVars.setValue("variablePrueba", 5451);
 
 
 
-            ///////////////MODIFIERS//////////////////
 
-            //Crear un modifier para un valor FLOAT
-            GuiController.Instance.Modifiers.addFloat("valorFloat", -50f, 200f, 0f);
-
-            //Crear un modifier para un ComboBox con opciones
-            string[] opciones = new string[]{"opcion1", "opcion2", "opcion3"};
-            GuiController.Instance.Modifiers.addInterval("valorIntervalo", opciones, 0);
-
-            //Crear un modifier para modificar un vértice
-            GuiController.Instance.Modifiers.addVertex3f("valorVertice", new Vector3(-100, -100, -100), new Vector3(50, 50, 50), new Vector3(0, 0, 0));
+            Microsoft.DirectX.Direct3D.Device d3dDevice = GuiController.Instance.D3dDevice;
 
 
-
-            ///////////////CONFIGURAR CAMARA ROTACIONAL//////////////////
-            //Es la camara que viene por default, asi que no hace falta hacerlo siempre
-            GuiController.Instance.RotCamera.Enable = true;
-            //Configurar centro al que se mira y distancia desde la que se mira
-            GuiController.Instance.RotCamera.setCamera(new Vector3(0, 0, 0), 100);
+            Vector3 center = new Vector3(0, 0, 0);
+            Vector3 size = new Vector3(500, 1, 500);
+            Color color = Color.Aqua;
 
 
-            /*
-            ///////////////CONFIGURAR CAMARA PRIMERA PERSONA//////////////////
-            //Camara en primera persona, tipo videojuego FPS
-            //Solo puede haber una camara habilitada a la vez. Al habilitar la camara FPS se deshabilita la camara rotacional
-            //Por default la camara FPS viene desactivada
-            GuiController.Instance.FpsCamera.Enable = true;
-            //Configurar posicion y hacia donde se mira
-            GuiController.Instance.FpsCamera.setCamera(new Vector3(0, 0, -20), new Vector3(0, 0, 0));
-            */
+            water = TgcBox.fromSize(center, size, color);
+            ship = TgcBox.fromSize(new Vector3(0, 1, 0), new Vector3(2, 2, 2), Color.Red);
+            canon = TgcBox.fromSize(new Vector3(0, 3, 0), new Vector3(1, 1, 1), Color.Black);
+
+            GuiController.Instance.ThirdPersonCamera.Enable = true;
+            GuiController.Instance.ThirdPersonCamera.setCamera(ship.Position, 25, 50);
 
 
 
-            ///////////////LISTAS EN C#//////////////////
-            //crear
-            List<string> lista = new List<string>();
 
-            //agregar elementos
-            lista.Add("elemento1");
-            lista.Add("elemento2");
 
-            //obtener elementos
-            string elemento1 = lista[0];
-
-            //bucle foreach
-            foreach (string elemento in lista)
-            {
-                //Loggear por consola del Framework
-                GuiController.Instance.Logger.log(elemento);
-            }
-
-            //bucle for
-            for (int i = 0; i < lista.Count; i++)
-            {
-                string element = lista[i];
-            }
 
 
         }
-
-
-        /// <summary>
-        /// Método que se llama cada vez que hay que refrescar la pantalla.
-        /// Escribir aquí todo el código referido al renderizado.
-        /// Borrar todo lo que no haga falta
-        /// </summary>
-        /// <param name="elapsedTime">Tiempo en segundos transcurridos desde el último frame</param>
         public override void render(float elapsedTime)
         {
+
             //Device de DirectX para renderizar
-            Device d3dDevice = GuiController.Instance.D3dDevice;
+            Microsoft.DirectX.Direct3D.Device d3dDevice = GuiController.Instance.D3dDevice;
+            TgcD3dInput d3dInput = GuiController.Instance.D3dInput;
+
+            GuiController.Instance.ThirdPersonCamera.updateCamera();
 
 
-            //Obtener valor de UserVar (hay que castear)
-            int valor = (int)GuiController.Instance.UserVars.getValue("variablePrueba");
+            //Calcular proxima posicion de personaje segun Input
+            Vector3 move = new Vector3(0, 0, 0);
 
 
-            //Obtener valores de Modifiers
-            float valorFloat = (float)GuiController.Instance.Modifiers["valorFloat"];
-            string opcionElegida = (string)GuiController.Instance.Modifiers["valorIntervalo"];
-            Vector3 valorVertice = (Vector3)GuiController.Instance.Modifiers["valorVertice"];
+            //Multiplicar la velocidad por el tiempo transcurrido, para no acoplarse al CPU
+            float speed = 50f * elapsedTime;
 
-
-            ///////////////INPUT//////////////////
-            //conviene deshabilitar ambas camaras para que no haya interferencia
-
-            //Capturar Input teclado 
-            if (GuiController.Instance.D3dInput.keyPressed(Microsoft.DirectX.DirectInput.Key.F))
+            if (d3dInput.keyDown(Key.W))
             {
-                //Tecla F apretada
+                move.Z = -speed;
+                ship.Rotation = new Vector3(0, 0, 0);
+                canon.Rotation = new Vector3(0, 0, 0) + lastYposition;
+
             }
 
-            //Capturar Input Mouse
-            if (GuiController.Instance.D3dInput.buttonPressed(TgcViewer.Utils.Input.TgcD3dInput.MouseButtons.BUTTON_LEFT))
+            //Atras
+            if (d3dInput.keyDown(Key.S))
             {
-                //Boton izq apretado
+                move.Z = speed;
+                ship.Rotation = new Vector3(0, 0, 0);
+                canon.Rotation = new Vector3(0, 0, 0) + lastYposition;
             }
+
+            //Izquierda
+            if (d3dInput.keyDown(Key.A))
+            {
+                move.X = +speed;
+                ship.Rotation = new Vector3(0, -(float)Math.PI / 4, 0);
+                canon.Rotation = new Vector3(0, -(float)Math.PI / 4, 0) + lastYposition;
+
+            }
+
+            //Derecha
+            if (d3dInput.keyDown(Key.D))
+            {
+                move.X = -speed;
+                ship.Rotation = new Vector3(0, (float)Math.PI / 4, 0);
+                canon.Rotation = new Vector3(0, -(float)Math.PI / 4, 0) + lastYposition;
+
+            }
+
+
+            //Izquierda cañon
+            if (d3dInput.keyDown(Key.LeftArrow))
+            {
+
+                canon.rotateY((float)Math.PI / 4 * elapsedTime);
+                lastYposition = canon.Rotation;
+            }
+
+            //Derecha cañon
+            if (d3dInput.keyDown(Key.RightArrow))
+            {
+
+                canon.rotateY(-(float)Math.PI / 4 * elapsedTime);
+                lastYposition = canon.Rotation;
+
+            }
+
+
+
+            water.setTexture(TgcTexture.createTexture(d3dDevice, "C:\\Users\\BNB\\Downloads\\TgcViewer - 2014-1C\\Examples\\Optimizacion\\Isla\\Textures\\agua10.jpg"));
+            ship.move(move);
+            canon.move(move);
+            GuiController.Instance.ThirdPersonCamera.Target = ship.Position;
+            ship.render();
+            water.render();
+            canon.render();
+
 
         }
 
-        /// <summary>
-        /// Método que se llama cuando termina la ejecución del ejemplo.
-        /// Hacer dispose() de todos los objetos creados.
-        /// </summary>
         public override void close()
         {
+
+            water.dispose();
+            ship.dispose();
 
         }
 
