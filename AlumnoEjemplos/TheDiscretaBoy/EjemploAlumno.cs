@@ -12,6 +12,7 @@ using TgcViewer.Utils.TgcSceneLoader;
 using TgcViewer.Utils.Input;
 using Microsoft.DirectX.DirectInput;
 using TgcViewer.Utils.TgcSkeletalAnimation;
+
 namespace AlumnoEjemplos.MiGrupo
 {
     /// <summary>
@@ -22,9 +23,9 @@ namespace AlumnoEjemplos.MiGrupo
 
         TgcBox canon;
         TgcBox water;
-        TgcBox ship;
         TgcSkeletalMesh mesh;
         Vector3 lastYposition = new Vector3(0, 0, 0);
+        GenericShip ship;
         /// <summary>
         /// Categoría a la que pertenece el ejemplo.
         /// Influye en donde se va a haber en el árbol de la derecha de la pantalla.
@@ -70,11 +71,12 @@ namespace AlumnoEjemplos.MiGrupo
 
 
             water = TgcBox.fromSize(center, size, color);
-            ship = TgcBox.fromSize(new Vector3(0, 1, 0), new Vector3(2, 2, 2), Color.Red);
+            ship = new GenericShip();
             canon = TgcBox.fromSize(new Vector3(0, 3, 0), new Vector3(1, 1, 1), Color.Black);
 
             GuiController.Instance.ThirdPersonCamera.Enable = true;
-            GuiController.Instance.ThirdPersonCamera.setCamera(ship.Position, 25, 50);
+            Vector3 CameraPosition = ship.Position();
+            GuiController.Instance.ThirdPersonCamera.setCamera(CameraPosition, 25, -50);
 
 
 
@@ -98,39 +100,41 @@ namespace AlumnoEjemplos.MiGrupo
 
 
             //Multiplicar la velocidad por el tiempo transcurrido, para no acoplarse al CPU
-            float speed = 50f * elapsedTime;
+            float speed = 10f * elapsedTime;
 
             if (d3dInput.keyDown(Key.W))
             {
-                move.Z = -speed;
-                ship.Rotation = new Vector3(0, 0, 0);
-                canon.Rotation = new Vector3(0, 0, 0) + lastYposition;
+                ship.acelerate(speed);
+                canon.Position = ship.Position() + new Vector3(0, 1, 0);
+
 
             }
 
             //Atras
             if (d3dInput.keyDown(Key.S))
             {
-                move.Z = speed;
-                ship.Rotation = new Vector3(0, 0, 0);
-                canon.Rotation = new Vector3(0, 0, 0) + lastYposition;
+                ship.desacelerate(speed);
+                canon.moveOrientedY(-speed);
+
             }
 
             //Izquierda
             if (d3dInput.keyDown(Key.A))
             {
-                move.X = +speed;
-                ship.Rotation = new Vector3(0, -(float)Math.PI / 4, 0);
-                canon.Rotation = new Vector3(0, -(float)Math.PI / 4, 0) + lastYposition;
+
+                ship.turnLeft(elapsedTime);
+                canon.rotateY(-(float)Math.PI * 3 / 4 * elapsedTime);
+
 
             }
 
             //Derecha
             if (d3dInput.keyDown(Key.D))
             {
-                move.X = -speed;
-                ship.Rotation = new Vector3(0, (float)Math.PI / 4, 0);
-                canon.Rotation = new Vector3(0, -(float)Math.PI / 4, 0) + lastYposition;
+
+                ship.turnRigth(elapsedTime);
+                canon.rotateY((float)Math.PI * 3 / 4 * elapsedTime);
+
 
             }
 
@@ -139,7 +143,7 @@ namespace AlumnoEjemplos.MiGrupo
             if (d3dInput.keyDown(Key.LeftArrow))
             {
 
-                canon.rotateY((float)Math.PI / 4 * elapsedTime);
+                canon.rotateY((float)Math.PI * 3 / 4 * elapsedTime);
                 lastYposition = canon.Rotation;
             }
 
@@ -147,17 +151,25 @@ namespace AlumnoEjemplos.MiGrupo
             if (d3dInput.keyDown(Key.RightArrow))
             {
 
-                canon.rotateY(-(float)Math.PI / 4 * elapsedTime);
+                canon.rotateY(-(float)Math.PI * 3 / 4 * elapsedTime);
                 lastYposition = canon.Rotation;
+
+            }
+
+            //Disparo
+            if (d3dInput.keyPressed(Key.Space))
+            {
+                 canon.moveOrientedY(-speed);
 
             }
 
 
 
-            water.setTexture(TgcTexture.createTexture(d3dDevice, "C:\\Users\\BNB\\Downloads\\TgcViewer - 2014-1C\\Examples\\Optimizacion\\Isla\\Textures\\agua10.jpg"));
-            ship.move(move);
+            water.setTexture(TgcTexture.createTexture(d3dDevice, "C:\\Git\\TgcViewer\\Examples\\Optimizacion\\Isla\\Textures\\agua 10.jpg"));
+
+
             canon.move(move);
-            GuiController.Instance.ThirdPersonCamera.Target = ship.Position;
+            GuiController.Instance.ThirdPersonCamera.Target = ship.Position();
             ship.render();
             water.render();
             canon.render();
@@ -170,7 +182,7 @@ namespace AlumnoEjemplos.MiGrupo
 
             water.dispose();
             ship.dispose();
-
+            canon.dispose();
         }
 
     }
