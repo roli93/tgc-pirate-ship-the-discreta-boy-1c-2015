@@ -20,19 +20,21 @@ namespace AlumnoEjemplos.MiGrupo
     {
 
         
-        TgcBox ship;
+        TgcMesh ship;
 
 
-        public GenericShip()
+        public GenericShip(TgcMesh shipMesh, Vector3 initialPosition)
         {
            
-            ship = TgcBox.fromSize(new Vector3(0, 1, 0), new Vector3(2, 2, 2), Color.Red);
+            ship = shipMesh;
+            ship.Position = initialPosition;
+     
 
         }
 
        public void acelerate(float speed){
             
-            ship.moveOrientedY(speed);
+            ship.moveOrientedY(-speed);
         }
 
         public void turnRigth(float elapsedTime)
@@ -48,7 +50,7 @@ namespace AlumnoEjemplos.MiGrupo
         public void desacelerate(float speed)
         {
 
-            ship.moveOrientedY(-speed);
+            ship.moveOrientedY(speed);
         }
 
         public Vector3 Position()
