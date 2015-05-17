@@ -18,28 +18,25 @@ namespace AlumnoEjemplos.TheDiscretaBoy
 {
     public class Cannon
     {
-        private TgcSphere bullet;
+        private Bullet bullet;
         private TgcMesh cannon;
-        private Vector3 shootingPosition;
-
+        
         public Cannon(TgcMesh cannonMesh, Vector3 shootingPosition)
         {
            
             cannon = cannonMesh;
-            this.shootingPosition = shootingPosition;
+            this.ShootingOffset = shootingPosition;
            /* for (int i = 0; i < 20; i++)
             { 
                 TgcSphere bullet = new TgcSphere();
             */
-                bullet = new TgcSphere();
-                bullet.Radius = 3;
-                bullet.setColor(Color.Black);
-                bullet.LevelOfDetail = 5;
-                bullet.updateValues();
+            bullet = new Bullet();
              /*   bullets.Add(bullet);
             }*/
 
         }
+
+        public Vector3 ShootingOffset{get;set;}
 
         public Vector3 Position
         {
@@ -77,19 +74,13 @@ namespace AlumnoEjemplos.TheDiscretaBoy
 
         public void shoot()
         {
-            bullet.Position = cannon.Position;
-            bullet.Position+= new Vector3(0, shootingPosition.Y, 0);
-            bullet.moveOrientedY(shootingPosition.X);
-            bullet.Rotation = cannon.Rotation;
-            bullet.rotateY((float)Math.PI);
-            bullet.updateValues();
+            bullet.beShot(this);
         }
 
         public void render(float speed)
         {
-            bullet.moveOrientedY(5 * speed);
-            bullet.Position += new Vector3(0, 1, 0);
-            bullet.render();
+
+            bullet.render(speed);
             cannon.render();
         }
         public void dispose()
