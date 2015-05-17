@@ -16,19 +16,30 @@ using TgcViewer.Utils.TgcSkeletalAnimation;
 
 namespace AlumnoEjemplos.MiGrupo
 {
-    class GenericShip
+    class GenericShip 
     {
 
         
-        TgcMesh ship;
-
+        private TgcMesh ship;
+        private TgcSphere bullet; 
+        //private List<TgcSphere> bullets = new List<TgcSphere>();
 
         public GenericShip(TgcMesh shipMesh, Vector3 initialPosition)
         {
            
             ship = shipMesh;
             ship.Position = initialPosition;
-     
+           /* for (int i = 0; i < 20; i++)
+            { 
+                TgcSphere bullet = new TgcSphere();
+            */
+                bullet = new TgcSphere();
+                bullet.Radius = 5;
+                bullet.setColor(Color.Black);
+                bullet.LevelOfDetail = 5;
+                bullet.updateValues();
+             /*   bullets.Add(bullet);
+            }*/
 
         }
 
@@ -53,18 +64,30 @@ namespace AlumnoEjemplos.MiGrupo
             ship.moveOrientedY(speed);
         }
 
-        public Vector3 Position()
+        public Vector3 Position
         {
-            return ship.Position;
+            get
+            {
+                return ship.Position;
+            }
+            set
+            {
+                ship.Position = value;
+            }
         }
 
-
+        public void shoot()
+        {
+            bullet.Position = ship.Position;
+            bullet.updateValues();
+        }
 
 
 
         public void render()
         {
             ship.render();
+            bullet.render();
         }
         public void dispose()
         {

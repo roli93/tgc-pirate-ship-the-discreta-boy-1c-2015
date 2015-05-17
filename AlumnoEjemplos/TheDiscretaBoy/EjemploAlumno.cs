@@ -78,7 +78,7 @@ namespace AlumnoEjemplos.MiGrupo
 
 
             GuiController.Instance.ThirdPersonCamera.Enable = true;
-            Vector3 CameraPosition = ship.Position();
+            Vector3 CameraPosition = ship.Position;
             GuiController.Instance.ThirdPersonCamera.setCamera(CameraPosition, 100, -750);
             //GuiController.Instance.RotCamera.Enable = true;
 
@@ -112,14 +112,14 @@ namespace AlumnoEjemplos.MiGrupo
             if (d3dInput.keyDown(Key.W))
             {
                 ship.acelerate(speed);
-                canon.Position = ship.Position() + new Vector3(0, 1, 0);
+                canon.Position = ship.Position + new Vector3(0, 1, 0);
             }
 
 
             if (d3dInput.keyDown(Key.S))
             {
                 ship.desacelerate(speed);
-                canon.Position = ship.Position() + new Vector3(0, 1, 0);
+                canon.Position = ship.Position + new Vector3(0, 1, 0);
 
             }
 
@@ -153,17 +153,19 @@ namespace AlumnoEjemplos.MiGrupo
 
             }
 
+            if (d3dInput.keyDown(Key.Space))
+            {
+                ship.shoot();
+            }
 
 
-            GuiController.Instance.ThirdPersonCamera.Target = ship.Position();
+
+
+            GuiController.Instance.ThirdPersonCamera.Target = ship.Position;
             ship.render();
             water.render();
             canon.render();
             cielo.render();
-            bullet.render();
-
-
-
         }
 
         public override void close()
@@ -173,6 +175,7 @@ namespace AlumnoEjemplos.MiGrupo
             ship.dispose();
             canon.dispose();
             cielo.dispose();
+            bullet.dispose();
 
         }
 
