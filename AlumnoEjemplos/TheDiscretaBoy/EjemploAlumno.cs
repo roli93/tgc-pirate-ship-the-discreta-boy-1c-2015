@@ -14,7 +14,7 @@ using Microsoft.DirectX.DirectInput;
 using TgcViewer.Utils.TgcSkeletalAnimation;
 using TgcViewer.Utils.Terrain;
 
-namespace AlumnoEjemplos.MiGrupo
+namespace AlumnoEjemplos.TheDiscretaBoy
 {
     /// <summary>
     /// Ejemplo del alumno
@@ -60,7 +60,7 @@ namespace AlumnoEjemplos.MiGrupo
 
             water = TgcBox.fromSize(new Vector3(0, 0, 0), new Vector3(5000, 1, 5000), Color.Aqua);
             water.setTexture(TgcTexture.createTexture(d3dDevice, texturesPath + "lostatseaday_dn.jpg"));
-            ship = new GenericShip(mesh, new Vector3(0, 2, 0),sceneCanon.Meshes[0]);
+            ship = new GenericShip(mesh, new Vector3(0, 2, 0),new Cannon(sceneCanon.Meshes[0], new Vector3(27,23,0)));
 
             cielo = new TgcSkyBox();
             cielo.Center = new Vector3(0, 500, 0);

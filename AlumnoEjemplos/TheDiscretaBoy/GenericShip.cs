@@ -14,38 +14,27 @@ using Microsoft.DirectX.DirectInput;
 using TgcViewer.Utils.TgcSkeletalAnimation;
 
 
-namespace AlumnoEjemplos.MiGrupo
+namespace AlumnoEjemplos.TheDiscretaBoy
+
 {
-    class GenericShip 
+    public class GenericShip 
     {
 
         
         private TgcMesh ship;
-        private TgcSphere bullet;
-        private TgcMesh cannon;
+        private Cannon cannon;
+
 
         //private List<TgcSphere> bullets = new List<TgcSphere>();
 
-        public GenericShip(TgcMesh shipMesh, Vector3 initialPosition, TgcMesh cannonMesh)
+        public GenericShip(TgcMesh shipMesh, Vector3 initialPosition, Cannon cannon)
         {
            
             ship = shipMesh;
-            ship.Position = initialPosition;
-            cannon = cannonMesh;
-            cannon.Position = ship.Position + new Vector3(0, 1, 0);
+            Position = initialPosition;
+            this.cannon = cannon;
+            cannon.Position = Position;
             cannon.Rotation = ship.Rotation;
-           /* for (int i = 0; i < 20; i++)
-            { 
-                TgcSphere bullet = new TgcSphere();
-            */
-                bullet = new TgcSphere();
-                bullet.Radius = 5;
-                bullet.setColor(Color.Black);
-                bullet.LevelOfDetail = 5;
-                bullet.updateValues();
-             /*   bullets.Add(bullet);
-            }*/
-
         }
 
        public void acelerate(float speed){
@@ -57,13 +46,13 @@ namespace AlumnoEjemplos.MiGrupo
         public void turnRight(float elapsedTime)
         {
             ship.rotateY((float)Math.PI * 3 / 4 * elapsedTime);
-            cannon.rotateY((float)Math.PI * 3 / 4 * elapsedTime);
+            cannon.turnRight(elapsedTime);
         }
 
         public void turnLeft(float elapsedTime)
         {
             ship.rotateY(-(float)Math.PI * 3 / 4 * elapsedTime);
-            cannon.rotateY(-(float)Math.PI * 3 / 4 * elapsedTime);
+            cannon.turnLeft(elapsedTime);
         }
 
         public void desacelerate(float speed)
@@ -74,12 +63,12 @@ namespace AlumnoEjemplos.MiGrupo
 
         public void turnCannonRight(float elapsedTime)
         {
-            cannon.rotateY((float)Math.PI * 3 / 4 * elapsedTime);
+            cannon.turnRight(elapsedTime);
         }
 
         public void turnCannonLeft(float elapsedTime)
         {
-            cannon.rotateY(-(float)Math.PI * 3 / 4 * elapsedTime);
+            cannon.turnLeft(elapsedTime);
         }
 
         public Vector3 Position
@@ -94,12 +83,21 @@ namespace AlumnoEjemplos.MiGrupo
             }
         }
 
+        public Vector3 Rotation
+        {
+            get
+            {
+                return ship.Rotation;
+            }
+            set
+            {
+                ship.Rotation = value;
+            }
+        }
+
         public void shoot()
         {
-            bullet.Position = cannon.Position;
-            bullet.Rotation = cannon.Rotation;
-            bullet.rotateY((float)Math.PI);
-            bullet.updateValues();
+            cannon.shoot();
         }
 
 
@@ -107,15 +105,12 @@ namespace AlumnoEjemplos.MiGrupo
         public void render(float speed)
         {
             ship.render();
-            bullet.moveOrientedY(5*speed);
-            bullet.render();
-            cannon.render();
+            cannon.render(speed);
         }
         public void dispose()
         {
             ship.dispose();
             cannon.dispose();
-            bullet.dispose();
         }
     }
 }
