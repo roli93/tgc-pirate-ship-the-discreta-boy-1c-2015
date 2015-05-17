@@ -22,7 +22,6 @@ namespace AlumnoEjemplos.MiGrupo
     public class EjemploAlumno : TgcExample
     {
 
-        TgcMesh canon;
         TgcMesh mesh;
         TgcBox water;
         TgcSkyBox cielo;
@@ -58,13 +57,10 @@ namespace AlumnoEjemplos.MiGrupo
             TgcScene sceneShip = loader.loadSceneFromFile(GuiController.Instance.ExamplesMediaDir + "MeshCreator\\Meshes\\Vehiculos\\Canoa\\Canoa-TgcScene.xml");
             mesh = sceneShip.Meshes[0];
             TgcScene sceneCanon = loader.loadSceneFromFile(GuiController.Instance.ExamplesMediaDir + "MeshCreator\\Meshes\\Armas\\Canon\\Canon.max-TgcScene.xml");
-            canon = sceneCanon.Meshes[0];
 
             water = TgcBox.fromSize(new Vector3(0, 0, 0), new Vector3(5000, 1, 5000), Color.Aqua);
             water.setTexture(TgcTexture.createTexture(d3dDevice, texturesPath + "lostatseaday_dn.jpg"));
-            ship = new GenericShip(mesh, new Vector3(0, 2, 0));
-
-          
+            ship = new GenericShip(mesh, new Vector3(0, 2, 0),sceneCanon.Meshes[0]);
 
             cielo = new TgcSkyBox();
             cielo.Center = new Vector3(0, 500, 0);
@@ -112,14 +108,13 @@ namespace AlumnoEjemplos.MiGrupo
             if (d3dInput.keyDown(Key.W))
             {
                 ship.acelerate(speed);
-                canon.Position = ship.Position + new Vector3(0, 1, 0);
             }
 
 
             if (d3dInput.keyDown(Key.S))
             {
                 ship.desacelerate(speed);
-                canon.Position = ship.Position + new Vector3(0, 1, 0);
+  
 
             }
 
@@ -127,28 +122,26 @@ namespace AlumnoEjemplos.MiGrupo
             {
 
                 ship.turnLeft(elapsedTime);
-                canon.rotateY(-(float)Math.PI * 3 / 4 * elapsedTime);
 
             }
 
             if (d3dInput.keyDown(Key.D))
             {
 
-                ship.turnRigth(elapsedTime);
-                canon.rotateY((float)Math.PI * 3 / 4 * elapsedTime);
+                ship.turnRight(elapsedTime);
             }
 
             if (d3dInput.keyDown(Key.LeftArrow))
             {
 
-                canon.rotateY(-(float)Math.PI * 3 / 4 * elapsedTime);
+                ship.turnCannonLeft(elapsedTime);
 
             }
 
             if (d3dInput.keyDown(Key.RightArrow))
             {
 
-                canon.rotateY((float)Math.PI * 3 / 4 * elapsedTime);
+                ship.turnCannonRight(elapsedTime);
 
 
             }
@@ -162,9 +155,8 @@ namespace AlumnoEjemplos.MiGrupo
 
 
             GuiController.Instance.ThirdPersonCamera.Target = ship.Position;
-            ship.render();
+            ship.render(speed);
             water.render();
-            canon.render();
             cielo.render();
         }
 
@@ -173,7 +165,6 @@ namespace AlumnoEjemplos.MiGrupo
 
             water.dispose();
             ship.dispose();
-            canon.dispose();
             cielo.dispose();
             bullet.dispose();
 

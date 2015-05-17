@@ -21,14 +21,19 @@ namespace AlumnoEjemplos.MiGrupo
 
         
         private TgcMesh ship;
-        private TgcSphere bullet; 
+        private TgcSphere bullet;
+        private TgcMesh cannon;
+
         //private List<TgcSphere> bullets = new List<TgcSphere>();
 
-        public GenericShip(TgcMesh shipMesh, Vector3 initialPosition)
+        public GenericShip(TgcMesh shipMesh, Vector3 initialPosition, TgcMesh cannonMesh)
         {
            
             ship = shipMesh;
             ship.Position = initialPosition;
+            cannon = cannonMesh;
+            cannon.Position = ship.Position + new Vector3(0, 1, 0);
+            cannon.Rotation = ship.Rotation;
            /* for (int i = 0; i < 20; i++)
             { 
                 TgcSphere bullet = new TgcSphere();
@@ -46,22 +51,35 @@ namespace AlumnoEjemplos.MiGrupo
        public void acelerate(float speed){
             
             ship.moveOrientedY(-speed);
+            cannon.Position = ship.Position + new Vector3(0, 1, 0);
         }
 
-        public void turnRigth(float elapsedTime)
+        public void turnRight(float elapsedTime)
         {
             ship.rotateY((float)Math.PI * 3 / 4 * elapsedTime);
+            cannon.rotateY((float)Math.PI * 3 / 4 * elapsedTime);
         }
 
         public void turnLeft(float elapsedTime)
         {
             ship.rotateY(-(float)Math.PI * 3 / 4 * elapsedTime);
+            cannon.rotateY(-(float)Math.PI * 3 / 4 * elapsedTime);
         }
 
         public void desacelerate(float speed)
         {
-
             ship.moveOrientedY(speed);
+            cannon.Position = ship.Position + new Vector3(0, 1, 0);
+        }
+
+        public void turnCannonRight(float elapsedTime)
+        {
+            cannon.rotateY((float)Math.PI * 3 / 4 * elapsedTime);
+        }
+
+        public void turnCannonLeft(float elapsedTime)
+        {
+            cannon.rotateY(-(float)Math.PI * 3 / 4 * elapsedTime);
         }
 
         public Vector3 Position
@@ -78,20 +96,26 @@ namespace AlumnoEjemplos.MiGrupo
 
         public void shoot()
         {
-            bullet.Position = ship.Position;
+            bullet.Position = cannon.Position;
+            bullet.Rotation = cannon.Rotation;
+            bullet.rotateY((float)Math.PI);
             bullet.updateValues();
         }
 
 
 
-        public void render()
+        public void render(float speed)
         {
             ship.render();
+            bullet.moveOrientedY(5*speed);
             bullet.render();
+            cannon.render();
         }
         public void dispose()
         {
             ship.dispose();
+            cannon.dispose();
+            bullet.dispose();
         }
     }
 }
