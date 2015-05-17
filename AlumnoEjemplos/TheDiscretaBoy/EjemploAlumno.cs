@@ -28,6 +28,7 @@ namespace AlumnoEjemplos.MiGrupo
         TgcSkyBox cielo;
         Vector3 lastYposition = new Vector3(0, 0, 0);
         GenericShip ship;
+        TgcSphere bullet;
 
         public override string getCategory()
         {
@@ -80,7 +81,17 @@ namespace AlumnoEjemplos.MiGrupo
             Vector3 CameraPosition = ship.Position();
             GuiController.Instance.ThirdPersonCamera.setCamera(CameraPosition, 100, -750);
             //GuiController.Instance.RotCamera.Enable = true;
-   
+
+            bullet = new TgcSphere();
+
+            bullet.Radius = 10;
+            bullet.setColor(Color.Black);
+            bullet.LevelOfDetail = 5;
+            bullet.Position = new Vector3(10, 10, 10);
+
+            bullet.updateValues();
+
+
             cielo.updateValues();
 
 
@@ -149,6 +160,7 @@ namespace AlumnoEjemplos.MiGrupo
             water.render();
             canon.render();
             cielo.render();
+            bullet.render();
 
 
 
