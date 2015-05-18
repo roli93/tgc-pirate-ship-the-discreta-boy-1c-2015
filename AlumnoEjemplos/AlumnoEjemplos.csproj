@@ -89,6 +89,7 @@
   <ItemGroup>
     <Compile Include="TheDiscretaBoy\EjemploAlumno.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TheDiscretaBoy\GenericShip.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\TgcViewer\TgcViewer.csproj">
