@@ -20,6 +20,7 @@ namespace AlumnoEjemplos.TheDiscretaBoy
     {
         private TgcSphere bullet;
         private Vector3 renderLimit = new Vector3(1000,1000,1000);
+        public Vector2 linearSpeed;
 
         public bool Visible { get;set;}
 
@@ -32,7 +33,7 @@ namespace AlumnoEjemplos.TheDiscretaBoy
             bullet.updateValues();
         }
 
-        public void beShot(Cannon carrier)
+        public void beShot(Cannon carrier) //Esto se puede mejorar, pero no es priorotario
         {
             bullet.Position = carrier.Position;
             bullet.Position+= new Vector3(0, carrier.ShootingOffset.Y, 0);
@@ -40,17 +41,18 @@ namespace AlumnoEjemplos.TheDiscretaBoy
             bullet.Rotation = carrier.Rotation;
             bullet.rotateY((float)Math.PI);
             bullet.updateValues();
+            linearSpeed = new Vector2(500F, 500F);
             Visible = true;
         }
 
-        public void render(float speed)
+        public void render(float elapsedTime)
         {
             if (Visible)
             {
                 //MRU
-                bullet.moveOrientedY(500 * speed);
+                bullet.moveOrientedY(linearSpeed.X* elapsedTime);
                 //MRUV- Tirto vertical
-                moveVertically(speed);
+                moveVertically(elapsedTime);
                 bullet.render();
                 if (bullet.Position.X > renderLimit.X || bullet.Position.Y > renderLimit.Y || bullet.Position.Z > renderLimit.Z)
                     Visible = false;
@@ -59,7 +61,8 @@ namespace AlumnoEjemplos.TheDiscretaBoy
 
         private void moveVertically(float elapsedTime)
         {
-            bullet.Position += new Vector3(0, 100 * elapsedTime, 0);
+            bullet.Position += new Vector3(0, linearSpeed.Y * elapsedTime, 0);
+            linearSpeed.Y -= 1F;
         }
 
         public void dispose()

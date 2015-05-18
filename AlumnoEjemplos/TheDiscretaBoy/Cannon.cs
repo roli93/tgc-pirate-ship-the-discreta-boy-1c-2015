@@ -20,6 +20,8 @@ namespace AlumnoEjemplos.TheDiscretaBoy
     {
         private Bullet bullet;
         private TgcMesh cannon;
+
+        private float rotationalSpeed = (float)Math.PI * 3 / 4;
         
         public Cannon(TgcMesh cannonMesh, Vector3 shootingPosition)
         {
@@ -64,12 +66,12 @@ namespace AlumnoEjemplos.TheDiscretaBoy
 
         public void turnRight(float elapsedTime)
         {
-            cannon.rotateY((float)Math.PI * 3 / 4 * elapsedTime);
+            cannon.rotateY(rotationalSpeed * elapsedTime);
         }
 
         public void turnLeft(float elapsedTime)
         {
-            cannon.rotateY(-(float)Math.PI * 3 / 4 * elapsedTime);
+            cannon.rotateY(-rotationalSpeed * elapsedTime);
         }
 
         public void shoot()
