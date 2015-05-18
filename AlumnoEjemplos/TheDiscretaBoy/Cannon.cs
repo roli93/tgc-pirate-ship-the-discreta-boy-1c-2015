@@ -77,10 +77,32 @@ namespace AlumnoEjemplos.TheDiscretaBoy
             bullet.beShot(this);
         }
 
-        public void render(float speed)
+        public void render(float elapsedTime)
         {
 
-            bullet.render(speed);
+            TgcD3dInput d3dInput = GuiController.Instance.D3dInput;
+
+            if (d3dInput.keyDown(Key.LeftArrow))
+            {
+
+                turnLeft(elapsedTime);
+
+            }
+
+            if (d3dInput.keyDown(Key.RightArrow))
+            {
+
+                turnRight(elapsedTime);
+
+
+            }
+
+            if (d3dInput.keyDown(Key.Space))
+            {
+                shoot();
+            }
+
+            bullet.render(elapsedTime);
             cannon.render();
         }
         public void dispose()

@@ -48,18 +48,18 @@ namespace AlumnoEjemplos.TheDiscretaBoy
             if (Visible)
             {
                 //MRU
-                bullet.moveOrientedY(5 * speed);
+                bullet.moveOrientedY(500 * speed);
                 //MRUV- Tirto vertical
-                moveVertically();
+                moveVertically(speed);
                 bullet.render();
                 if (bullet.Position.X > renderLimit.X || bullet.Position.Y > renderLimit.Y || bullet.Position.Z > renderLimit.Z)
                     Visible = false;
             }
         }
 
-        private void moveVertically()
+        private void moveVertically(float elapsedTime)
         {
-            bullet.Position += new Vector3(0, 1, 0);
+            bullet.Position += new Vector3(0, 100 * elapsedTime, 0);
         }
 
         public void dispose()

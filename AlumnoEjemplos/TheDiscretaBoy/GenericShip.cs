@@ -18,12 +18,11 @@ namespace AlumnoEjemplos.TheDiscretaBoy
 
 {
     public class GenericShip 
-    {
-
-        
+    {        
         private TgcMesh ship;
         private Cannon cannon;
-
+        private float linearSpeedFactor = 100F;
+        private float rotationalSpeedFactor = (float)Math.PI * 3 / 4;
 
         //private List<TgcSphere> bullets = new List<TgcSphere>();
 
@@ -37,38 +36,28 @@ namespace AlumnoEjemplos.TheDiscretaBoy
             cannon.Rotation = ship.Rotation;
         }
 
-       public void acelerate(float speed){
+       public void acelerate(float elapsedTime){
             
-            ship.moveOrientedY(-speed);
+            ship.moveOrientedY(-linearSpeedFactor* elapsedTime);
             cannon.Position = ship.Position + new Vector3(0, 1, 0);
         }
 
         public void turnRight(float elapsedTime)
         {
-            ship.rotateY((float)Math.PI * 3 / 4 * elapsedTime);
+            ship.rotateY(rotationalSpeedFactor * elapsedTime);
             cannon.turnRight(elapsedTime);
         }
 
         public void turnLeft(float elapsedTime)
         {
-            ship.rotateY(-(float)Math.PI * 3 / 4 * elapsedTime);
+            ship.rotateY(-rotationalSpeedFactor * elapsedTime);
             cannon.turnLeft(elapsedTime);
         }
 
-        public void desacelerate(float speed)
+        public void desacelerate(float elapsedTime)
         {
-            ship.moveOrientedY(speed);
+            ship.moveOrientedY(linearSpeedFactor*elapsedTime);
             cannon.Position = ship.Position + new Vector3(0, 1, 0);
-        }
-
-        public void turnCannonRight(float elapsedTime)
-        {
-            cannon.turnRight(elapsedTime);
-        }
-
-        public void turnCannonLeft(float elapsedTime)
-        {
-            cannon.turnLeft(elapsedTime);
         }
 
         public Vector3 Position
@@ -95,17 +84,38 @@ namespace AlumnoEjemplos.TheDiscretaBoy
             }
         }
 
-        public void shoot()
+        public void render(float elapsedTime)
         {
-            cannon.shoot();
-        }
+            TgcD3dInput d3dInput = GuiController.Instance.D3dInput;
+
+            if (d3dInput.keyDown(Key.W))
+            {
+                acelerate(elapsedTime);
+            }
 
 
+            if (d3dInput.keyDown(Key.S))
+            {
+                desacelerate(elapsedTime);
 
-        public void render(float speed)
-        {
+
+            }
+
+            if (d3dInput.keyDown(Key.A))
+            {
+
+                turnLeft(elapsedTime);
+
+            }
+
+            if (d3dInput.keyDown(Key.D))
+            {
+
+                turnRight(elapsedTime);
+            }
+
             ship.render();
-            cannon.render(speed);
+            cannon.render(elapsedTime);
         }
         public void dispose()
         {

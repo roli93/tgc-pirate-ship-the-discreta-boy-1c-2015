@@ -85,66 +85,9 @@ namespace AlumnoEjemplos.TheDiscretaBoy
         public override void render(float elapsedTime)
         {
 
-
-            Microsoft.DirectX.Direct3D.Device d3dDevice = GuiController.Instance.D3dDevice;
-            TgcD3dInput d3dInput = GuiController.Instance.D3dInput;
-
             GuiController.Instance.ThirdPersonCamera.updateCamera();
-
-
-            float speed = 100f * elapsedTime;
-
-            if (d3dInput.keyDown(Key.W))
-            {
-                ship.acelerate(speed);
-            }
-
-
-            if (d3dInput.keyDown(Key.S))
-            {
-                ship.desacelerate(speed);
-  
-
-            }
-
-            if (d3dInput.keyDown(Key.A))
-            {
-
-                ship.turnLeft(elapsedTime);
-
-            }
-
-            if (d3dInput.keyDown(Key.D))
-            {
-
-                ship.turnRight(elapsedTime);
-            }
-
-            if (d3dInput.keyDown(Key.LeftArrow))
-            {
-
-                ship.turnCannonLeft(elapsedTime);
-
-            }
-
-            if (d3dInput.keyDown(Key.RightArrow))
-            {
-
-                ship.turnCannonRight(elapsedTime);
-
-
-            }
-
-            if (d3dInput.keyDown(Key.Space))
-            {
-                ship.shoot();
-            }
-
-
-
-
             GuiController.Instance.ThirdPersonCamera.Target = ship.Position;
-            ship.render(speed);
+            ship.render(elapsedTime);
             water.render();
             cielo.render();
         }
