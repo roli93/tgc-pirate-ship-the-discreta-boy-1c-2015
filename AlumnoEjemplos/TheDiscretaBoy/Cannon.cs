@@ -18,24 +18,24 @@ namespace AlumnoEjemplos.TheDiscretaBoy
 {
     public class Cannon
     {
-        private Bullet bullet;
+        private Bullet currentBullet;
         private TgcMesh cannon;
+        private CircularBuffer<Bullet> bullets = new CircularBuffer<Bullet>();
+        private bool spaceDown=false;
 
         private float rotationalSpeed = (float)Math.PI * 3 / 4;
         
         public Cannon(TgcMesh cannonMesh, Vector3 shootingPosition)
         {
            
+
             cannon = cannonMesh;
             this.ShootingOffset = shootingPosition;
-           /* for (int i = 0; i < 20; i++)
+            for (int i = 0; i <50; i++)
             { 
-                TgcSphere bullet = new TgcSphere();
-            */
-            bullet = new Bullet();
-             /*   bullets.Add(bullet);
-            }*/
-
+                bullets.Add(new Bullet());
+            }
+            currentBullet = bullets.GetNext();
         }
 
         public Vector3 ShootingOffset{get;set;}
@@ -76,7 +76,11 @@ namespace AlumnoEjemplos.TheDiscretaBoy
 
         public void shoot()
         {
-            bullet.beShot(this);
+            if(!currentBullet.Visible)
+            {
+                currentBullet.beShot(this);
+                currentBullet = bullets.GetNext();
+            }
         }
 
         public void render(float elapsedTime)
@@ -101,16 +105,38 @@ namespace AlumnoEjemplos.TheDiscretaBoy
 
             if (d3dInput.keyDown(Key.Space))
             {
-                shoot();
+               if(!spaceDown) //Para q no se apriete 20 millones de veces y espere sa que la suelten
+                {
+                    shoot();
+                    spaceDown = true;
+                }
+            }
+            else
+            {
+                spaceDown = false;
             }
 
-            bullet.render(elapsedTime);
+
+           foreach(Bullet bullet in bullets)
+                bullet.render(elapsedTime);
             cannon.render();
         }
         public void dispose()
         {
             cannon.dispose();
-            bullet.dispose();
+            currentBullet.dispose();
+        }
+
+    }
+
+    class CircularBuffer<T> : List<T>
+    {
+        private int currentIndex=0;
+
+        public T GetNext(){
+            T element = this.ElementAt<T>(currentIndex);
+            currentIndex = (currentIndex+1) % this.Count;
+            return element;
         }
 
     }

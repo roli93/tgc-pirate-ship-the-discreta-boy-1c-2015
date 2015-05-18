@@ -13,7 +13,6 @@ using TgcViewer.Utils.Input;
 using Microsoft.DirectX.DirectInput;
 using TgcViewer.Utils.TgcSkeletalAnimation;
 
-
 namespace AlumnoEjemplos.TheDiscretaBoy
 
 {

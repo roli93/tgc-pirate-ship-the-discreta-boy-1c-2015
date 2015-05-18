@@ -29,38 +29,39 @@ namespace AlumnoEjemplos.TheDiscretaBoy
             bullet = new TgcSphere();
             bullet.Radius = 3;
             bullet.setColor(Color.Black);
-            bullet.LevelOfDetail = 5;
+            bullet.LevelOfDetail = 1;
             bullet.updateValues();
         }
 
         public void beShot(Cannon carrier) //Esto se puede mejorar, pero no es priorotario
         {
-            bullet.Position = carrier.Position;
-            bullet.Position+= new Vector3(0, carrier.ShootingOffset.Y, 0);
-            bullet.moveOrientedY(carrier.ShootingOffset.X);
-            bullet.Rotation = carrier.Rotation;
-            bullet.rotateY((float)Math.PI);
-            bullet.updateValues();
-            linearSpeed = new Vector2(500F, 500F);
-            Visible = true;
+                bullet.Position = carrier.Position;
+                bullet.Position+= new Vector3(0, carrier.ShootingOffset.Y, 0);
+                bullet.Rotation = carrier.Rotation;
+                bullet.rotateY((float)Math.PI);
+                bullet.moveOrientedY(carrier.ShootingOffset.X);
+                bullet.updateValues();
+                linearSpeed = new Vector2(500F, 500F);
+                Visible = true;
         }
 
         public void render(float elapsedTime)
         {
             if (Visible)
             {
-                //MRU
-                bullet.moveOrientedY(linearSpeed.X* elapsedTime);
-                //MRUV- Tirto vertical
-                moveVertically(elapsedTime);
+                moveObliquely(elapsedTime);
                 bullet.render();
-                if (bullet.Position.X > renderLimit.X || bullet.Position.Y > renderLimit.Y || bullet.Position.Z > renderLimit.Z)
+                if (bullet.Position.X > renderLimit.X || bullet.Position.Y > renderLimit.Y || bullet.Position.Z > renderLimit.Z ||
+                    bullet.Position.X < -renderLimit.X || bullet.Position.Y < -renderLimit.Y || bullet.Position.Z < -renderLimit.Z)
                     Visible = false;
             }
         }
 
-        private void moveVertically(float elapsedTime)
+        private void moveObliquely(float elapsedTime)
         {
+            //MRU
+            bullet.moveOrientedY(linearSpeed.X* elapsedTime);
+            //MRUV- Tirto vertical
             bullet.Position += new Vector3(0, linearSpeed.Y * elapsedTime, 0);
             linearSpeed.Y -= 1F;
         }
