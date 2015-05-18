@@ -23,10 +23,11 @@ namespace AlumnoEjemplos.TheDiscretaBoy
         private Cannon cannon;
         private float linearSpeedFactor = 100F;
         private float rotationalSpeedFactor = (float)Math.PI * 3 / 4;
+        private Vector3 cannonOffset; 
 
         //private List<TgcSphere> bullets = new List<TgcSphere>();
 
-        public GenericShip(TgcMesh shipMesh, Vector3 initialPosition, Cannon cannon)
+        public GenericShip(TgcMesh shipMesh, Vector3 initialPosition, Cannon cannon, Vector3 cannonOffset)
         {
            
             ship = shipMesh;
@@ -34,12 +35,13 @@ namespace AlumnoEjemplos.TheDiscretaBoy
             this.cannon = cannon;
             cannon.Position = Position;
             cannon.Rotation = ship.Rotation;
+            this.cannonOffset = cannonOffset;
         }
 
        public void acelerate(float elapsedTime){
             
             ship.moveOrientedY(-linearSpeedFactor* elapsedTime);
-            cannon.Position = ship.Position + new Vector3(0, 1, 0);
+            cannon.Position = ship.Position + cannonOffset;
         }
 
         public void turnRight(float elapsedTime)
@@ -57,7 +59,7 @@ namespace AlumnoEjemplos.TheDiscretaBoy
         public void desacelerate(float elapsedTime)
         {
             ship.moveOrientedY(linearSpeedFactor*elapsedTime);
-            cannon.Position = ship.Position + new Vector3(0, 1, 0);
+            cannon.Position = ship.Position + cannonOffset;
         }
 
         public Vector3 Position

@@ -59,7 +59,7 @@ namespace AlumnoEjemplos.TheDiscretaBoy
 
             water = TgcBox.fromSize(new Vector3(0, 0, 0), new Vector3(5000, 1, 5000), Color.Aqua);
             water.setTexture(TgcTexture.createTexture(d3dDevice, texturesPath + "lostatseaday_dn.jpg"));
-            ship = new GenericShip(mesh, new Vector3(0, 2, 0),new Cannon(sceneCanon.Meshes[0], new Vector3(27,21,0)));
+            ship = new GenericShip(mesh, new Vector3(0, 2, 0),new Cannon(sceneCanon.Meshes[0], new Vector3(27,21,0)), new Vector3(0,1,0));
 
             cielo = new TgcSkyBox();
             cielo.Center = new Vector3(0, 500, 0);
