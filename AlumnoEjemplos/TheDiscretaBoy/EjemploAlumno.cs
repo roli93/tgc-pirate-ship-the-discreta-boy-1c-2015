@@ -64,7 +64,7 @@ namespace AlumnoEjemplos.TheDiscretaBoy
             cielo = new TgcSphere();
             cielo.Radius = 5000;
             cielo.setTexture(TgcTexture.createTexture(d3dDevice, texturesPath + "sky-dome-panorma2.jpg"));
-            cielo.LevelOfDetail = 5;
+            cielo.LevelOfDetail = 1;
             cielo.Position = ship.Position;
             cielo.rotateY(-(float)Math.PI * 1 / 4);
             cielo.updateValues();
