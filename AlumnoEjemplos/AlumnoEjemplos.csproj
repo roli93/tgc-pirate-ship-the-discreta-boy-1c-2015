@@ -87,8 +87,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="TheDiscretaBoy\Bullet.cs" />
+    <Compile Include="TheDiscretaBoy\Cannon.cs" />
     <Compile Include="TheDiscretaBoy\EjemploAlumno.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TheDiscretaBoy\Element.cs" />
+    <Compile Include="TheDiscretaBoy\GenericShip.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\TgcViewer\TgcViewer.csproj">
