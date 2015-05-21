@@ -21,12 +21,12 @@ namespace AlumnoEjemplos.TheDiscretaBoy
     /// </summary>
     public class EjemploAlumno : TgcExample
     {
-
-        TgcMesh meshShip,meshEnemy;
-        TgcBox water;
-        TgcSphere cielo;
-        Vector3 lastYposition = new Vector3(0, 0, 0);
-        GenericShip ship,enemy;
+        public static EjemploAlumno Instance { get; set; }
+        public TgcMesh meshShip, meshEnemy;
+        public TgcBox water;
+        public TgcSphere cielo;
+        public Vector3 lastYposition = new Vector3(0, 0, 0);
+        public GenericShip ship, enemy;
 
         public override string getCategory()
         {
@@ -48,7 +48,7 @@ namespace AlumnoEjemplos.TheDiscretaBoy
 
         public override void init()
         {
-
+            EjemploAlumno.Instance = this;
 
             Microsoft.DirectX.Direct3D.Device d3dDevice = GuiController.Instance.D3dDevice;
             string texturesPath = GuiController.Instance.ExamplesMediaDir + "Texturas\\SkyboxSet1\\ThickCloudsWater\\";
@@ -102,6 +102,7 @@ namespace AlumnoEjemplos.TheDiscretaBoy
 
             GuiController.Instance.ThirdPersonCamera.updateCamera();
             GuiController.Instance.ThirdPersonCamera.Target = ship.Position;
+
             ship.render(elapsedTime);
             water.render();
             cielo.render();
