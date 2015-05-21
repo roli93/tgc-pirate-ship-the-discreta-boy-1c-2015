@@ -19,8 +19,10 @@ namespace AlumnoEjemplos.TheDiscretaBoy
     public class GenericShip 
     {        
         private TgcMesh ship;
+        private float maxLinearSpeed = 500F;
+        private float minLinearSpeed = -500F;
         private Cannon cannon;
-        private float linearSpeed = 500F;
+        private float linearSpeed = 0F;
         private float rotationalSpeed = (float)Math.PI * 3 / 4;
         private Vector3 cannonOffset; 
 
@@ -37,10 +39,11 @@ namespace AlumnoEjemplos.TheDiscretaBoy
             this.cannonOffset = cannonOffset;
         }
 
-       public void acelerate(float elapsedTime){
+       public void moveForward(float elapsedTime){
             
-            ship.moveOrientedY(-linearSpeed* elapsedTime);
+            ship.moveOrientedY((linearSpeed>500F?500F:linearSpeed)* elapsedTime);
             cannon.Position = ship.Position + cannonOffset;
+            cannon.LinearSpeed = linearSpeed;
         }
 
         public void turnRight(float elapsedTime)
@@ -55,10 +58,14 @@ namespace AlumnoEjemplos.TheDiscretaBoy
             cannon.turnLeft(elapsedTime);
         }
 
-        public void desacelerate(float elapsedTime)
+        private void accelerate()
         {
-            ship.moveOrientedY(linearSpeed*elapsedTime);
-            cannon.Position = ship.Position + cannonOffset;
+            linearSpeed += (linearSpeed > maxLinearSpeed ? 0F : 1.5F);
+        }
+
+        public void desaccelerate()
+        {
+            linearSpeed -= (linearSpeed < minLinearSpeed ? 0F : 1.5F); 
         }
 
         public Vector3 Position
@@ -90,17 +97,15 @@ namespace AlumnoEjemplos.TheDiscretaBoy
             TgcD3dInput d3dInput = GuiController.Instance.D3dInput;
 
             if (d3dInput.keyDown(Key.W))
-            {
-                acelerate(elapsedTime);
-            }
+                accelerate();
+            else if(linearSpeed>0F)
+                desaccelerate();
 
 
             if (d3dInput.keyDown(Key.S))
-            {
-                desacelerate(elapsedTime);
-
-
-            }
+                desaccelerate();
+            else if (linearSpeed < 0F)
+                accelerate();
 
             if (d3dInput.keyDown(Key.A))
             {
@@ -114,6 +119,8 @@ namespace AlumnoEjemplos.TheDiscretaBoy
 
                 turnRight(elapsedTime);
             }
+
+            moveForward(elapsedTime);
 
             ship.render();
             cannon.render(elapsedTime);

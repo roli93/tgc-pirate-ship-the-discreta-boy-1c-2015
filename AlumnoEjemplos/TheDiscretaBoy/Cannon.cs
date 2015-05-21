@@ -22,13 +22,14 @@ namespace AlumnoEjemplos.TheDiscretaBoy
         private TgcMesh cannon;
         private CircularBuffer<Bullet> bullets = new CircularBuffer<Bullet>();
         private bool spaceDown=false;
-
+        public float LinearSpeed{get;set;}
+        public Vector3 RelativeRotation { get; set; }
         private float rotationalSpeed = (float)Math.PI * 3 / 4;
         
         public Cannon(TgcMesh cannonMesh, Vector3 shootingPosition)
         {
-           
-
+            RelativeRotation = new Vector3(0, 0, 0);
+            LinearSpeed = 0F;
             cannon = cannonMesh;
             this.ShootingOffset = shootingPosition;
             for (int i = 0; i <50; i++)
@@ -90,17 +91,20 @@ namespace AlumnoEjemplos.TheDiscretaBoy
 
             if (d3dInput.keyDown(Key.LeftArrow))
             {
-
+                Vector3 previousRotation = Rotation;
                 turnLeft(elapsedTime);
+                Vector3 rotationalIncrement = Rotation - previousRotation;
+                RelativeRotation += rotationalIncrement;
 
             }
 
             if (d3dInput.keyDown(Key.RightArrow))
             {
-
+                Vector3 previousRotation = Rotation;
                 turnRight(elapsedTime);
-
-
+                Vector3 rotationalIncrement = Rotation - previousRotation;
+                RelativeRotation += rotationalIncrement;
+                
             }
 
             if (d3dInput.keyDown(Key.Space))
@@ -116,8 +120,7 @@ namespace AlumnoEjemplos.TheDiscretaBoy
                 spaceDown = false;
             }
 
-
-           foreach(Bullet bullet in bullets)
+            foreach(Bullet bullet in bullets)
                 bullet.render(elapsedTime);
             cannon.render();
         }
