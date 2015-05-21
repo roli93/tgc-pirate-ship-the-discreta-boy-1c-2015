@@ -13,7 +13,6 @@ using TgcViewer.Utils.Input;
 using Microsoft.DirectX.DirectInput;
 using TgcViewer.Utils.TgcSkeletalAnimation;
 
-
 namespace AlumnoEjemplos.TheDiscretaBoy
 
 {
@@ -21,8 +20,8 @@ namespace AlumnoEjemplos.TheDiscretaBoy
     {        
         private TgcMesh ship;
         private Cannon cannon;
-        private float linearSpeedFactor = 100F;
-        private float rotationalSpeedFactor = (float)Math.PI * 3 / 4;
+        private float linearSpeed = 100F;
+        private float rotationalSpeed = (float)Math.PI * 3 / 4;
         private Vector3 cannonOffset; 
 
         //private List<TgcSphere> bullets = new List<TgcSphere>();
@@ -40,25 +39,25 @@ namespace AlumnoEjemplos.TheDiscretaBoy
 
        public void acelerate(float elapsedTime){
             
-            ship.moveOrientedY(-linearSpeedFactor* elapsedTime);
+            ship.moveOrientedY(-linearSpeed* elapsedTime);
             cannon.Position = ship.Position + cannonOffset;
         }
 
         public void turnRight(float elapsedTime)
         {
-            ship.rotateY(rotationalSpeedFactor * elapsedTime);
+            ship.rotateY(rotationalSpeed * elapsedTime);
             cannon.turnRight(elapsedTime);
         }
 
         public void turnLeft(float elapsedTime)
         {
-            ship.rotateY(-rotationalSpeedFactor * elapsedTime);
+            ship.rotateY(-rotationalSpeed * elapsedTime);
             cannon.turnLeft(elapsedTime);
         }
 
         public void desacelerate(float elapsedTime)
         {
-            ship.moveOrientedY(linearSpeedFactor*elapsedTime);
+            ship.moveOrientedY(linearSpeed*elapsedTime);
             cannon.Position = ship.Position + cannonOffset;
         }
 
