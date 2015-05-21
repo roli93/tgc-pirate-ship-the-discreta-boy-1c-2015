@@ -65,12 +65,12 @@ namespace AlumnoEjemplos.TheDiscretaBoy
             }
         }
 
-        public void turnRight(float elapsedTime)
+        public void rotateRight(float elapsedTime)
         {
             cannon.rotateY(rotationalSpeed * elapsedTime);
         }
 
-        public void turnLeft(float elapsedTime)
+        public void rotateLeft(float elapsedTime)
         {
             cannon.rotateY(-rotationalSpeed * elapsedTime);
         }
@@ -91,19 +91,13 @@ namespace AlumnoEjemplos.TheDiscretaBoy
 
             if (d3dInput.keyDown(Key.LeftArrow))
             {
-                Vector3 previousRotation = Rotation;
                 turnLeft(elapsedTime);
-                Vector3 rotationalIncrement = Rotation - previousRotation;
-                RelativeRotation += rotationalIncrement;
 
             }
 
             if (d3dInput.keyDown(Key.RightArrow))
             {
-                Vector3 previousRotation = Rotation;
                 turnRight(elapsedTime);
-                Vector3 rotationalIncrement = Rotation - previousRotation;
-                RelativeRotation += rotationalIncrement;
                 
             }
 
@@ -123,6 +117,22 @@ namespace AlumnoEjemplos.TheDiscretaBoy
             foreach(Bullet bullet in bullets)
                 bullet.render(elapsedTime);
             cannon.render();
+        }
+
+        private void turnRight(float elapsedTime)
+        {
+            Vector3 previousRotation = Rotation;
+            rotateRight(elapsedTime);
+            Vector3 rotationalIncrement = Rotation - previousRotation;
+            RelativeRotation += rotationalIncrement;
+        }
+
+        private void turnLeft(float elapsedTime)
+        {
+            Vector3 previousRotation = Rotation;
+            rotateLeft(elapsedTime);
+            Vector3 rotationalIncrement = Rotation - previousRotation;
+            RelativeRotation += rotationalIncrement;
         }
         public void dispose()
         {

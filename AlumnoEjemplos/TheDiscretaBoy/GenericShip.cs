@@ -16,21 +16,20 @@ using TgcViewer.Utils.TgcSkeletalAnimation;
 namespace AlumnoEjemplos.TheDiscretaBoy
 
 {
-    public class GenericShip 
-    {        
-        private TgcMesh ship;
-        private float maxLinearSpeed = 500F;
-        private float minLinearSpeed = -500F;
-        private Cannon cannon;
-        private float linearSpeed = 0F;
-        private float rotationalSpeed = (float)Math.PI * 3 / 4;
-        private Vector3 cannonOffset; 
+    public abstract class GenericShip
+    {
+        internal TgcMesh ship;
+        internal float maxLinearSpeed = 500F;
+        internal float minLinearSpeed = -500F;
+        internal Cannon cannon;
+        internal float linearSpeed = 0F;
+        internal float rotationalSpeed = (float)Math.PI * 3 / 4;
+        internal Vector3 cannonOffset;
 
         //private List<TgcSphere> bullets = new List<TgcSphere>();
 
         public GenericShip(TgcMesh shipMesh, Vector3 initialPosition, Cannon cannon, Vector3 cannonOffset)
         {
-           
             ship = shipMesh;
             Position = initialPosition;
             this.cannon = cannon;
@@ -39,9 +38,10 @@ namespace AlumnoEjemplos.TheDiscretaBoy
             this.cannonOffset = cannonOffset;
         }
 
-       public void moveForward(float elapsedTime){
-            
-            ship.moveOrientedY((linearSpeed>500F?500F:linearSpeed)* elapsedTime);
+        public void moveForward(float elapsedTime)
+        {
+
+            ship.moveOrientedY((linearSpeed > 500F ? 500F : linearSpeed) * elapsedTime);
             cannon.Position = ship.Position + cannonOffset;
             cannon.LinearSpeed = linearSpeed;
         }
@@ -49,23 +49,23 @@ namespace AlumnoEjemplos.TheDiscretaBoy
         public void turnRight(float elapsedTime)
         {
             ship.rotateY(rotationalSpeed * elapsedTime);
-            cannon.turnRight(elapsedTime);
+            cannon.rotateRight(elapsedTime);
         }
 
         public void turnLeft(float elapsedTime)
         {
             ship.rotateY(-rotationalSpeed * elapsedTime);
-            cannon.turnLeft(elapsedTime);
+            cannon.rotateLeft(elapsedTime);
         }
 
-        private void accelerate()
+        internal void accelerate()
         {
             linearSpeed += (linearSpeed > maxLinearSpeed ? 0F : 1.5F);
         }
 
-        public void desaccelerate()
+        internal void desaccelerate()
         {
-            linearSpeed -= (linearSpeed < minLinearSpeed ? 0F : 1.5F); 
+            linearSpeed -= (linearSpeed < minLinearSpeed ? 0F : 1.5F);
         }
 
         public Vector3 Position
@@ -92,43 +92,63 @@ namespace AlumnoEjemplos.TheDiscretaBoy
             }
         }
 
-        public void render(float elapsedTime)
-        {
-            TgcD3dInput d3dInput = GuiController.Instance.D3dInput;
+        public abstract void render(float elapsedTime);
 
-            if (d3dInput.keyDown(Key.W))
-                accelerate();
-            else if(linearSpeed>0F)
-                desaccelerate();
-
-
-            if (d3dInput.keyDown(Key.S))
-                desaccelerate();
-            else if (linearSpeed < 0F)
-                accelerate();
-
-            if (d3dInput.keyDown(Key.A))
-            {
-
-                turnLeft(elapsedTime);
-
-            }
-
-            if (d3dInput.keyDown(Key.D))
-            {
-
-                turnRight(elapsedTime);
-            }
-
-            moveForward(elapsedTime);
-
-            ship.render();
-            cannon.render(elapsedTime);
-        }
         public void dispose()
         {
             ship.dispose();
             cannon.dispose();
         }
+    }
+
+        public class PlayerShip : GenericShip
+    {
+
+            public PlayerShip(TgcMesh shipMesh, Vector3 initialPosition, Cannon cannon, Vector3 cannonOffset) : base(shipMesh, initialPosition, cannon, cannonOffset){}
+
+            public override void render(float elapsedTime)
+            {
+                TgcD3dInput d3dInput = GuiController.Instance.D3dInput;
+
+                if (d3dInput.keyDown(Key.W))
+                    accelerate();
+                else if (linearSpeed > 0F)
+                    desaccelerate();
+
+
+                if (d3dInput.keyDown(Key.S))
+                    desaccelerate();
+                else if (linearSpeed < 0F)
+                    accelerate();
+
+                if (d3dInput.keyDown(Key.A))
+                {
+
+                    turnLeft(elapsedTime);
+
+                }
+
+                if (d3dInput.keyDown(Key.D))
+                {
+
+                    turnRight(elapsedTime);
+                }
+
+                moveForward(elapsedTime);
+
+                ship.render();
+                cannon.render(elapsedTime);
+            }
+    }
+
+        public class EnemyShip : GenericShip
+    {
+            public EnemyShip(TgcMesh shipMesh, Vector3 initialPosition, Cannon cannon, Vector3 cannonOffset) : base(shipMesh, initialPosition, cannon, cannonOffset) {}
+
+            public override void render(float elapsedTime)
+            {
+                ship.render();
+                cannon.render(elapsedTime);
+            }
     }
 }
