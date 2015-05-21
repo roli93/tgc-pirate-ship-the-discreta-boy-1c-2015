@@ -21,6 +21,7 @@ namespace AlumnoEjemplos.TheDiscretaBoy
         private TgcSphere bullet;
         private Vector3 renderLimit = new Vector3(10000,10000,10000);
         public Vector3 linearSpeed;
+        public Vector2 initialSpeed = new Vector2(500, 500);
 
         public bool Visible { get;set;}
 
@@ -43,7 +44,7 @@ namespace AlumnoEjemplos.TheDiscretaBoy
                 bullet.updateValues();
                 float parallelSpeedIncrement = carrier.LinearSpeed*-(float)Math.Cos((float)carrier.RelativeRotation.Y);
                 float orthogonalSpeedIncrement = carrier.LinearSpeed * (float)Math.Sin((float)carrier.RelativeRotation.Y);
-                linearSpeed = new Vector3(500F + parallelSpeedIncrement, 500F, orthogonalSpeedIncrement);
+                linearSpeed = new Vector3(initialSpeed.X + parallelSpeedIncrement, initialSpeed.Y, orthogonalSpeedIncrement);
                 Visible = true;
         }
 
