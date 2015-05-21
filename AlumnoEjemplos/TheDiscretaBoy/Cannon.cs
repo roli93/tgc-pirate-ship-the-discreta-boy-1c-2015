@@ -21,7 +21,6 @@ namespace AlumnoEjemplos.TheDiscretaBoy
         private Bullet currentBullet;
         private TgcMesh cannon;
         private CircularBuffer<Bullet> bullets = new CircularBuffer<Bullet>();
-        private bool spaceDown=false;
         public float LinearSpeed{get;set;}
         public Vector3 RelativeRotation { get; set; }
         private float rotationalSpeed = (float)Math.PI * 3 / 4;
@@ -86,40 +85,12 @@ namespace AlumnoEjemplos.TheDiscretaBoy
 
         public void render(float elapsedTime)
         {
-
-            TgcD3dInput d3dInput = GuiController.Instance.D3dInput;
-
-            if (d3dInput.keyDown(Key.LeftArrow))
-            {
-                turnLeft(elapsedTime);
-
-            }
-
-            if (d3dInput.keyDown(Key.RightArrow))
-            {
-                turnRight(elapsedTime);
-                
-            }
-
-            if (d3dInput.keyDown(Key.Space))
-            {
-               if(!spaceDown) //Para q no se apriete 20 millones de veces y espere sa que la suelten
-                {
-                    shoot();
-                    spaceDown = true;
-                }
-            }
-            else
-            {
-                spaceDown = false;
-            }
-
             foreach(Bullet bullet in bullets)
                 bullet.render(elapsedTime);
             cannon.render();
         }
 
-        private void turnRight(float elapsedTime)
+        public void turnRight(float elapsedTime)
         {
             Vector3 previousRotation = Rotation;
             rotateRight(elapsedTime);
@@ -127,7 +98,7 @@ namespace AlumnoEjemplos.TheDiscretaBoy
             RelativeRotation += rotationalIncrement;
         }
 
-        private void turnLeft(float elapsedTime)
+        public void turnLeft(float elapsedTime)
         {
             Vector3 previousRotation = Rotation;
             rotateLeft(elapsedTime);

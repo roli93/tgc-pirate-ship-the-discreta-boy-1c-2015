@@ -103,6 +103,7 @@ namespace AlumnoEjemplos.TheDiscretaBoy
 
         public class PlayerShip : GenericShip
     {
+            private bool spaceDown = false;
 
             public PlayerShip(TgcMesh shipMesh, Vector3 initialPosition, Cannon cannon, Vector3 cannonOffset) : base(shipMesh, initialPosition, cannon, cannonOffset){}
 
@@ -133,6 +134,32 @@ namespace AlumnoEjemplos.TheDiscretaBoy
 
                     turnRight(elapsedTime);
                 }
+
+                if (d3dInput.keyDown(Key.LeftArrow))
+                {
+                    cannon.turnLeft(elapsedTime);
+
+                }
+
+                if (d3dInput.keyDown(Key.RightArrow))
+                {
+                    cannon.turnRight(elapsedTime);
+
+                }
+
+                if (d3dInput.keyDown(Key.Space))
+                {
+                    if (!spaceDown) //Para q no se apriete 20 millones de veces y espere sa que la suelten
+                    {
+                        cannon.shoot();
+                        spaceDown = true;
+                    }
+                }
+                else
+                {
+                    spaceDown = false;
+                }
+
 
                 moveForward(elapsedTime);
 
