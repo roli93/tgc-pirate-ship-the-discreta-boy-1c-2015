@@ -20,7 +20,7 @@ namespace AlumnoEjemplos.TheDiscretaBoy
     {        
         private TgcMesh ship;
         private Cannon cannon;
-        private float linearSpeed = 100F;
+        private float linearSpeed = 500F;
         private float rotationalSpeed = (float)Math.PI * 3 / 4;
         private Vector3 cannonOffset; 
 

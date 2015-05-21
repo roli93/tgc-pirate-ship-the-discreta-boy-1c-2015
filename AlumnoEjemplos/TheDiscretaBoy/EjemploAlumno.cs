@@ -24,7 +24,7 @@ namespace AlumnoEjemplos.TheDiscretaBoy
 
         TgcMesh mesh;
         TgcBox water;
-        TgcSkyBox cielo;
+        TgcSphere cielo;
         Vector3 lastYposition = new Vector3(0, 0, 0);
         GenericShip ship;
 
@@ -51,25 +51,32 @@ namespace AlumnoEjemplos.TheDiscretaBoy
 
 
             Microsoft.DirectX.Direct3D.Device d3dDevice = GuiController.Instance.D3dDevice;
-            string texturesPath = GuiController.Instance.ExamplesMediaDir + "Texturas\\Quake\\SkyBox LostAtSeaDay\\";
+            string texturesPath = GuiController.Instance.ExamplesMediaDir + "Texturas\\SkyboxSet1\\ThickCloudsWater\\";
             TgcSceneLoader loader = new TgcSceneLoader();
             TgcScene sceneShip = loader.loadSceneFromFile(GuiController.Instance.ExamplesMediaDir + "MeshCreator\\Meshes\\Vehiculos\\Canoa\\Canoa-TgcScene.xml");
             mesh = sceneShip.Meshes[0];
             TgcScene sceneCanon = loader.loadSceneFromFile(GuiController.Instance.ExamplesMediaDir + "MeshCreator\\Meshes\\Armas\\Canon\\Canon.max-TgcScene.xml");
 
-            water = TgcBox.fromSize(new Vector3(0, 0, 0), new Vector3(5000, 1, 5000), Color.Aqua);
-            water.setTexture(TgcTexture.createTexture(d3dDevice, texturesPath + "lostatseaday_dn.jpg"));
+            water = TgcBox.fromSize(new Vector3(0, 0, 0), new Vector3(10000, 1, 10000), Color.Aqua);
+            water.setTexture(TgcTexture.createTexture(d3dDevice, texturesPath + "ThickCloudsWaterDown2048.png"));
             ship = new GenericShip(mesh, new Vector3(0, 2, 0),new Cannon(sceneCanon.Meshes[0], new Vector3(27,21,0)), new Vector3(0,1,0));
 
-            cielo = new TgcSkyBox();
-            cielo.Center = new Vector3(0, 500, 0);
-            cielo.Size = new Vector3(5000, 1000, 5000);
-            cielo.setFaceTexture(TgcSkyBox.SkyFaces.Up, texturesPath + "lostatseaday_up.jpg");
-            cielo.setFaceTexture(TgcSkyBox.SkyFaces.Down, texturesPath + "lostatseaday_dn.jpg");
-            cielo.setFaceTexture(TgcSkyBox.SkyFaces.Left, texturesPath + "lostatseaday_lf.jpg");
-            cielo.setFaceTexture(TgcSkyBox.SkyFaces.Right, texturesPath + "lostatseaday_rt.jpg");
-            cielo.setFaceTexture(TgcSkyBox.SkyFaces.Front, texturesPath + "lostatseaday_ft.jpg");
-            cielo.setFaceTexture(TgcSkyBox.SkyFaces.Back, texturesPath + "lostatseaday_bk.jpg");
+            cielo = new TgcSphere();
+            cielo.Radius = 5000;
+            cielo.setTexture(TgcTexture.createTexture(d3dDevice, texturesPath + "sky-dome-panorma2.jpg"));
+            cielo.LevelOfDetail = 1;
+            cielo.Position = ship.Position;
+            cielo.rotateY(-(float)Math.PI * 1 / 4);
+            cielo.updateValues();
+                /*new TgcSkyBox();
+            cielo.Center = new Vector3(0, 512*5 , 0);
+            cielo.Size = new Vector3(2048*5F, 1024*5F, 2048*5F);
+            cielo.setFaceTexture(TgcSkyBox.SkyFaces.Up, texturesPath + "ThickCloudsWaterUp2048.png");
+            cielo.setFaceTexture(TgcSkyBox.SkyFaces.Left, texturesPath + "ThickCloudsWaterLeft2048.png");
+            cielo.setFaceTexture(TgcSkyBox.SkyFaces.Down, texturesPath + "ThickCloudsWaterDown2048.png");
+            cielo.setFaceTexture(TgcSkyBox.SkyFaces.Right, texturesPath + "ThickCloudsWaterRight2048.png");
+            cielo.setFaceTexture(TgcSkyBox.SkyFaces.Front, texturesPath + "ThickCloudsWaterBack2048.png");
+            cielo.setFaceTexture(TgcSkyBox.SkyFaces.Back, texturesPath + "ThickCloudsWaterFront2048.png");*/
 
 
             GuiController.Instance.ThirdPersonCamera.Enable = true;
@@ -88,7 +95,7 @@ namespace AlumnoEjemplos.TheDiscretaBoy
             GuiController.Instance.ThirdPersonCamera.updateCamera();
             GuiController.Instance.ThirdPersonCamera.Target = ship.Position;
             ship.render(elapsedTime);
-            water.render();
+           water.render();
             cielo.render();
         }
 
