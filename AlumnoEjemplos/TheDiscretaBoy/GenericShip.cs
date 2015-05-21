@@ -32,6 +32,7 @@ namespace AlumnoEjemplos.TheDiscretaBoy
         internal float rotationalSpeed = (float)Math.PI * 3 / 4;
         internal Vector3 cannonOffset;
         internal int life = 100;
+        internal bool shooting = false;
 
         //private List<TgcSphere> bullets = new List<TgcSphere>();
 
@@ -133,6 +134,8 @@ namespace AlumnoEjemplos.TheDiscretaBoy
             }
 
             if (status == Status.Alive)
+                if (life <= 0)
+                    sink();
                 renderAlive(elapsedTime);
 
             if (status == Status.Sunk)
@@ -157,7 +160,6 @@ namespace AlumnoEjemplos.TheDiscretaBoy
 
         public class PlayerShip : GenericShip
     {
-            private bool spaceDown = false;
 
             public PlayerShip(TgcMesh shipMesh, Vector3 initialPosition, Cannon cannon, Vector3 cannonOffset) : base(shipMesh, initialPosition, cannon, cannonOffset){}
 
@@ -205,15 +207,15 @@ namespace AlumnoEjemplos.TheDiscretaBoy
 
                             if (d3dInput.keyDown(Key.Space))
                             {
-                                if (!spaceDown) //Para q no se apriete 20 millones de veces y espere sa que la suelten
+                                if (!shooting) //Para q no se apriete 20 millones de veces y espere sa que la suelten
                                 {
                                     cannon.shoot();
-                                    spaceDown = true;
+                                    shooting = true;
                                 }
                             }
                             else
                             {
-                                spaceDown = false;
+                                shooting = false;
                             }
 
 
@@ -225,15 +227,57 @@ namespace AlumnoEjemplos.TheDiscretaBoy
 
         public class EnemyShip : GenericShip
     {
+            private float time = 0F;
+
             public EnemyShip(TgcMesh shipMesh, Vector3 initialPosition, Cannon cannon, Vector3 cannonOffset) : base(shipMesh, initialPosition, cannon, cannonOffset) {}
 
             public override void renderAlive(float elapsedTime)
             {
-                if (life<=0)
-                    sink();
-
+                if (distance(EjemploAlumno.Instance.ship.Position, EjemploAlumno.Instance.enemy.Position)<300)
+                {
+                    //aim();
+                    if (!shooting) //Para q no se apriete 20 millones de veces y espere sa que la suelten
+                    {
+                        cannon.shoot();
+                        shooting = true;
+                    }
+                    else
+                    {
+                        spendTime(elapsedTime * (float)Math.PI * 1.9F);
+                    }
+                }
+                else
+                {
+                    shooting = false;
+                }
                 ship.render();
                 cannon.render(elapsedTime);
             }
+
+            public double distance(Vector3 a, Vector3 b)
+            {
+                return Math.Sqrt(Math.Pow(a.X - b.X, 2) + Math.Pow(a.Y - b.Y, 2) + Math.Pow(a.Z - b.Z, 2));
+            }
+
+            public void spendTime(float time)
+            {
+                if (this.time + time < Math.PI*2)
+                    this.time += time;
+                else
+                {
+                    shooting = false;
+                    this.time = 0;
+                }
+                
+            }
+
+
+
+            private void aim ()
+            {
+                cannon.aimAt(EjemploAlumno.Instance.ship.Position-Position);
+            }
+
+
     }
 }

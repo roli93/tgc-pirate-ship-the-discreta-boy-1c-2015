@@ -111,6 +111,17 @@ namespace AlumnoEjemplos.TheDiscretaBoy
             currentBullet.dispose();
         }
 
+        private double angle(Vector2 a, Vector2 b)
+        {
+            float angulo = (float) (Vector2.Dot(a, b) == 0 ? Math.PI * .5F : Math.Acos((a.Length() * b.Length()) / Vector2.Dot(a, b)));
+            return angulo;
+        }
+
+        public void aimAt(Vector3 objective)
+        {
+            Vector2 orientation = new Vector2((float)Math.Sin(cannon.Rotation.Y), -(float)Math.Cos(cannon.Rotation.Y));
+            cannon.rotateY((float)angle(new Vector2(objective.X, objective.Z), orientation));
+        }
     }
 
     class CircularBuffer<T> : List<T>
