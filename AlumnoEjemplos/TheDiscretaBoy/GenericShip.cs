@@ -19,6 +19,8 @@ namespace AlumnoEjemplos.TheDiscretaBoy
     public class GenericShip 
     {        
         private TgcMesh ship;
+        private float maxLinearSpeed = 500F;
+        private float minLinearSpeed = -500F;
         private Cannon cannon;
         private float linearSpeed = 0F;
         private float rotationalSpeed = (float)Math.PI * 3 / 4;
@@ -39,7 +41,7 @@ namespace AlumnoEjemplos.TheDiscretaBoy
 
        public void moveForward(float elapsedTime){
             
-            ship.moveOrientedY(linearSpeed* elapsedTime);
+            ship.moveOrientedY((linearSpeed>500F?500F:linearSpeed)* elapsedTime);
             cannon.Position = ship.Position + cannonOffset;
             cannon.LinearSpeed = linearSpeed;
         }
@@ -58,12 +60,12 @@ namespace AlumnoEjemplos.TheDiscretaBoy
 
         private void accelerate()
         {
-            linearSpeed += 1.5F;
+            linearSpeed += (linearSpeed > maxLinearSpeed ? 0F : 1.5F);
         }
 
         public void desaccelerate()
         {
-            linearSpeed -= 1.5F;
+            linearSpeed -= (linearSpeed < minLinearSpeed ? 0F : 1.5F); 
         }
 
         public Vector3 Position
