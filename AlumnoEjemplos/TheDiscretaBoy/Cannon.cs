@@ -21,7 +21,6 @@ namespace AlumnoEjemplos.TheDiscretaBoy
         private Bullet currentBullet;
         private TgcMesh cannon;
         private CircularBuffer<Bullet> bullets = new CircularBuffer<Bullet>();
-        private bool spaceDown=false;
         public float LinearSpeed{get;set;}
         public Vector3 RelativeRotation { get; set; }
         private float rotationalSpeed = (float)Math.PI * 3 / 4;
@@ -65,12 +64,12 @@ namespace AlumnoEjemplos.TheDiscretaBoy
             }
         }
 
-        public void turnRight(float elapsedTime)
+        public void rotateRight(float elapsedTime)
         {
             cannon.rotateY(rotationalSpeed * elapsedTime);
         }
 
-        public void turnLeft(float elapsedTime)
+        public void rotateLeft(float elapsedTime)
         {
             cannon.rotateY(-rotationalSpeed * elapsedTime);
         }
@@ -86,43 +85,25 @@ namespace AlumnoEjemplos.TheDiscretaBoy
 
         public void render(float elapsedTime)
         {
-
-            TgcD3dInput d3dInput = GuiController.Instance.D3dInput;
-
-            if (d3dInput.keyDown(Key.LeftArrow))
-            {
-                Vector3 previousRotation = Rotation;
-                turnLeft(elapsedTime);
-                Vector3 rotationalIncrement = Rotation - previousRotation;
-                RelativeRotation += rotationalIncrement;
-
-            }
-
-            if (d3dInput.keyDown(Key.RightArrow))
-            {
-                Vector3 previousRotation = Rotation;
-                turnRight(elapsedTime);
-                Vector3 rotationalIncrement = Rotation - previousRotation;
-                RelativeRotation += rotationalIncrement;
-                
-            }
-
-            if (d3dInput.keyDown(Key.Space))
-            {
-               if(!spaceDown) //Para q no se apriete 20 millones de veces y espere sa que la suelten
-                {
-                    shoot();
-                    spaceDown = true;
-                }
-            }
-            else
-            {
-                spaceDown = false;
-            }
-
             foreach(Bullet bullet in bullets)
                 bullet.render(elapsedTime);
             cannon.render();
+        }
+
+        public void turnRight(float elapsedTime)
+        {
+            Vector3 previousRotation = Rotation;
+            rotateRight(elapsedTime);
+            Vector3 rotationalIncrement = Rotation - previousRotation;
+            RelativeRotation += rotationalIncrement;
+        }
+
+        public void turnLeft(float elapsedTime)
+        {
+            Vector3 previousRotation = Rotation;
+            rotateLeft(elapsedTime);
+            Vector3 rotationalIncrement = Rotation - previousRotation;
+            RelativeRotation += rotationalIncrement;
         }
         public void dispose()
         {
@@ -130,6 +111,17 @@ namespace AlumnoEjemplos.TheDiscretaBoy
             currentBullet.dispose();
         }
 
+        private double angle(Vector2 a, Vector2 b)
+        {
+            float angulo = (float) (Vector2.Dot(a, b) == 0 ? Math.PI * .5F : Math.Acos((a.Length() * b.Length()) / Vector2.Dot(a, b)));
+            return angulo;
+        }
+
+        public void aimAt(Vector3 objective)
+        {
+            Vector2 orientation = new Vector2((float)Math.Sin(cannon.Rotation.Y), -(float)Math.Cos(cannon.Rotation.Y));
+            cannon.rotateY((float)angle(new Vector2(objective.X, objective.Z), orientation));
+        }
     }
 
     class CircularBuffer<T> : List<T>

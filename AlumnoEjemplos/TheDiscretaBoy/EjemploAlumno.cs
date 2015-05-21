@@ -21,12 +21,12 @@ namespace AlumnoEjemplos.TheDiscretaBoy
     /// </summary>
     public class EjemploAlumno : TgcExample
     {
-
-        TgcMesh mesh;
-        TgcBox water;
-        TgcSphere cielo;
-        Vector3 lastYposition = new Vector3(0, 0, 0);
-        GenericShip ship;
+        public static EjemploAlumno Instance { get; set; }
+        public TgcMesh meshShip, meshEnemy;
+        public TgcBox water;
+        public TgcSphere cielo;
+        public Vector3 lastYposition = new Vector3(0, 0, 0);
+        public GenericShip ship, enemy;
 
         public override string getCategory()
         {
@@ -48,18 +48,26 @@ namespace AlumnoEjemplos.TheDiscretaBoy
 
         public override void init()
         {
-
+            EjemploAlumno.Instance = this;
 
             Microsoft.DirectX.Direct3D.Device d3dDevice = GuiController.Instance.D3dDevice;
             string texturesPath = GuiController.Instance.ExamplesMediaDir + "Texturas\\SkyboxSet1\\ThickCloudsWater\\";
             TgcSceneLoader loader = new TgcSceneLoader();
             TgcScene sceneShip = loader.loadSceneFromFile(GuiController.Instance.ExamplesMediaDir + "MeshCreator\\Meshes\\Vehiculos\\Canoa\\Canoa-TgcScene.xml");
-            mesh = sceneShip.Meshes[0];
+            meshShip = sceneShip.Meshes[0];
             TgcScene sceneCanon = loader.loadSceneFromFile(GuiController.Instance.ExamplesMediaDir + "MeshCreator\\Meshes\\Armas\\Canon\\Canon.max-TgcScene.xml");
+            
+
+            ship = new PlayerShip(meshShip, new Vector3(0, 2, 0),new Cannon(sceneCanon.Meshes[0], new Vector3(27,21,0)), new Vector3(0,1,0));
 
             water = TgcBox.fromSize(new Vector3(0, 0, 0), new Vector3(10000, 1, 10000), Color.Aqua);
             water.setTexture(TgcTexture.createTexture(d3dDevice, texturesPath + "ThickCloudsWaterDown2048.png"));
-            ship = new GenericShip(mesh, new Vector3(0, 2, 0),new Cannon(sceneCanon.Meshes[0], new Vector3(27,21,0)), new Vector3(0,1,0));
+
+            sceneShip = loader.loadSceneFromFile(GuiController.Instance.ExamplesMediaDir + "MeshCreator\\Meshes\\Vehiculos\\Canoa\\Canoa-TgcScene.xml");
+            meshEnemy = sceneShip.Meshes[0];
+            sceneCanon = loader.loadSceneFromFile(GuiController.Instance.ExamplesMediaDir + "MeshCreator\\Meshes\\Armas\\Canon\\Canon.max-TgcScene.xml");
+
+            enemy = new EnemyShip(meshEnemy, new Vector3(100, 2, 0), new Cannon(sceneCanon.Meshes[0], new Vector3(27, 21, 0)), new Vector3(0, 1, 0));
 
             cielo = new TgcSphere();
             cielo.Radius = 5000;
@@ -94,9 +102,11 @@ namespace AlumnoEjemplos.TheDiscretaBoy
 
             GuiController.Instance.ThirdPersonCamera.updateCamera();
             GuiController.Instance.ThirdPersonCamera.Target = ship.Position;
+
             ship.render(elapsedTime);
-           water.render();
+            water.render();
             cielo.render();
+            enemy.render(elapsedTime);
         }
 
         public override void close()
@@ -105,7 +115,7 @@ namespace AlumnoEjemplos.TheDiscretaBoy
             water.dispose();
             ship.dispose();
             cielo.dispose();
-
+            enemy.dispose();
         }
 
 
