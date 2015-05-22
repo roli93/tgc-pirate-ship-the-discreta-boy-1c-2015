@@ -18,22 +18,24 @@ namespace AlumnoEjemplos.TheDiscretaBoy
 {
     public class Cannon
     {
-        private Bullet bullet;
+        private Bullet currentBullet;
         private TgcMesh cannon;
+        private CircularBuffer<Bullet> bullets = new CircularBuffer<Bullet>();
+        public float LinearSpeed{get;set;}
+        public Vector3 RelativeRotation { get; set; }
+        private float rotationalSpeed = (float)Math.PI * 3 / 4;
         
         public Cannon(TgcMesh cannonMesh, Vector3 shootingPosition)
         {
-           
+            RelativeRotation = new Vector3(0, 0, 0);
+            LinearSpeed = 0F;
             cannon = cannonMesh;
             this.ShootingOffset = shootingPosition;
-           /* for (int i = 0; i < 20; i++)
+            for (int i = 0; i <50; i++)
             { 
-                TgcSphere bullet = new TgcSphere();
-            */
-            bullet = new Bullet();
-             /*   bullets.Add(bullet);
-            }*/
-
+                bullets.Add(new Bullet());
+            }
+            currentBullet = bullets.GetNext();
         }
 
         public Vector3 ShootingOffset{get;set;}
@@ -62,53 +64,74 @@ namespace AlumnoEjemplos.TheDiscretaBoy
             }
         }
 
-        public void turnRight(float elapsedTime)
+        public void rotateRight(float elapsedTime)
         {
-            cannon.rotateY((float)Math.PI * 3 / 4 * elapsedTime);
+            cannon.rotateY(rotationalSpeed * elapsedTime);
         }
 
-        public void turnLeft(float elapsedTime)
+        public void rotateLeft(float elapsedTime)
         {
-            cannon.rotateY(-(float)Math.PI * 3 / 4 * elapsedTime);
+            cannon.rotateY(-rotationalSpeed * elapsedTime);
         }
 
         public void shoot()
         {
-            bullet.beShot(this);
+            if(!currentBullet.Visible)
+            {
+                currentBullet.beShot(this);
+                currentBullet = bullets.GetNext();
+            }
         }
 
         public void render(float elapsedTime)
         {
-
-            TgcD3dInput d3dInput = GuiController.Instance.D3dInput;
-
-            if (d3dInput.keyDown(Key.LeftArrow))
-            {
-
-                turnLeft(elapsedTime);
-
-            }
-
-            if (d3dInput.keyDown(Key.RightArrow))
-            {
-
-                turnRight(elapsedTime);
-
-
-            }
-
-            if (d3dInput.keyDown(Key.Space))
-            {
-                shoot();
-            }
-
-            bullet.render(elapsedTime);
+            foreach(Bullet bullet in bullets)
+                bullet.render(elapsedTime);
             cannon.render();
+        }
+
+        public void turnRight(float elapsedTime)
+        {
+            Vector3 previousRotation = Rotation;
+            rotateRight(elapsedTime);
+            Vector3 rotationalIncrement = Rotation - previousRotation;
+            RelativeRotation += rotationalIncrement;
+        }
+
+        public void turnLeft(float elapsedTime)
+        {
+            Vector3 previousRotation = Rotation;
+            rotateLeft(elapsedTime);
+            Vector3 rotationalIncrement = Rotation - previousRotation;
+            RelativeRotation += rotationalIncrement;
         }
         public void dispose()
         {
             cannon.dispose();
-            bullet.dispose();
+            currentBullet.dispose();
+        }
+
+        private double angle(Vector2 a, Vector2 b)
+        {
+            float angulo = (float) (Vector2.Dot(a, b) == 0 ? Math.PI * .5F : Math.Acos((a.Length() * b.Length()) / Vector2.Dot(a, b)));
+            return angulo;
+        }
+
+        public void aimAt(Vector3 objective)
+        {
+            Vector2 orientation = new Vector2((float)Math.Sin(cannon.Rotation.Y), -(float)Math.Cos(cannon.Rotation.Y));
+            cannon.rotateY((float)angle(new Vector2(objective.X, objective.Z), orientation));
+        }
+    }
+
+    class CircularBuffer<T> : List<T>
+    {
+        private int currentIndex=0;
+
+        public T GetNext(){
+            T element = this.ElementAt<T>(currentIndex);
+            currentIndex = (currentIndex+1) % this.Count;
+            return element;
         }
 
     }

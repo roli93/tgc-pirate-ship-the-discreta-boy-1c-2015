@@ -19,7 +19,11 @@ namespace AlumnoEjemplos.TheDiscretaBoy
     public class Bullet
     {
         private TgcSphere bullet;
-        private Vector3 renderLimit = new Vector3(1000,1000,1000);
+        private Vector3 renderLimit = new Vector3(10000,10000,10000);
+        public Vector3 linearSpeed;
+        public Vector2 initialSpeed = new Vector2(200, 200);
+        public TgcBoundingSphere BoundingSphere { get; set; }
+        private bool shooting = false;
 
         public bool Visible { get;set;}
 
@@ -28,38 +32,72 @@ namespace AlumnoEjemplos.TheDiscretaBoy
             bullet = new TgcSphere();
             bullet.Radius = 3;
             bullet.setColor(Color.Black);
-            bullet.LevelOfDetail = 5;
+            bullet.LevelOfDetail = 1;
             bullet.updateValues();
+            BoundingSphere =  new TgcBoundingSphere(bullet.Position, 3);
         }
 
-        public void beShot(Cannon carrier)
+        public void beShot(Cannon carrier) //Esto se puede mejorar, pero no es priorotario
         {
-            bullet.Position = carrier.Position;
-            bullet.Position+= new Vector3(0, carrier.ShootingOffset.Y, 0);
-            bullet.moveOrientedY(carrier.ShootingOffset.X);
-            bullet.Rotation = carrier.Rotation;
-            bullet.rotateY((float)Math.PI);
-            bullet.updateValues();
-            Visible = true;
+                bullet.Position = carrier.Position;
+                bullet.Position+= new Vector3(0, carrier.ShootingOffset.Y, 0);
+                bullet.Rotation = carrier.Rotation;
+                bullet.rotateY((float)Math.PI);
+                bullet.moveOrientedY(carrier.ShootingOffset.X);
+                bullet.updateValues();
+                float parallelSpeedIncrement = carrier.LinearSpeed*-(float)Math.Cos((float)carrier.RelativeRotation.Y);
+                float orthogonalSpeedIncrement = carrier.LinearSpeed * (float)Math.Sin((float)carrier.RelativeRotation.Y);
+                linearSpeed = new Vector3(initialSpeed.X + parallelSpeedIncrement, initialSpeed.Y, orthogonalSpeedIncrement);
+                Visible = true;
         }
 
-        public void render(float speed)
+        public void render(float elapsedTime)
         {
             if (Visible)
             {
-                //MRU
-                bullet.moveOrientedY(500 * speed);
-                //MRUV- Tirto vertical
-                moveVertically(speed);
+                moveObliquely(elapsedTime);
                 bullet.render();
-                if (bullet.Position.X > renderLimit.X || bullet.Position.Y > renderLimit.Y || bullet.Position.Z > renderLimit.Z)
+                if (bullet.Position.X > renderLimit.X || bullet.Position.Y > renderLimit.Y || bullet.Position.Z > renderLimit.Z ||
+                    bullet.Position.X < -renderLimit.X || bullet.Position.Y < -renderLimit.Y || bullet.Position.Z < -renderLimit.Z)
                     Visible = false;
+                if (TgcCollisionUtils.testSphereAABB(BoundingSphere, EjemploAlumno.Instance.enemy.BoundingBox))
+                {
+              
+                    if (!shooting) //Para q no se apriete 20 millones de veces y espere sa que la suelten
+                    {
+                        EjemploAlumno.Instance.enemy.beShot();
+                        shooting = true;
+                    }
+                }
+                else if (TgcCollisionUtils.testSphereAABB(BoundingSphere, EjemploAlumno.Instance.ship.BoundingBox))
+                {
+
+                    if (!shooting)
+                    {
+                        EjemploAlumno.Instance.ship.beShot();
+                        shooting = true;
+                    }
+                }
+                else
+                {
+                    shooting = false;
+                }
             }
+
+
         }
 
-        private void moveVertically(float elapsedTime)
+        private void moveObliquely(float elapsedTime)
         {
-            bullet.Position += new Vector3(0, 100 * elapsedTime, 0);
+            //MRU
+            bullet.moveOrientedY(linearSpeed.X * elapsedTime);//V paralela al cañon
+            bullet.rotateY((float)Math.PI * 0.5F);
+            bullet.moveOrientedY(linearSpeed.Z * elapsedTime);//V perpendicular al cañon
+            bullet.rotateY(-(float)Math.PI * 0.5F);
+            //MRUV- Tirto vertical
+            bullet.move(0,linearSpeed.Y * elapsedTime,0);
+            linearSpeed.Y -= 1F;
+            BoundingSphere.setCenter(bullet.Position);
         }
 
         public void dispose()
