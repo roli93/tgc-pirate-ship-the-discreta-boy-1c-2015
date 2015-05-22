@@ -136,12 +136,14 @@ namespace AlumnoEjemplos.TheDiscretaBoy
             if (status == Status.Alive)
                 if (life <= 0)
                     sink();
-                renderAlive(elapsedTime);
+                else
+                    renderAlive(elapsedTime);
 
             if (status == Status.Sunk)
             {
                 GuiController.Instance.ThirdPersonCamera.Enable = false;
                 ship.move(0, -100F * elapsedTime, 0);
+                cannon.Position = ship.Position + cannonOffset;
                 ship.render();
             }
         }
@@ -270,8 +272,6 @@ namespace AlumnoEjemplos.TheDiscretaBoy
                 }
                 
             }
-
-
 
             private void aim ()
             {
