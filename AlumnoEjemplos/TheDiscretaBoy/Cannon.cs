@@ -158,10 +158,29 @@ namespace AlumnoEjemplos.TheDiscretaBoy
             cannon.rotateY((float)angle(new Vector2(objective.X, objective.Z), orientation));
         }
 
-        public bool notAimingAt(GenericShip ship)
+        public bool aimingAt(GenericShip ship)
         {
-            return true;
+            Vector3 aimVector = ship.Position - Position;
+            double theAngle = angle(Direction, new Vector2(aimVector.X, aimVector.Z));
+            return  Math.Abs(theAngle) < 0.1F; 
         }
+
+        public bool onRightSideOf(GenericShip ship)
+        {
+            Vector3 aimVector = ship.Position - Position;
+            double theAngle = angle(Direction, new Vector2(aimVector.X, aimVector.Z));
+            return theAngle > 0F; 
+        }
+
+
+        public bool onLeftSideOf(GenericShip ship)
+        {
+            Vector3 aimVector = ship.Position - Position;
+            double theAngle = angle(Direction, new Vector2(aimVector.X, aimVector.Z));
+            return theAngle < 0F;
+        }
+
+
     }
 
     class CircularBuffer<T> : List<T>

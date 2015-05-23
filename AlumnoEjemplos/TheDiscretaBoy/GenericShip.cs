@@ -230,20 +230,25 @@ namespace AlumnoEjemplos.TheDiscretaBoy
         public class EnemyShip : GenericShip
     {
             private float time = 0F;
+            private GenericShip victim = EjemploAlumno.Instance.ship;
 
             public EnemyShip(TgcMesh shipMesh, Vector3 initialPosition, Cannon cannon, Vector3 cannonOffset) : base(shipMesh, initialPosition, cannon, cannonOffset) {}
 
             public override void renderAlive(float elapsedTime)
             {
                 TgcD3dInput d3dInput = GuiController.Instance.D3dInput;
-                Vector3 vectorToPlayerShip = EjemploAlumno.Instance.ship.Position - EjemploAlumno.Instance.enemy.Position;
+                Vector3 vectorToPlayerShip = victim.Position - Position;
 
                 if (vectorToPlayerShip.Length()<300)
                 {
-                    double x = cannon.angle(cannon.Direction, new Vector2(vectorToPlayerShip.X,vectorToPlayerShip.Z));
-                    if (cannon.notAimingAt(EjemploAlumno.Instance.ship))
-                        /*cannon.rotateLeft(elapsedTime)*/;
-                    else if (!shooting) //Para q no se apriete 20 millones de veces y espere sa que la suelten
+                    if (!cannon.aimingAt(victim))
+                    {
+                        if (cannon.onLeftSideOf(victim))
+                            cannon.turnRight(elapsedTime);
+                        else if (cannon.onRightSideOf(victim))
+                            cannon.turnLeft(elapsedTime);
+                    }                        
+                    else if (!shooting)
                     {
                         cannon.shoot();
                         shooting = true;
@@ -266,8 +271,7 @@ namespace AlumnoEjemplos.TheDiscretaBoy
 
                 if (d3dInput.keyDown(Key.L))
                 {
-                    cannon.turnRight(elapsedTime);
-
+                    cannon.aimingAt(EjemploAlumno.Instance.ship);
                 }
 
                 ship.render();
