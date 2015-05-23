@@ -24,13 +24,22 @@ namespace AlumnoEjemplos.TheDiscretaBoy
         public float LinearSpeed{get;set;}
         public Vector3 RelativeRotation { get; set; }
         private float rotationalSpeed = (float)Math.PI * 3 / 4;
+        private TgcSphere a;
+        private int pointOffset;
+
         
         public Cannon(TgcMesh cannonMesh, Vector3 shootingPosition)
-        {
+        {            
             RelativeRotation = new Vector3(0, 0, 0);
             LinearSpeed = 0F;
             cannon = cannonMesh;
             this.ShootingOffset = shootingPosition;
+            a = new TgcSphere();
+            a.Radius = 5;
+            a.setColor(Color.Red);
+            a.LevelOfDetail = 1;
+            a.updateValues();
+            pointOffset = -100;
             for (int i = 0; i <50; i++)
             { 
                 bullets.Add(new Bullet());
@@ -40,6 +49,15 @@ namespace AlumnoEjemplos.TheDiscretaBoy
 
         public Vector3 ShootingOffset{get;set;}
 
+        public Vector2 Direction// vector x,z
+        {
+            get
+            {
+                Vector3 directon3D = a.Position-Position;
+                return Vector2.Normalize(new Vector2(directon3D.X, directon3D.Z));
+            }
+        }
+        
         public Vector3 Position
         {
             get
@@ -49,6 +67,8 @@ namespace AlumnoEjemplos.TheDiscretaBoy
             set
             {
                 cannon.Position = value;
+                a.Position = value;
+                a.moveOrientedY(pointOffset);
             }
         }
 
@@ -67,11 +87,17 @@ namespace AlumnoEjemplos.TheDiscretaBoy
         public void rotateRight(float elapsedTime)
         {
             cannon.rotateY(rotationalSpeed * elapsedTime);
+            a.Position = Position;
+            a.rotateY(rotationalSpeed * elapsedTime);
+            a.moveOrientedY(pointOffset);
         }
 
         public void rotateLeft(float elapsedTime)
         {
             cannon.rotateY(-rotationalSpeed * elapsedTime);
+            a.Position = Position;
+            a.rotateY(-rotationalSpeed * elapsedTime);
+            a.moveOrientedY(pointOffset);
         }
 
         public void shoot()
@@ -88,6 +114,7 @@ namespace AlumnoEjemplos.TheDiscretaBoy
             foreach(Bullet bullet in bullets)
                 bullet.render(elapsedTime);
             cannon.render();
+            a.render();
         }
 
         public void turnRight(float elapsedTime)
@@ -111,9 +138,17 @@ namespace AlumnoEjemplos.TheDiscretaBoy
             currentBullet.dispose();
         }
 
-        private double angle(Vector2 a, Vector2 b)
+        public double angle(Vector2 a, Vector2 b)
         {
-            float angulo = (float) (Vector2.Dot(a, b) == 0 ? Math.PI * .5F : Math.Acos((a.Length() * b.Length()) / Vector2.Dot(a, b)));
+            if (a.Length() == 0 || b.Length() == 0)
+                return 0;
+
+            float absAtimesAbsb = a.Length() * b.Length();
+            float dotAB = Vector2.Dot(a, b);
+            float division = dotAB / absAtimesAbsb;
+            double bareAngle = Math.Acos(division);
+
+            double angulo = bareAngle*Math.Sign(Vector2.Ccw(a,b));
             return angulo;
         }
 
@@ -121,6 +156,11 @@ namespace AlumnoEjemplos.TheDiscretaBoy
         {
             Vector2 orientation = new Vector2((float)Math.Sin(cannon.Rotation.Y), -(float)Math.Cos(cannon.Rotation.Y));
             cannon.rotateY((float)angle(new Vector2(objective.X, objective.Z), orientation));
+        }
+
+        public bool notAimingAt(GenericShip ship)
+        {
+            return true;
         }
     }
 

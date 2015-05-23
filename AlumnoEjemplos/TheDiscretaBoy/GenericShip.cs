@@ -235,10 +235,15 @@ namespace AlumnoEjemplos.TheDiscretaBoy
 
             public override void renderAlive(float elapsedTime)
             {
-                if (distance(EjemploAlumno.Instance.ship.Position, EjemploAlumno.Instance.enemy.Position)<300)
+                TgcD3dInput d3dInput = GuiController.Instance.D3dInput;
+                Vector3 vectorToPlayerShip = EjemploAlumno.Instance.ship.Position - EjemploAlumno.Instance.enemy.Position;
+
+                if (vectorToPlayerShip.Length()<300)
                 {
-                    //aim();
-                    if (!shooting) //Para q no se apriete 20 millones de veces y espere sa que la suelten
+                    double x = cannon.angle(cannon.Direction, new Vector2(vectorToPlayerShip.X,vectorToPlayerShip.Z));
+                    if (cannon.notAimingAt(EjemploAlumno.Instance.ship))
+                        /*cannon.rotateLeft(elapsedTime)*/;
+                    else if (!shooting) //Para q no se apriete 20 millones de veces y espere sa que la suelten
                     {
                         cannon.shoot();
                         shooting = true;
@@ -252,13 +257,21 @@ namespace AlumnoEjemplos.TheDiscretaBoy
                 {
                     shooting = false;
                 }
+
+                if (d3dInput.keyDown(Key.K))
+                {
+                    cannon.turnLeft(elapsedTime);
+
+                }
+
+                if (d3dInput.keyDown(Key.L))
+                {
+                    cannon.turnRight(elapsedTime);
+
+                }
+
                 ship.render();
                 cannon.render(elapsedTime);
-            }
-
-            public double distance(Vector3 a, Vector3 b)
-            {
-                return Math.Sqrt(Math.Pow(a.X - b.X, 2) + Math.Pow(a.Y - b.Y, 2) + Math.Pow(a.Z - b.Z, 2));
             }
 
             public void spendTime(float time)
