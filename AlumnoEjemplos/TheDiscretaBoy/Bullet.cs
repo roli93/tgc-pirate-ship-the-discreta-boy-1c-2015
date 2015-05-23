@@ -21,7 +21,7 @@ namespace AlumnoEjemplos.TheDiscretaBoy
         private TgcSphere bullet;
         private Vector3 renderLimit = new Vector3(10000,10000,10000);
         public Vector3 linearSpeed;
-        public Vector2 initialSpeed = new Vector2(200, 200);
+        public Vector2 InitialSpeed { get; set; }
         public TgcBoundingSphere BoundingSphere { get; set; }
         private bool shooting = false;
 
@@ -47,7 +47,7 @@ namespace AlumnoEjemplos.TheDiscretaBoy
                 bullet.updateValues();
                 float parallelSpeedIncrement = carrier.LinearSpeed*-(float)Math.Cos((float)carrier.RelativeRotation.Y);
                 float orthogonalSpeedIncrement = carrier.LinearSpeed * (float)Math.Sin((float)carrier.RelativeRotation.Y);
-                linearSpeed = new Vector3(initialSpeed.X + parallelSpeedIncrement, initialSpeed.Y, orthogonalSpeedIncrement);
+                linearSpeed = new Vector3(InitialSpeed.X + parallelSpeedIncrement, InitialSpeed.Y, orthogonalSpeedIncrement);
                 Visible = true;
         }
 
@@ -96,7 +96,8 @@ namespace AlumnoEjemplos.TheDiscretaBoy
             bullet.rotateY(-(float)Math.PI * 0.5F);
             //MRUV- Tirto vertical
             bullet.move(0,linearSpeed.Y * elapsedTime,0);
-            linearSpeed.Y -= 1F;
+            float a = elapsedTime / elapsedTime;
+            linearSpeed.Y -= a;
             BoundingSphere.setCenter(bullet.Position);
         }
 

@@ -234,6 +234,12 @@ namespace AlumnoEjemplos.TheDiscretaBoy
 
             public EnemyShip(TgcMesh shipMesh, Vector3 initialPosition, Cannon cannon, Vector3 cannonOffset) : base(shipMesh, initialPosition, cannon, cannonOffset) {}
 
+            private Vector2 shootingSpeedForDistance(float distance)// a 45º
+            {
+                double speedModule = 15.0* Math.Sqrt(distance/Math.Sin(Math.PI /2));
+                return new Vector2((float)speedModule, (float)speedModule);
+            }
+
             public override void renderAlive(float elapsedTime)
             {
                 TgcD3dInput d3dInput = GuiController.Instance.D3dInput;
@@ -250,6 +256,7 @@ namespace AlumnoEjemplos.TheDiscretaBoy
                     }                        
                     else if (!shooting)
                     {
+                        cannon.InitialSpeed = shootingSpeedForDistance(vectorToPlayerShip.Length());
                         cannon.shoot();
                         shooting = true;
                     }

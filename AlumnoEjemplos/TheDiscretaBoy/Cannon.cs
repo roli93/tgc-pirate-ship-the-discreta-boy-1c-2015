@@ -24,24 +24,25 @@ namespace AlumnoEjemplos.TheDiscretaBoy
         public float LinearSpeed{get;set;}
         public Vector3 RelativeRotation { get; set; }
         private float rotationalSpeed = (float)Math.PI * 3 / 4;
-        private TgcSphere a;
+        private TgcSphere point;
         private int pointOffset;
-
+        public Vector2 InitialSpeed { get; set; }
         
         public Cannon(TgcMesh cannonMesh, Vector3 shootingPosition)
-        {            
+        {
+            InitialSpeed = new Vector2(200, 200);
             RelativeRotation = new Vector3(0, 0, 0);
             LinearSpeed = 0F;
             cannon = cannonMesh;
             this.ShootingOffset = shootingPosition;
-            a = new TgcSphere();
-            a.Radius = 5;
-            a.setColor(Color.Red);
-            a.LevelOfDetail = 1;
-            a.updateValues();
+            point = new TgcSphere();
+            point.Radius = 5;
+            point.setColor(Color.Red);
+            point.LevelOfDetail = 1;
+            point.updateValues();
             pointOffset = -100;
             for (int i = 0; i <50; i++)
-            { 
+            {
                 bullets.Add(new Bullet());
             }
             currentBullet = bullets.GetNext();
@@ -53,7 +54,7 @@ namespace AlumnoEjemplos.TheDiscretaBoy
         {
             get
             {
-                Vector3 directon3D = a.Position-Position;
+                Vector3 directon3D = point.Position-Position;
                 return Vector2.Normalize(new Vector2(directon3D.X, directon3D.Z));
             }
         }
@@ -67,8 +68,8 @@ namespace AlumnoEjemplos.TheDiscretaBoy
             set
             {
                 cannon.Position = value;
-                a.Position = value;
-                a.moveOrientedY(pointOffset);
+                point.Position = value;
+                point.moveOrientedY(pointOffset);
             }
         }
 
@@ -87,23 +88,24 @@ namespace AlumnoEjemplos.TheDiscretaBoy
         public void rotateRight(float elapsedTime)
         {
             cannon.rotateY(rotationalSpeed * elapsedTime);
-            a.Position = Position;
-            a.rotateY(rotationalSpeed * elapsedTime);
-            a.moveOrientedY(pointOffset);
+            point.Position = Position;
+            point.rotateY(rotationalSpeed * elapsedTime);
+            point.moveOrientedY(pointOffset);
         }
 
         public void rotateLeft(float elapsedTime)
         {
             cannon.rotateY(-rotationalSpeed * elapsedTime);
-            a.Position = Position;
-            a.rotateY(-rotationalSpeed * elapsedTime);
-            a.moveOrientedY(pointOffset);
+            point.Position = Position;
+            point.rotateY(-rotationalSpeed * elapsedTime);
+            point.moveOrientedY(pointOffset);
         }
 
         public void shoot()
         {
             if(!currentBullet.Visible)
             {
+                currentBullet.InitialSpeed = InitialSpeed;
                 currentBullet.beShot(this);
                 currentBullet = bullets.GetNext();
             }
@@ -114,7 +116,6 @@ namespace AlumnoEjemplos.TheDiscretaBoy
             foreach(Bullet bullet in bullets)
                 bullet.render(elapsedTime);
             cannon.render();
-            a.render();
         }
 
         public void turnRight(float elapsedTime)
