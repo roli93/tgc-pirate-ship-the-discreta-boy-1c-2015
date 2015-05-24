@@ -21,7 +21,7 @@ namespace AlumnoEjemplos.TheDiscretaBoy
         Alive, Sinking, Sunk
     }
 
-    public abstract class GenericShip
+    public abstract class GenericShip :Aimer
     {
         internal TgcMesh ship;
         internal Status status = Status.Alive;
@@ -33,7 +33,7 @@ namespace AlumnoEjemplos.TheDiscretaBoy
         internal Vector3 cannonOffset;
         internal int life = 1000;
 
-        public GenericShip(TgcMesh shipMesh, Vector3 initialPosition, Cannon cannon, Vector3 cannonOffset)
+        public GenericShip(TgcMesh shipMesh, Vector3 initialPosition, Cannon cannon, Vector3 cannonOffset) : base()
         {
             ship = shipMesh;
             Position = initialPosition;
@@ -51,16 +51,23 @@ namespace AlumnoEjemplos.TheDiscretaBoy
             cannon.LinearSpeed = linearSpeed;
         }
 
-        public void turnRight(float elapsedTime)
+        internal override TgcMesh getMesh()
+        {
+            return ship;
+        }
+
+        public override void turnRight(float elapsedTime)
         {
             ship.rotateY(rotationalSpeed * elapsedTime);
             cannon.rotateRight(elapsedTime);
+            updateDirection(elapsedTime, rotationalSpeed);
         }
 
-        public void turnLeft(float elapsedTime)
+        public override void turnLeft(float elapsedTime)
         {
             ship.rotateY(-rotationalSpeed * elapsedTime);
             cannon.rotateLeft(elapsedTime);
+            updateDirection(elapsedTime, -rotationalSpeed);
         }
 
         internal void accelerate()
@@ -218,12 +225,32 @@ namespace AlumnoEjemplos.TheDiscretaBoy
 
         public class EnemyShip : GenericShip
     {
-            private float time = 0F;
             private GenericShip victim = EjemploAlumno.Instance.ship;
             private Timer timer = new Timer(2F);
             private Oscilator speedAdjuster = new Oscilator(50F, 50F);
 
             public EnemyShip(TgcMesh shipMesh, Vector3 initialPosition, Cannon cannon, Vector3 cannonOffset) : base(shipMesh, initialPosition, cannon, cannonOffset) {}
+
+            private void shootPeriodically(float elapsedTime)
+            {
+                if (!cannon.aimingAt(victim))
+                    cannon.aimAt(victim, elapsedTime);
+                else
+                    timer.doWhenItsTimeTo(() => cannon.shootWithSpeed(shootingSpeedForDistance(distanceToVictim(), elapsedTime)), elapsedTime);
+            }
+
+            private float distanceToVictim()
+            {
+                return VectorToVictim.Length();
+            }
+
+            private void apporach(GenericShip victim, float elapsedTime)
+            {
+                if (!aimingAt(victim))
+                    aimAt(victim, elapsedTime);
+                else
+                    desaccelerate();
+            }
 
             private Vector2 shootingSpeedForDistance(float distance, float elapsedTime)// a 45º
             {
@@ -231,20 +258,27 @@ namespace AlumnoEjemplos.TheDiscretaBoy
                 return new Vector2((float)speedModule, (float)speedModule);
             }
 
+            private Vector3 VectorToVictim
+            {
+                get
+                {
+                    return victim.Position - Position;
+                }
+            }
+
             public override void renderAlive(float elapsedTime)
             {
                 TgcD3dInput d3dInput = GuiController.Instance.D3dInput;
-                Vector3 vectorToPlayerShip = victim.Position - Position;
 
-                if (vectorToPlayerShip.Length() < 300)
+                float distancte = distanceToVictim();
+                if (distancte < 300)
                 {
-                    if (!cannon.aimingAt(victim))
-                        cannon.aimAt(victim, elapsedTime);
-                    else
-                        timer.doWhenItsTimeTo(() => cannon.shootWithSpeed(shootingSpeedForDistance(vectorToPlayerShip.Length(), elapsedTime)), elapsedTime);
+                    if(linearSpeed <0F) 
+                           accelerate();
+                    shootPeriodically(elapsedTime);
                 }
                 else
-                    apporach(victim);
+                    apporach(victim, elapsedTime);
 
                 if (d3dInput.keyDown(Key.K))
                 {
@@ -257,13 +291,9 @@ namespace AlumnoEjemplos.TheDiscretaBoy
                     cannon.aimingAt(EjemploAlumno.Instance.ship);
                 }
 
+                moveForward(elapsedTime);
                 ship.render();
                 cannon.render(elapsedTime);
-            }
-
-            private void apporach(GenericShip victim)
-            {
-
             }
     }
 

@@ -57,18 +57,18 @@ namespace AlumnoEjemplos.TheDiscretaBoy
 
         public void rotateRight(float elapsedTime)
         {
-            cannon.rotateY(rotationalSpeed * elapsedTime);
-            point.Position = Position;
-            point.rotateY(rotationalSpeed * elapsedTime);
-            point.moveOrientedY(pointOffset);
+            rotate(elapsedTime, rotationalSpeed);
         }
 
         public void rotateLeft(float elapsedTime)
         {
-            cannon.rotateY(-rotationalSpeed * elapsedTime);
-            point.Position = Position;
-            point.rotateY(-rotationalSpeed * elapsedTime);
-            point.moveOrientedY(pointOffset);
+            rotate(elapsedTime, -rotationalSpeed);
+        }
+
+        private void rotate(float elapsedTime, float speed)
+        {
+            cannon.rotateY(speed * elapsedTime);
+            updateDirection(elapsedTime, speed);
         }
 
         public void shootWithSpeed(Vector2 speed)
@@ -178,6 +178,13 @@ namespace AlumnoEjemplos.TheDiscretaBoy
             }
         }
 
+        internal void updateDirection(float elapsedTime, float speed)
+        {
+            point.Position = Position;
+            point.rotateY(speed * elapsedTime);
+            point.moveOrientedY(pointOffset);
+        }
+
         private double angle(Vector2 a, Vector2 b)
         {
             if (a.Length() == 0 || b.Length() == 0)
@@ -204,7 +211,8 @@ namespace AlumnoEjemplos.TheDiscretaBoy
         {
             Vector3 aimVector = ship.Position - Position;
             double theAngle = angle(Direction, new Vector2(aimVector.X, aimVector.Z));
-            return Math.Abs(theAngle) < 0.1F;
+            bool aiming = Math.Abs(theAngle) < 0.1F;
+            return aiming;
         }
 
         private bool onRightSideOf(GenericShip ship)
