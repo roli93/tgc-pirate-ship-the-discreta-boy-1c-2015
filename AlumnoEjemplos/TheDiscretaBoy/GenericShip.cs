@@ -21,7 +21,7 @@ namespace AlumnoEjemplos.TheDiscretaBoy
         Alive, Sinking, Sunk
     }
 
-    public abstract class GenericShip :Aimer
+    public abstract class GenericShip :AimingCapable
     {
         internal TgcMesh ship;
         internal Status status = Status.Alive;
@@ -31,7 +31,7 @@ namespace AlumnoEjemplos.TheDiscretaBoy
         internal float linearSpeed = 0F;
         internal float rotationalSpeed = (float)Math.PI * 3 / 4;
         internal Vector3 cannonOffset;
-        internal int life = 1000;
+        internal int life = 300;
 
         public GenericShip(TgcMesh shipMesh, Vector3 initialPosition, Cannon cannon, Vector3 cannonOffset) : base()
         {
@@ -78,18 +78,6 @@ namespace AlumnoEjemplos.TheDiscretaBoy
         internal void desaccelerate()
         {
             linearSpeed -= (linearSpeed < minLinearSpeed ? 0F : 1.5F);
-        }
-
-        public Vector3 Position
-        {
-            get
-            {
-                return ship.Position;
-            }
-            set
-            {
-                ship.Position = value;
-            }
         }
 
         public TgcBoundingBox BoundingBox
@@ -161,193 +149,6 @@ namespace AlumnoEjemplos.TheDiscretaBoy
         {
             ship.dispose();
             cannon.dispose();
-        }
-    }
-
-        public class PlayerShip : GenericShip
-    {
-
-            public PlayerShip(TgcMesh shipMesh, Vector3 initialPosition, Cannon cannon, Vector3 cannonOffset) : base(shipMesh, initialPosition, cannon, cannonOffset){}
-
-            public override void renderAlive(float elapsedTime)
-            {
-                            TgcD3dInput d3dInput = GuiController.Instance.D3dInput;
-
-                            if (d3dInput.keyDown(Key.W))
-                                accelerate();
-                            else if (linearSpeed > 0F)
-                                desaccelerate();
-
-                            if (d3dInput.keyDown(Key.Q))
-                                sink();
-
-                            if (d3dInput.keyDown(Key.S))
-                                desaccelerate();
-                            else if (linearSpeed < 0F)
-                                accelerate();
-
-                            if (d3dInput.keyDown(Key.A))
-                            {
-
-                                turnLeft(elapsedTime);
-
-                            }
-
-                            if (d3dInput.keyDown(Key.D))
-                            {
-
-                                turnRight(elapsedTime);
-                            }
-
-                            if (d3dInput.keyDown(Key.LeftArrow))
-                            {
-                                cannon.turnLeft(elapsedTime);
-
-                            }
-
-                            if (d3dInput.keyDown(Key.RightArrow))
-                            {
-                                cannon.turnRight(elapsedTime);
-
-                            }
-
-                            if (d3dInput.keyPressed(Key.Space))
-                            {
-                                    cannon.shoot();
-                            }
-
-
-                            moveForward(elapsedTime);
-                            ship.render();
-                            cannon.render(elapsedTime);
-              }
-    }
-
-        public class EnemyShip : GenericShip
-    {
-            private GenericShip victim = EjemploAlumno.Instance.ship;
-            private Timer timer = new Timer(2F);
-            private Oscilator speedAdjuster = new Oscilator(50F, 50F);
-
-            public EnemyShip(TgcMesh shipMesh, Vector3 initialPosition, Cannon cannon, Vector3 cannonOffset) : base(shipMesh, initialPosition, cannon, cannonOffset) {}
-
-            private void shootPeriodically(float elapsedTime)
-            {
-                if (!cannon.aimingAt(victim))
-                    cannon.aimAt(victim, elapsedTime);
-                else
-                    timer.doWhenItsTimeTo(() => cannon.shootWithSpeed(shootingSpeedForDistance(distanceToVictim(), elapsedTime)), elapsedTime);
-            }
-
-            private float distanceToVictim()
-            {
-                return VectorToVictim.Length();
-            }
-
-            private void apporach(GenericShip victim, float elapsedTime)
-            {
-                if (!aimingAt(victim))
-                    aimAt(victim, elapsedTime);
-                else
-                    desaccelerate();
-            }
-
-            private Vector2 shootingSpeedForDistance(float distance, float elapsedTime)// a 45º
-            {
-                double speedModule =  + (14.0 +(distance/130)) * Math.Sqrt((speedAdjuster.oscilation(elapsedTime) +distance)/Math.Sin(Math.PI /2));
-                return new Vector2((float)speedModule, (float)speedModule);
-            }
-
-            private Vector3 VectorToVictim
-            {
-                get
-                {
-                    return victim.Position - Position;
-                }
-            }
-
-            public override void renderAlive(float elapsedTime)
-            {
-                TgcD3dInput d3dInput = GuiController.Instance.D3dInput;
-
-                float distancte = distanceToVictim();
-                if (distancte < 300)
-                {
-                    if(linearSpeed <0F) 
-                           accelerate();
-                    shootPeriodically(elapsedTime);
-                }
-                else
-                    apporach(victim, elapsedTime);
-
-                if (d3dInput.keyDown(Key.K))
-                {
-                    cannon.turnLeft(elapsedTime);
-
-                }
-
-                if (d3dInput.keyDown(Key.L))
-                {
-                    cannon.aimingAt(EjemploAlumno.Instance.ship);
-                }
-
-                moveForward(elapsedTime);
-                ship.render();
-                cannon.render(elapsedTime);
-            }
-    }
-
-    public class Timer
-    {
-        private float time;
-        private float frequency;
-        private bool itsTime=false;
-
-        public Timer(float frequency)
-        {
-            this.frequency = frequency;
-        }
-        
-        public void doWhenItsTimeTo(System.Action whatToDo, float elapsedTime){
-
-            if(itsTime)
-            {
-                whatToDo();
-                itsTime = false;
-            }
-            spendTime(elapsedTime);
-        }
-
-        private void spendTime(float elapsedTime)
-        {
-            if (time < Math.PI * 2)
-                time += elapsedTime * (float)Math.PI * frequency;
-            else
-            {
-                itsTime = true;
-                this.time = 0;
-            }
-        }
-
-    }
-
-    public class Oscilator
-    {
-        private float frequency;
-        private float rotation;
-        private float amplitude;
-
-        public Oscilator(float frequency, float amplitude)
-        {
-            this.frequency = frequency;
-            this.amplitude = amplitude;
-        }
-
-        public float oscilation(float elapsedTime)
-        {
-            rotation += elapsedTime * 2*(float)Math.PI * frequency;
-            float result = (float)Math.Sin(rotation)*amplitude;
-            return result;
         }
     }
 
