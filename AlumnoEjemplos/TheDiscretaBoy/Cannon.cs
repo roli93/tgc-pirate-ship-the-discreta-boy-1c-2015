@@ -16,7 +16,7 @@ using TgcViewer.Utils.TgcSkeletalAnimation;
 
 namespace AlumnoEjemplos.TheDiscretaBoy
 {
-    public class Cannon
+    public class Cannon : Aimer
     {
         private Bullet currentBullet;
         private TgcMesh cannon;
@@ -24,23 +24,15 @@ namespace AlumnoEjemplos.TheDiscretaBoy
         public float LinearSpeed{get;set;}
         public Vector3 RelativeRotation { get; set; }
         private float rotationalSpeed = (float)Math.PI * 3 / 4;
-        private TgcSphere point;
-        private int pointOffset;
         public Vector2 InitialSpeed { get; set; }
         
-        public Cannon(TgcMesh cannonMesh, Vector3 shootingPosition)
+        public Cannon(TgcMesh cannonMesh, Vector3 shootingPosition) : base()
         {
             InitialSpeed = new Vector2(200, 200);
             RelativeRotation = new Vector3(0, 0, 0);
             LinearSpeed = 0F;
             cannon = cannonMesh;
             this.ShootingOffset = shootingPosition;
-            point = new TgcSphere();
-            point.Radius = 5;
-            point.setColor(Color.Red);
-            point.LevelOfDetail = 1;
-            point.updateValues();
-            pointOffset = -100;
             for (int i = 0; i <50; i++)
             {
                 bullets.Add(new Bullet());
@@ -50,28 +42,6 @@ namespace AlumnoEjemplos.TheDiscretaBoy
 
         public Vector3 ShootingOffset{get;set;}
 
-        public Vector2 Direction// vector x,z
-        {
-            get
-            {
-                Vector3 directon3D = point.Position-Position;
-                return Vector2.Normalize(new Vector2(directon3D.X, directon3D.Z));
-            }
-        }
-        
-        public Vector3 Position
-        {
-            get
-            {
-                return cannon.Position;
-            }
-            set
-            {
-                cannon.Position = value;
-                point.Position = value;
-                point.moveOrientedY(pointOffset);
-            }
-        }
 
         public Vector3 Rotation
         {
@@ -124,7 +94,7 @@ namespace AlumnoEjemplos.TheDiscretaBoy
             cannon.render();
         }
 
-        public void turnRight(float elapsedTime)
+        public override void turnRight(float elapsedTime)
         {
             Vector3 previousRotation = Rotation;
             rotateRight(elapsedTime);
@@ -132,61 +102,23 @@ namespace AlumnoEjemplos.TheDiscretaBoy
             RelativeRotation += rotationalIncrement;
         }
 
-        public void turnLeft(float elapsedTime)
+        public override void turnLeft(float elapsedTime)
         {
             Vector3 previousRotation = Rotation;
             rotateLeft(elapsedTime);
             Vector3 rotationalIncrement = Rotation - previousRotation;
             RelativeRotation += rotationalIncrement;
         }
+
+        internal override TgcMesh getMesh()
+        {
+            return cannon;
+        }
+
         public void dispose()
         {
             cannon.dispose();
             currentBullet.dispose();
-        }
-
-        private double angle(Vector2 a, Vector2 b)
-        {
-            if (a.Length() == 0 || b.Length() == 0)
-                return 0;
-
-            float absAtimesAbsb = a.Length() * b.Length();
-            float dotAB = Vector2.Dot(a, b);
-            float division = dotAB / absAtimesAbsb;
-            double bareAngle = Math.Acos(division);
-
-            double angulo = bareAngle*Math.Sign(Vector2.Ccw(a,b));
-            return angulo;
-        }
-
-        public void aimAt(GenericShip objective,float elapsedTime)
-        {
-            if (onLeftSideOf(objective))
-                turnRight(elapsedTime);
-            else if (onRightSideOf(objective))
-                turnLeft(elapsedTime);
-        }
-        
-        public bool aimingAt(GenericShip ship)
-        {
-            Vector3 aimVector = ship.Position - Position;
-            double theAngle = angle(Direction, new Vector2(aimVector.X, aimVector.Z));
-            return  Math.Abs(theAngle) < 0.1F; 
-        }
-
-        private bool onRightSideOf(GenericShip ship)
-        {
-            Vector3 aimVector = ship.Position - Position;
-            double theAngle = angle(Direction, new Vector2(aimVector.X, aimVector.Z));
-            return theAngle > 0F; 
-        }
-
-
-        private bool onLeftSideOf(GenericShip ship)
-        {
-            Vector3 aimVector = ship.Position - Position;
-            double theAngle = angle(Direction, new Vector2(aimVector.X, aimVector.Z));
-            return theAngle < 0F;
         }
 
     }
@@ -199,6 +131,95 @@ namespace AlumnoEjemplos.TheDiscretaBoy
             T element = this.ElementAt<T>(currentIndex);
             currentIndex = (currentIndex+1) % this.Count;
             return element;
+        }
+
+    }
+
+    public abstract class Aimer
+    {
+
+        internal TgcSphere point;
+        internal int pointOffset;
+
+        public Aimer()
+        {
+            point = new TgcSphere();
+            point.Radius = 5;
+            point.setColor(Color.Red);
+            point.LevelOfDetail = 1;
+            point.updateValues();
+            pointOffset = -100;
+        }
+
+        internal abstract TgcMesh getMesh();
+        public abstract void turnRight(float elapsedTime);
+        public abstract void turnLeft(float elapsedTime);
+
+        public Vector2 Direction// vector x,z
+        {
+            get
+            {
+                Vector3 directon3D = point.Position - Position;
+                return Vector2.Normalize(new Vector2(directon3D.X, directon3D.Z));
+            }
+        }
+
+        public Vector3 Position
+        {
+            get
+            {
+                return getMesh().Position;
+            }
+            set
+            {
+                getMesh().Position = value;
+                point.Position = value;
+                point.moveOrientedY(pointOffset);
+            }
+        }
+
+        private double angle(Vector2 a, Vector2 b)
+        {
+            if (a.Length() == 0 || b.Length() == 0)
+                return 0;
+
+            float absAtimesAbsb = a.Length() * b.Length();
+            float dotAB = Vector2.Dot(a, b);
+            float division = dotAB / absAtimesAbsb;
+            double bareAngle = Math.Acos(division);
+
+            double angulo = bareAngle * Math.Sign(Vector2.Ccw(a, b));
+            return angulo;
+        }
+
+        public void aimAt(GenericShip objective, float elapsedTime)
+        {
+            if (onLeftSideOf(objective))
+                turnRight(elapsedTime);
+            else if (onRightSideOf(objective))
+                turnLeft(elapsedTime);
+        }
+
+        public bool aimingAt(GenericShip ship)
+        {
+            Vector3 aimVector = ship.Position - Position;
+            double theAngle = angle(Direction, new Vector2(aimVector.X, aimVector.Z));
+            return Math.Abs(theAngle) < 0.1F;
+        }
+
+        private bool onRightSideOf(GenericShip ship)
+        {
+            Vector3 aimVector = ship.Position - Position;
+            double theAngle = angle(Direction, new Vector2(aimVector.X, aimVector.Z));
+            return theAngle > 0F;
+        }
+
+
+        private bool onLeftSideOf(GenericShip ship)
+        {
+            Vector3 aimVector = ship.Position - Position;
+            double theAngle = angle(Direction, new Vector2(aimVector.X, aimVector.Z));
+            return theAngle < 0F;
         }
 
     }
