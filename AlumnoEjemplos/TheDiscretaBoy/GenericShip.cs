@@ -18,7 +18,7 @@ namespace AlumnoEjemplos.TheDiscretaBoy
 {
     public enum Status 
     {
-        Alive, Sinking, Sunk
+        Alive, Sinking, Sunk, Colliding, Crashing
     }
 
     public abstract class GenericShip :AimingCapable
@@ -32,11 +32,14 @@ namespace AlumnoEjemplos.TheDiscretaBoy
         internal float rotationalSpeed = (float)Math.PI * 3 / 4;
         internal Vector3 cannonOffset;
         internal int life = 300;
+        internal Vector3 lastUncollidingPosition;
+        internal Vector3 initialPosition;
+        internal int renderTimes;
 
         public GenericShip(TgcMesh shipMesh, Vector3 initialPosition, Cannon cannon, Vector3 cannonOffset) : base()
         {
             ship = shipMesh;
-            Position = initialPosition;
+            this.initialPosition = Position = initialPosition;
             this.cannon = cannon;
             cannon.Position = Position;
             cannon.Rotation = ship.Rotation;
@@ -137,6 +140,39 @@ namespace AlumnoEjemplos.TheDiscretaBoy
                 ship.move(0, -100F * elapsedTime, 0);
                 cannon.Position = ship.Position + cannonOffset;
                 ship.render();
+            }
+            
+            if (status == Status.Colliding)
+            {
+                Vector3 vectrToLimit = lastUncollidingPosition - Position;
+                if (vectrToLimit.Length() < 30)
+                {
+                    ship.moveOrientedY(- elapsedTime * linearSpeed);
+                    cannon.Position = ship.Position + cannonOffset;
+                }
+                else
+                    status = Status.Alive;
+                ship.render();
+                cannon.render(elapsedTime);
+            }
+            if (status == Status.Crashing)
+            {
+                Position = initialPosition;
+                cannon.Position = Position + cannonOffset;
+                if(renderTimes<600)
+                {
+                    renderTimes++;
+                    if(renderTimes % 10 < 6)
+                    {
+                        ship.render();
+                        cannon.render(elapsedTime);
+                    }
+                }
+                else
+                {
+                    status = Status.Alive;
+                    renderTimes = 0;
+                }
             }
         }
 

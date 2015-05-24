@@ -60,21 +60,21 @@ namespace AlumnoEjemplos.TheDiscretaBoy
                 if (bullet.Position.X > renderLimit.X || bullet.Position.Y > renderLimit.Y || bullet.Position.Z > renderLimit.Z ||
                     bullet.Position.X < -renderLimit.X || bullet.Position.Y < -renderLimit.Y || bullet.Position.Z < -renderLimit.Z)
                     Visible = false;
-                if (TgcCollisionUtils.testSphereAABB(BoundingSphere, EjemploAlumno.Instance.enemy.BoundingBox))
+                if (TgcCollisionUtils.testSphereAABB(BoundingSphere, EjemploAlumno.Instance.enemyShip.BoundingBox))
                 {
               
                     if (!shooting) //Para q no se apriete 20 millones de veces y espere sa que la suelten
                     {
-                        EjemploAlumno.Instance.enemy.beShot();
+                        EjemploAlumno.Instance.enemyShip.beShot();
                         shooting = true;
                     }
                 }
-                else if (TgcCollisionUtils.testSphereAABB(BoundingSphere, EjemploAlumno.Instance.ship.BoundingBox))
+                else if (TgcCollisionUtils.testSphereAABB(BoundingSphere, EjemploAlumno.Instance.playerShip.BoundingBox))
                 {
 
                     if (!shooting)
                     {
-                        EjemploAlumno.Instance.ship.beShot();
+                        EjemploAlumno.Instance.playerShip.beShot();
                         shooting = true;
                     }
                 }

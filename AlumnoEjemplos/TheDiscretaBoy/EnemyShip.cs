@@ -18,7 +18,7 @@ namespace AlumnoEjemplos.TheDiscretaBoy
 
     public class EnemyShip : GenericShip
     {
-        private GenericShip victim = EjemploAlumno.Instance.ship;
+        private GenericShip victim = EjemploAlumno.Instance.playerShip;
         private Timer timer = new Timer(2F);
         private Oscilator speedAdjuster = new Oscilator(50F, 50F);
 
@@ -81,7 +81,7 @@ namespace AlumnoEjemplos.TheDiscretaBoy
 
             if (d3dInput.keyDown(Key.L))
             {
-                cannon.aimingAt(EjemploAlumno.Instance.ship);
+                cannon.aimingAt(EjemploAlumno.Instance.playerShip);
             }
 
             moveForward(elapsedTime);

@@ -66,8 +66,18 @@ namespace AlumnoEjemplos.TheDiscretaBoy
                 cannon.shoot();
             }
 
-
             moveForward(elapsedTime);
+
+            if (!TgcCollisionUtils.testSphereAABB(EjemploAlumno.Instance.skyBoundaries, this.BoundingBox))
+                status = Status.Colliding;
+            else
+                lastUncollidingPosition = Position;
+            if (TgcCollisionUtils.testAABBAABB(EjemploAlumno.Instance.enemyShip.BoundingBox, BoundingBox))
+            {
+                life -= 100;
+                status = Status.Crashing;
+            }
+
             ship.render();
             cannon.render(elapsedTime);
         }

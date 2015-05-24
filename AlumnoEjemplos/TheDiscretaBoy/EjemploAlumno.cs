@@ -24,9 +24,10 @@ namespace AlumnoEjemplos.TheDiscretaBoy
         public static EjemploAlumno Instance { get; set; }
         public TgcMesh meshShip, meshEnemy;
         public TgcBox water;
-        public TgcSphere cielo;
-        public Vector3 lastYposition = new Vector3(0, 0, 0);
-        public GenericShip ship, enemy;
+        public TgcSphere sky;
+        public GenericShip playerShip, enemyShip;
+        public TgcBoundingSphere skyBoundaries;
+        public Vector3 lastPlayerPosition;
 
         public override string getCategory()
         {
@@ -56,9 +57,8 @@ namespace AlumnoEjemplos.TheDiscretaBoy
             TgcScene sceneShip = loader.loadSceneFromFile(GuiController.Instance.ExamplesMediaDir + "MeshCreator\\Meshes\\Vehiculos\\Canoa\\Canoa-TgcScene.xml");
             meshShip = sceneShip.Meshes[0];
             TgcScene sceneCanon = loader.loadSceneFromFile(GuiController.Instance.ExamplesMediaDir + "MeshCreator\\Meshes\\Armas\\Canon\\Canon.max-TgcScene.xml");
-            
 
-            ship = new PlayerShip(meshShip, new Vector3(0, 2, 0),new Cannon(sceneCanon.Meshes[0], new Vector3(27,21,0)), new Vector3(0,1,0));
+            playerShip = new PlayerShip(meshShip, new Vector3(-100, 2, -1800), new Cannon(sceneCanon.Meshes[0], new Vector3(27, 21, 0)), new Vector3(0, 1, 0));
 
             water = TgcBox.fromSize(new Vector3(0, 0, 0), new Vector3(10000, 1, 10000), Color.Aqua);
             water.setTexture(TgcTexture.createTexture(d3dDevice, texturesPath + "ThickCloudsWaterDown2048.png"));
@@ -67,32 +67,23 @@ namespace AlumnoEjemplos.TheDiscretaBoy
             meshEnemy = sceneShip.Meshes[0];
             sceneCanon = loader.loadSceneFromFile(GuiController.Instance.ExamplesMediaDir + "MeshCreator\\Meshes\\Armas\\Canon\\Canon.max-TgcScene.xml");
 
-            enemy = new EnemyShip(meshEnemy, new Vector3(100, 2, 0), new Cannon(sceneCanon.Meshes[0], new Vector3(27, 21, 0)), new Vector3(0, 1, 0));
+            enemyShip = new EnemyShip(meshEnemy, new Vector3(1000, 2, 1000), new Cannon(sceneCanon.Meshes[0], new Vector3(27, 21, 0)), new Vector3(0, 1, 0));
 
-            cielo = new TgcSphere();
-            cielo.Radius = 5000;
-            cielo.setTexture(TgcTexture.createTexture(d3dDevice, texturesPath + "sky-dome-panorma2.jpg"));
-            cielo.LevelOfDetail = 1;
-            cielo.Position = ship.Position;
-            cielo.rotateY(-(float)Math.PI * 1 / 4);
-            cielo.updateValues();
-                /*new TgcSkyBox();
-            cielo.Center = new Vector3(0, 512*5 , 0);
-            cielo.Size = new Vector3(2048*5F, 1024*5F, 2048*5F);
-            cielo.setFaceTexture(TgcSkyBox.SkyFaces.Up, texturesPath + "ThickCloudsWaterUp2048.png");
-            cielo.setFaceTexture(TgcSkyBox.SkyFaces.Left, texturesPath + "ThickCloudsWaterLeft2048.png");
-            cielo.setFaceTexture(TgcSkyBox.SkyFaces.Down, texturesPath + "ThickCloudsWaterDown2048.png");
-            cielo.setFaceTexture(TgcSkyBox.SkyFaces.Right, texturesPath + "ThickCloudsWaterRight2048.png");
-            cielo.setFaceTexture(TgcSkyBox.SkyFaces.Front, texturesPath + "ThickCloudsWaterBack2048.png");
-            cielo.setFaceTexture(TgcSkyBox.SkyFaces.Back, texturesPath + "ThickCloudsWaterFront2048.png");*/
+            sky = new TgcSphere();
+            sky.Radius = 5000;
+            sky.setTexture(TgcTexture.createTexture(d3dDevice, texturesPath + "sky-dome-panorma2.jpg"));
+            sky.LevelOfDetail = 1;
+            sky.Position = water.Position;
+            sky.rotateY(-(float)Math.PI * 1 / 4);
+            sky.updateValues();
 
+            skyBoundaries = new TgcBoundingSphere(sky.Position + new Vector3(0,0,-1800), 2100);
 
             GuiController.Instance.ThirdPersonCamera.Enable = true;
-            Vector3 CameraPosition = ship.Position;
+            Vector3 CameraPosition = playerShip.Position;
             GuiController.Instance.ThirdPersonCamera.setCamera(CameraPosition, 100, -750);
-            //GuiController.Instance.RotCamera.Enable = true;
 
-            cielo.updateValues();
+            sky.updateValues();
 
 
         }
@@ -101,21 +92,21 @@ namespace AlumnoEjemplos.TheDiscretaBoy
         {
 
             GuiController.Instance.ThirdPersonCamera.updateCamera();
-            GuiController.Instance.ThirdPersonCamera.Target = ship.Position;
+            GuiController.Instance.ThirdPersonCamera.Target = playerShip.Position;
 
-            ship.render(elapsedTime);
+            playerShip.render(elapsedTime);
             water.render();
-            cielo.render();
-            enemy.render(elapsedTime);
+            sky.render();
+            enemyShip.render(elapsedTime);
         }
 
         public override void close()
         {
 
             water.dispose();
-            ship.dispose();
-            cielo.dispose();
-            enemy.dispose();
+            playerShip.dispose();
+            sky.dispose();
+            enemyShip.dispose();
         }
 
 
