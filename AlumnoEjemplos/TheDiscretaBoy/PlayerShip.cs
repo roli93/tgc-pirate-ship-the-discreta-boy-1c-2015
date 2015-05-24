@@ -69,13 +69,10 @@ namespace AlumnoEjemplos.TheDiscretaBoy
             moveForward(elapsedTime);
 
             if (!TgcCollisionUtils.testSphereAABB(EjemploAlumno.Instance.skyBoundaries, this.BoundingBox))
-                status = Status.Colliding;
-            else
-                lastUncollidingPosition = Position;
+                bounce(Status.Alive);
             if (TgcCollisionUtils.testAABBAABB(EjemploAlumno.Instance.enemyShip.BoundingBox, BoundingBox))
             {
-                life -= 100;
-                status = Status.Crashing;
+                crash();
             }
 
             ship.render();

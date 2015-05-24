@@ -18,7 +18,7 @@ namespace AlumnoEjemplos.TheDiscretaBoy
 {
     public enum Status 
     {
-        Alive, Sinking, Sunk, Colliding, Crashing
+        Alive, Sinking, Sunk, Bouncing, Resurrecting
     }
 
     public abstract class GenericShip :AimingCapable
@@ -32,9 +32,9 @@ namespace AlumnoEjemplos.TheDiscretaBoy
         internal float rotationalSpeed = (float)Math.PI * 3 / 4;
         internal Vector3 cannonOffset;
         internal int life = 300;
-        internal Vector3 lastUncollidingPosition;
         internal Vector3 initialPosition;
         internal int renderTimes;
+        internal Status postBounceStatus;
 
         public GenericShip(TgcMesh shipMesh, Vector3 initialPosition, Cannon cannon, Vector3 cannonOffset) : base()
         {
@@ -112,6 +112,20 @@ namespace AlumnoEjemplos.TheDiscretaBoy
             status= Status.Sinking;
         }
 
+        internal void bounce(Status postBounceStatus)
+        {
+            linearSpeed *= -1;
+            this.postBounceStatus = postBounceStatus;
+            status = Status.Bouncing;
+        }
+
+
+        internal void crash()
+        {
+            life -= 25;
+            bounce(Status.Resurrecting);
+        }
+
         public abstract void renderAlive(float elapsedTime);
 
         public virtual void render(float elapsedTime)
@@ -142,20 +156,25 @@ namespace AlumnoEjemplos.TheDiscretaBoy
                 ship.render();
             }
             
-            if (status == Status.Colliding)
+            if (status == Status.Bouncing)
             {
-                Vector3 vectrToLimit = lastUncollidingPosition - Position;
-                if (vectrToLimit.Length() < 30)
+                if (linearSpeed != 0)
                 {
-                    ship.moveOrientedY(- elapsedTime * linearSpeed);
-                    cannon.Position = ship.Position + cannonOffset;
+                    if (!TgcCollisionUtils.testAABBAABB(EjemploAlumno.Instance.enemyShip.BoundingBox, BoundingBox))
+                        if (linearSpeed > 0)
+                            desaccelerate();
+                        else
+                            accelerate();
                 }
                 else
-                    status = Status.Alive;
+                    status = postBounceStatus;
+                moveForward(elapsedTime);
                 ship.render();
                 cannon.render(elapsedTime);
             }
-            if (status == Status.Crashing)
+
+
+            if (status == Status.Resurrecting)
             {
                 Position = initialPosition;
                 cannon.Position = Position + cannonOffset;
