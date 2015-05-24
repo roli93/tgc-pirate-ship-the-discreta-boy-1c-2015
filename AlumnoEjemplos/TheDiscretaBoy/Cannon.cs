@@ -101,6 +101,12 @@ namespace AlumnoEjemplos.TheDiscretaBoy
             point.moveOrientedY(pointOffset);
         }
 
+        public void shootWithSpeed(Vector2 speed)
+        {
+            InitialSpeed = speed; 
+            shoot();
+        }
+
         public void shoot()
         {
             if(!currentBullet.Visible)
@@ -139,7 +145,7 @@ namespace AlumnoEjemplos.TheDiscretaBoy
             currentBullet.dispose();
         }
 
-        public double angle(Vector2 a, Vector2 b)
+        private double angle(Vector2 a, Vector2 b)
         {
             if (a.Length() == 0 || b.Length() == 0)
                 return 0;
@@ -153,12 +159,14 @@ namespace AlumnoEjemplos.TheDiscretaBoy
             return angulo;
         }
 
-        public void aimAt(Vector3 objective)
+        public void aimAt(GenericShip objective,float elapsedTime)
         {
-            Vector2 orientation = new Vector2((float)Math.Sin(cannon.Rotation.Y), -(float)Math.Cos(cannon.Rotation.Y));
-            cannon.rotateY((float)angle(new Vector2(objective.X, objective.Z), orientation));
+            if (onLeftSideOf(objective))
+                turnRight(elapsedTime);
+            else if (onRightSideOf(objective))
+                turnLeft(elapsedTime);
         }
-
+        
         public bool aimingAt(GenericShip ship)
         {
             Vector3 aimVector = ship.Position - Position;
@@ -166,7 +174,7 @@ namespace AlumnoEjemplos.TheDiscretaBoy
             return  Math.Abs(theAngle) < 0.1F; 
         }
 
-        public bool onRightSideOf(GenericShip ship)
+        private bool onRightSideOf(GenericShip ship)
         {
             Vector3 aimVector = ship.Position - Position;
             double theAngle = angle(Direction, new Vector2(aimVector.X, aimVector.Z));
@@ -174,13 +182,12 @@ namespace AlumnoEjemplos.TheDiscretaBoy
         }
 
 
-        public bool onLeftSideOf(GenericShip ship)
+        private bool onLeftSideOf(GenericShip ship)
         {
             Vector3 aimVector = ship.Position - Position;
             double theAngle = angle(Direction, new Vector2(aimVector.X, aimVector.Z));
             return theAngle < 0F;
         }
-
 
     }
 

@@ -32,9 +32,6 @@ namespace AlumnoEjemplos.TheDiscretaBoy
         internal float rotationalSpeed = (float)Math.PI * 3 / 4;
         internal Vector3 cannonOffset;
         internal int life = 100;
-        internal bool shooting = false;
-
-        //private List<TgcSphere> bullets = new List<TgcSphere>();
 
         public GenericShip(TgcMesh shipMesh, Vector3 initialPosition, Cannon cannon, Vector3 cannonOffset)
         {
@@ -207,17 +204,9 @@ namespace AlumnoEjemplos.TheDiscretaBoy
 
                             }
 
-                            if (d3dInput.keyDown(Key.Space))
+                            if (d3dInput.keyPressed(Key.Space))
                             {
-                                if (!shooting) //Para q no se apriete 20 millones de veces y espere sa que la suelten
-                                {
                                     cannon.shoot();
-                                    shooting = true;
-                                }
-                            }
-                            else
-                            {
-                                shooting = false;
                             }
 
 
@@ -231,12 +220,13 @@ namespace AlumnoEjemplos.TheDiscretaBoy
     {
             private float time = 0F;
             private GenericShip victim = EjemploAlumno.Instance.ship;
+            private Timer timer = new Timer(1.9F);
 
             public EnemyShip(TgcMesh shipMesh, Vector3 initialPosition, Cannon cannon, Vector3 cannonOffset) : base(shipMesh, initialPosition, cannon, cannonOffset) {}
 
             private Vector2 shootingSpeedForDistance(float distance)// a 45º
             {
-                double speedModule = 15.0* Math.Sqrt(distance/Math.Sin(Math.PI /2));
+                double speedModule = 14.0* Math.Sqrt(distance/Math.Sin(Math.PI /2));
                 return new Vector2((float)speedModule, (float)speedModule);
             }
 
@@ -245,29 +235,12 @@ namespace AlumnoEjemplos.TheDiscretaBoy
                 TgcD3dInput d3dInput = GuiController.Instance.D3dInput;
                 Vector3 vectorToPlayerShip = victim.Position - Position;
 
-                if (vectorToPlayerShip.Length()<300)
+                if (vectorToPlayerShip.Length() < 300)
                 {
                     if (!cannon.aimingAt(victim))
-                    {
-                        if (cannon.onLeftSideOf(victim))
-                            cannon.turnRight(elapsedTime);
-                        else if (cannon.onRightSideOf(victim))
-                            cannon.turnLeft(elapsedTime);
-                    }                        
-                    else if (!shooting)
-                    {
-                        cannon.InitialSpeed = shootingSpeedForDistance(vectorToPlayerShip.Length());
-                        cannon.shoot();
-                        shooting = true;
-                    }
+                        cannon.aimAt(victim, elapsedTime);
                     else
-                    {
-                        spendTime(elapsedTime * (float)Math.PI * 1.9F);
-                    }
-                }
-                else
-                {
-                    shooting = false;
+                        timer.doWhenItsTimeTo(() => cannon.shootWithSpeed(shootingSpeedForDistance(vectorToPlayerShip.Length())), elapsedTime);
                 }
 
                 if (d3dInput.keyDown(Key.K))
@@ -284,24 +257,40 @@ namespace AlumnoEjemplos.TheDiscretaBoy
                 ship.render();
                 cannon.render(elapsedTime);
             }
+    }
 
-            public void spendTime(float time)
+    public class Timer
+    {
+        private float time;
+        private float frequency;
+        private bool itsTime=false;
+
+        public Timer(float frequency)
+        {
+            this.frequency = frequency;
+        }
+        
+        public void doWhenItsTimeTo(System.Action whatToDo, float elapsedTime){
+
+            if(itsTime)
             {
-                if (this.time + time < Math.PI*2)
-                    this.time += time;
-                else
-                {
-                    shooting = false;
-                    this.time = 0;
-                }
-                
+                whatToDo();
+                itsTime = false;
             }
+            spendTime(elapsedTime);
+        }
 
-            private void aim ()
+        private void spendTime(float elapsedTime)
+        {
+            if (time < Math.PI * 2)
+                time += elapsedTime * (float)Math.PI * frequency;
+            else
             {
-                cannon.aimAt(EjemploAlumno.Instance.ship.Position-Position);
+                itsTime = true;
+                this.time = 0;
             }
-
+        }
 
     }
+
 }
