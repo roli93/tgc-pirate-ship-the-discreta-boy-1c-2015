@@ -31,7 +31,7 @@ namespace AlumnoEjemplos.TheDiscretaBoy
         internal float linearSpeed = 0F;
         internal float rotationalSpeed = (float)Math.PI * 3 / 4;
         internal Vector3 cannonOffset;
-        internal int life = 100;
+        internal int life = 300;
 
         public GenericShip(TgcMesh shipMesh, Vector3 initialPosition, Cannon cannon, Vector3 cannonOffset)
         {
@@ -220,13 +220,14 @@ namespace AlumnoEjemplos.TheDiscretaBoy
     {
             private float time = 0F;
             private GenericShip victim = EjemploAlumno.Instance.ship;
-            private Timer timer = new Timer(1.9F);
+            private Timer timer = new Timer(2F);
+            private Oscilator speedAdjuster = new Oscilator(75F, 2.5F);
 
             public EnemyShip(TgcMesh shipMesh, Vector3 initialPosition, Cannon cannon, Vector3 cannonOffset) : base(shipMesh, initialPosition, cannon, cannonOffset) {}
 
-            private Vector2 shootingSpeedForDistance(float distance)// a 45º
+            private Vector2 shootingSpeedForDistance(float distance, float elapsedTime)// a 45º
             {
-                double speedModule = 14.0* Math.Sqrt(distance/Math.Sin(Math.PI /2));
+                double speedModule = (speedAdjuster.oscilation(elapsedTime) + 14.0) * Math.Sqrt(distance/Math.Sin(Math.PI /2));
                 return new Vector2((float)speedModule, (float)speedModule);
             }
 
@@ -240,7 +241,7 @@ namespace AlumnoEjemplos.TheDiscretaBoy
                     if (!cannon.aimingAt(victim))
                         cannon.aimAt(victim, elapsedTime);
                     else
-                        timer.doWhenItsTimeTo(() => cannon.shootWithSpeed(shootingSpeedForDistance(vectorToPlayerShip.Length())), elapsedTime);
+                        timer.doWhenItsTimeTo(() => cannon.shootWithSpeed(shootingSpeedForDistance(vectorToPlayerShip.Length(), elapsedTime)), elapsedTime);
                 }
 
                 if (d3dInput.keyDown(Key.K))
@@ -291,6 +292,26 @@ namespace AlumnoEjemplos.TheDiscretaBoy
             }
         }
 
+    }
+
+    public class Oscilator
+    {
+        private float frequency;
+        private float rotation;
+        private float amplitude;
+
+        public Oscilator(float frequency, float amplitude)
+        {
+            this.frequency = frequency;
+            this.amplitude = amplitude;
+        }
+
+        public float oscilation(float elapsedTime)
+        {
+            rotation += elapsedTime * 2*(float)Math.PI * frequency;
+            float result = (float)Math.Sin(rotation)*amplitude;
+            return result;
+        }
     }
 
 }
