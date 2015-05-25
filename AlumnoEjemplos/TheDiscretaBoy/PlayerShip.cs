@@ -24,17 +24,19 @@ namespace AlumnoEjemplos.TheDiscretaBoy
             TgcD3dInput d3dInput = GuiController.Instance.D3dInput;
 
             if (d3dInput.keyDown(Key.W))
-                accelerate();
-            else if (linearSpeed > 0F)
-                desaccelerate();
+                accelerate(elapsedTime);
+            else if (linearSpeed > 1F)
+                desaccelerate(elapsedTime);
+            else if (d3dInput.keyDown(Key.S))
+                desaccelerate(elapsedTime);
+            else if (linearSpeed < -1F)
+                accelerate(elapsedTime);
+            else
+                linearSpeed = 0F;
 
             if (d3dInput.keyDown(Key.Q))
                 sink();
 
-            if (d3dInput.keyDown(Key.S))
-                desaccelerate();
-            else if (linearSpeed < 0F)
-                accelerate();
 
             if (d3dInput.keyDown(Key.A))
             {

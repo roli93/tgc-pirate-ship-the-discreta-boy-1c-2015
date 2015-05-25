@@ -95,7 +95,6 @@
     <Compile Include="TheDiscretaBoy\Various.cs" />
     <Compile Include="TheDiscretaBoy\EjemploAlumno.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="TheDiscretaBoy\Element.cs" />
     <Compile Include="TheDiscretaBoy\GenericShip.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -24,6 +24,7 @@ namespace AlumnoEjemplos.TheDiscretaBoy
         public Vector2 InitialSpeed { get; set; }
         public TgcBoundingSphere BoundingSphere { get; set; }
         private bool shooting = false;
+        private float acceleration = -500F;
 
         public bool Visible { get;set;}
 
@@ -96,8 +97,7 @@ namespace AlumnoEjemplos.TheDiscretaBoy
             bullet.rotateY(-(float)Math.PI * 0.5F);
             //MRUV- Tirto vertical
             bullet.move(0,linearSpeed.Y * elapsedTime,0);
-            float a = elapsedTime / elapsedTime;
-            linearSpeed.Y -= a;
+            linearSpeed.Y += acceleration*elapsedTime;
             BoundingSphere.setCenter(bullet.Position);
         }
 

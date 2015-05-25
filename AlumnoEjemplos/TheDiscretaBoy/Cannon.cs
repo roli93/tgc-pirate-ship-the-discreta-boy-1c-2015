@@ -19,7 +19,7 @@ namespace AlumnoEjemplos.TheDiscretaBoy
     public class Cannon : AimingCapable
     {
         private Bullet currentBullet;
-        private TgcMesh cannon;
+        public TgcMesh cannon;
         private CircularBuffer<Bullet> bullets = new CircularBuffer<Bullet>();
         public float LinearSpeed{get;set;}
         public Vector3 RelativeRotation { get; set; }

@@ -13,6 +13,7 @@ using TgcViewer.Utils.Input;
 using Microsoft.DirectX.DirectInput;
 using TgcViewer.Utils.TgcSkeletalAnimation;
 using TgcViewer.Utils.Terrain;
+using TgcViewer.Utils.Shaders;
 
 namespace AlumnoEjemplos.TheDiscretaBoy
 {
@@ -84,7 +85,10 @@ namespace AlumnoEjemplos.TheDiscretaBoy
             GuiController.Instance.ThirdPersonCamera.setCamera(CameraPosition, 100, -750);
 
             sky.updateValues();
-
+           /* GuiController.Instance.Modifiers.addFloat("Ambient", 0, 1, 0.5f);
+            GuiController.Instance.Modifiers.addFloat("Diffuse", 0, 1, 0.6f);
+            GuiController.Instance.Modifiers.addFloat("Specular", 0, 1, 0.5f);
+            GuiController.Instance.Modifiers.addFloat("SpecularPower", 1, 100, 16); */
 
         }
 
@@ -93,6 +97,26 @@ namespace AlumnoEjemplos.TheDiscretaBoy
 
             GuiController.Instance.ThirdPersonCamera.updateCamera();
             GuiController.Instance.ThirdPersonCamera.Target = playerShip.Position;
+
+            /*Microsoft.DirectX.Direct3D.Effect effect;
+
+            effect = TgcShaders.loadEffect(GuiController.Instance.ExamplesDir + "Shaders\\WorkshopShaders\\Shaders\\PhongShading.fx"); ;
+
+            effect.SetValue("fvLightPosition", TgcParserUtils.vector3ToFloat3Array(GuiController.Instance.ThirdPersonCamera.getPosition() + new Vector3(0, 2000, 0)));
+            effect.SetValue("fvEyePosition", TgcParserUtils.vector3ToFloat3Array(GuiController.Instance.ThirdPersonCamera.getPosition()));
+            effect.SetValue("k_la", (float)GuiController.Instance.Modifiers["Ambient"]);
+            effect.SetValue("k_ld", (float)GuiController.Instance.Modifiers["Diffuse"]);
+            effect.SetValue("k_ls", (float)GuiController.Instance.Modifiers["Specular"]);
+            effect.SetValue("fSpecularPower", (float)GuiController.Instance.Modifiers["SpecularPower"]);
+
+            playerShip.ship.Effect = effect;
+            playerShip.cannon.cannon.Effect = effect;
+            water.Effect = effect;
+            
+
+            playerShip.ship.Technique = "DefaultTechnique";
+            playerShip.cannon.cannon.Technique = "DefaultTechnique";
+            water.Technique = "DefaultTechnique";*/
 
             playerShip.render(elapsedTime);
             water.render();

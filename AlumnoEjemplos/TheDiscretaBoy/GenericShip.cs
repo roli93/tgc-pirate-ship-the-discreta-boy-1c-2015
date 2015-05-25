@@ -33,8 +33,10 @@ namespace AlumnoEjemplos.TheDiscretaBoy
         internal Vector3 cannonOffset;
         internal int life = 300;
         internal Vector3 initialPosition;
-        internal int renderTimes;
+        internal float resurrectingElapsedTime;
         internal Status postBounceStatus;
+        internal float acceleration = 1000F;
+        internal Timer twinkler = new Timer(1000F);
 
         public GenericShip(TgcMesh shipMesh, Vector3 initialPosition, Cannon cannon, Vector3 cannonOffset) : base()
         {
@@ -73,14 +75,14 @@ namespace AlumnoEjemplos.TheDiscretaBoy
             updateDirection(elapsedTime, -rotationalSpeed);
         }
 
-        internal void accelerate()
+        internal void accelerate(float elapsedTime)
         {
-            linearSpeed += (linearSpeed > maxLinearSpeed ? 0F : 1.5F);
+            linearSpeed += (linearSpeed > maxLinearSpeed ? 0F : acceleration*elapsedTime);
         }
 
-        internal void desaccelerate()
+        internal void desaccelerate(float elapsedTime)
         {
-            linearSpeed -= (linearSpeed < minLinearSpeed ? 0F : 1.5F);
+            linearSpeed -= (linearSpeed < minLinearSpeed ? 0F : acceleration*elapsedTime);
         }
 
         public TgcBoundingBox BoundingBox
@@ -158,13 +160,13 @@ namespace AlumnoEjemplos.TheDiscretaBoy
             
             if (status == Status.Bouncing)
             {
-                if (linearSpeed != 0)
+                if (Math.Abs(linearSpeed) > 1)
                 {
                     if (!TgcCollisionUtils.testAABBAABB(EjemploAlumno.Instance.enemyShip.BoundingBox, BoundingBox))
                         if (linearSpeed > 0)
-                            desaccelerate();
+                            desaccelerate(elapsedTime);
                         else
-                            accelerate();
+                            accelerate(elapsedTime);
                 }
                 else
                     status = postBounceStatus;
@@ -178,19 +180,21 @@ namespace AlumnoEjemplos.TheDiscretaBoy
             {
                 Position = initialPosition;
                 cannon.Position = Position + cannonOffset;
-                if(renderTimes<600)
+                if(resurrectingElapsedTime < .7)
                 {
-                    renderTimes++;
-                    if(renderTimes % 10 < 6)
-                    {
-                        ship.render();
-                        cannon.render(elapsedTime);
-                    }
+                    resurrectingElapsedTime+= elapsedTime;
+                    twinkler.doWhenItsTimeTo(() =>
+                                                    {
+                                                        ship.render();
+                                                        cannon.render(elapsedTime);
+                                                    },
+                                                    elapsedTime
+                                             );
                 }
                 else
                 {
                     status = Status.Alive;
-                    renderTimes = 0;
+                    resurrectingElapsedTime = 0;
                 }
             }
         }

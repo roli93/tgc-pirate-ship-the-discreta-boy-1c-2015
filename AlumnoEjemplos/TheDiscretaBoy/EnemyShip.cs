@@ -42,12 +42,12 @@ namespace AlumnoEjemplos.TheDiscretaBoy
             if (!aimingAt(victim))
                 aimAt(victim, elapsedTime);
             else
-                desaccelerate();
+                desaccelerate(elapsedTime);
         }
 
         private Vector2 shootingSpeedForDistance(float distance, float elapsedTime)// a 45º
         {
-            double speedModule = +(14.0 + (distance / 130)) * Math.Sqrt((speedAdjuster.oscilation(elapsedTime) + distance) / Math.Sin(Math.PI / 2));
+            double speedModule = +(14.0 + (distance / 300)) * Math.Sqrt((speedAdjuster.oscilation(elapsedTime) + distance) / Math.Sin(Math.PI / 2));
             return new Vector2((float)speedModule, (float)speedModule);
         }
 
@@ -67,7 +67,9 @@ namespace AlumnoEjemplos.TheDiscretaBoy
             if (distancte < 300)
             {
                 if (linearSpeed < 0F)
-                    accelerate();
+                    accelerate(elapsedTime);
+                else
+                    linearSpeed = 0F;
                 shootPeriodically(elapsedTime);
             }
             else
