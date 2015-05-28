@@ -13,6 +13,7 @@ using TgcViewer.Utils.Input;
 using Microsoft.DirectX.DirectInput;
 using TgcViewer.Utils.TgcSkeletalAnimation;
 using TgcViewer.Utils.Terrain;
+using TgcViewer.Utils._2D;
 
 namespace AlumnoEjemplos.TheDiscretaBoy
 {
@@ -27,6 +28,7 @@ namespace AlumnoEjemplos.TheDiscretaBoy
         public TgcSphere cielo;
         public Vector3 lastYposition = new Vector3(0, 0, 0);
         public GenericShip ship, enemy;
+        public TgcSprite barraDeVida;
 
         public override string getCategory()
         {
@@ -49,6 +51,14 @@ namespace AlumnoEjemplos.TheDiscretaBoy
         public override void init()
         {
             EjemploAlumno.Instance = this;
+
+            //Crear Sprite de barra de vida
+            barraDeVida = new TgcSprite();
+            barraDeVida.Texture = TgcTexture.createTexture(GuiController.Instance.AlumnoEjemplosMediaDir + "\\Texturas\\barra_de_vida.png");
+            //La pongo arriba
+            barraDeVida.Position = new Vector2(0,0);
+            //La achico
+            barraDeVida.Scaling = new Vector2(0.4f, 0.4f);
 
             Microsoft.DirectX.Direct3D.Device d3dDevice = GuiController.Instance.D3dDevice;
             string texturesPath = GuiController.Instance.ExamplesMediaDir + "Texturas\\SkyboxSet1\\ThickCloudsWater\\";
@@ -107,6 +117,10 @@ namespace AlumnoEjemplos.TheDiscretaBoy
             water.render();
             cielo.render();
             enemy.render(elapsedTime);
+
+            GuiController.Instance.Drawer2D.beginDrawSprite();
+            barraDeVida.render();
+            GuiController.Instance.Drawer2D.endDrawSprite();
         }
 
         public override void close()
@@ -116,6 +130,7 @@ namespace AlumnoEjemplos.TheDiscretaBoy
             ship.dispose();
             cielo.dispose();
             enemy.dispose();
+            barraDeVida.dispose();
         }
 
 
