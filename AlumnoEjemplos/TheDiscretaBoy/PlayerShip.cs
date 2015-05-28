@@ -12,12 +12,18 @@ using TgcViewer.Utils.TgcSceneLoader;
 using TgcViewer.Utils.Input;
 using Microsoft.DirectX.DirectInput;
 using TgcViewer.Utils.TgcSkeletalAnimation;
+using TgcViewer.Utils._2D;
+
 namespace AlumnoEjemplos.TheDiscretaBoy
 {
     public class PlayerShip : GenericShip
     {
+        public TgcSprite barraDeVida;
 
-        public PlayerShip(TgcMesh shipMesh, Vector3 initialPosition, Cannon cannon, Vector3 cannonOffset) : base(shipMesh, initialPosition, cannon, cannonOffset) { }
+        public PlayerShip(TgcMesh shipMesh, Vector3 initialPosition, Cannon cannon, Vector3 cannonOffset, TgcSprite barraDeVida) : base(shipMesh, initialPosition, cannon, cannonOffset) 
+        {
+            this.barraDeVida = barraDeVida;
+        }
 
         public override void renderAlive(float elapsedTime)
         {
@@ -70,6 +76,18 @@ namespace AlumnoEjemplos.TheDiscretaBoy
             moveForward(elapsedTime);
             ship.render();
             cannon.render(elapsedTime);
+        }
+
+        public override void reduceLife(int quantity)
+        {
+            base.reduceLife(quantity);
+            
+            barraDeVida.Scaling = new Vector2(0.4f * porcentajeDeVida(), 0.4f);
+        }
+
+        public override string name()
+        {
+            return "Barco del jugador";
         }
     }
 }

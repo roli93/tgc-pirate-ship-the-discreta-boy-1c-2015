@@ -88,6 +88,11 @@ namespace AlumnoEjemplos.TheDiscretaBoy
             ship.render();
             cannon.render(elapsedTime);
         }
+
+        public override string name()
+        {
+            return "Barco enemigo";
+        }
     }
 
 }

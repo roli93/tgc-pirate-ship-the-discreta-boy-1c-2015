@@ -12,6 +12,7 @@ using TgcViewer.Utils.TgcSceneLoader;
 using TgcViewer.Utils.Input;
 using Microsoft.DirectX.DirectInput;
 using TgcViewer.Utils.TgcSkeletalAnimation;
+using TgcViewer.Utils;
 
 namespace AlumnoEjemplos.TheDiscretaBoy
 
@@ -23,6 +24,8 @@ namespace AlumnoEjemplos.TheDiscretaBoy
 
     public abstract class GenericShip :AimingCapable
     {
+        public static int maximumLife = 300;
+
         internal TgcMesh ship;
         internal Status status = Status.Alive;
         internal float maxLinearSpeed = 500F;
@@ -31,7 +34,7 @@ namespace AlumnoEjemplos.TheDiscretaBoy
         internal float linearSpeed = 0F;
         internal float rotationalSpeed = (float)Math.PI * 3 / 4;
         internal Vector3 cannonOffset;
-        internal int life = 300;
+        internal int life = maximumLife;
 
         public GenericShip(TgcMesh shipMesh, Vector3 initialPosition, Cannon cannon, Vector3 cannonOffset) : base()
         {
@@ -142,13 +145,29 @@ namespace AlumnoEjemplos.TheDiscretaBoy
 
         public void beShot()
         {
-            life -= 25;
+            this.reduceLife(25);
         }
 
         public void dispose()
         {
             ship.dispose();
             cannon.dispose();
+        }
+
+        public virtual void reduceLife(int quantity)
+        {
+            life -= quantity;
+            GuiController.Instance.Logger.log("Vida del " + this.name() + ": " + (porcentajeDeVida() * 100) + "%");
+        }
+
+        public virtual string name() 
+        {
+            return "Barco generico";
+        }
+
+        public float porcentajeDeVida()
+        {
+            return (float)life / (float)maximumLife;
         }
     }
 
