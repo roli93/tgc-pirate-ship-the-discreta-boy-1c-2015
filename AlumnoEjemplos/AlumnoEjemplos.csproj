@@ -91,8 +91,10 @@
     <Compile Include="TheDiscretaBoy\Barra.cs" />
     <Compile Include="TheDiscretaBoy\Bullet.cs" />
     <Compile Include="TheDiscretaBoy\Cannon.cs" />
+    <Compile Include="TheDiscretaBoy\Efecto.cs" />
     <Compile Include="TheDiscretaBoy\EnemyShip.cs" />
     <Compile Include="TheDiscretaBoy\Explocion.cs" />
+    <Compile Include="TheDiscretaBoy\Hundimiento.cs" />
     <Compile Include="TheDiscretaBoy\PlayerShip.cs" />
     <Compile Include="TheDiscretaBoy\Various.cs" />
     <Compile Include="TheDiscretaBoy\EjemploAlumno.cs" />

@@ -5,11 +5,11 @@ using System.Text;
 
 namespace AlumnoEjemplos.TheDiscretaBoy
 {
-    public class Explocion : Efecto
+    public class Hundimiento : Efecto
     {
         public override string soundDirectory()
         {
-            return "Sound\\torpedo_impact.wav";
+            return "Sound\\explotion_4.wav";
         }
     }
 }

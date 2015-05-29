@@ -38,6 +38,7 @@ namespace AlumnoEjemplos.TheDiscretaBoy
         internal int life = maximumLife;
         public Barra barraDeVida;
         public Explocion explocion;
+        public Hundimiento hundimiento;
 
         public GenericShip(TgcMesh shipMesh, Vector3 initialPosition, Cannon cannon, Vector3 cannonOffset) : base()
         {
@@ -49,6 +50,7 @@ namespace AlumnoEjemplos.TheDiscretaBoy
             this.cannonOffset = cannonOffset;
             iniciarBarra();
             explocion = new Explocion();
+            hundimiento = new Hundimiento();
         }
 
         public void iniciarBarra()
@@ -120,6 +122,7 @@ namespace AlumnoEjemplos.TheDiscretaBoy
         public void sink()
         {
             status= Status.Sinking;
+            hundimiento.show();
         }
 
         public abstract void renderAlive(float elapsedTime);
