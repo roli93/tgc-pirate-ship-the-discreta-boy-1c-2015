@@ -119,7 +119,7 @@ namespace AlumnoEjemplos.TheDiscretaBoy
             }
         }
 
-        public void sink()
+        public virtual void sink()
         {
             status= Status.Sinking;
             hundimiento.show();

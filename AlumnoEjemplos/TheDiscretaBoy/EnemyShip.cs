@@ -96,6 +96,12 @@ namespace AlumnoEjemplos.TheDiscretaBoy
         {
             return "Barco enemigo";
         }
+
+        public override void sink()
+        {
+            base.sink();
+            (new Triumph()).show();
+        }
     }
 
 }
