@@ -12,12 +12,15 @@ using TgcViewer.Utils.TgcSceneLoader;
 using TgcViewer.Utils.Input;
 using Microsoft.DirectX.DirectInput;
 using TgcViewer.Utils.TgcSkeletalAnimation;
+
 namespace AlumnoEjemplos.TheDiscretaBoy
 {
     public class PlayerShip : GenericShip
     {
 
-        public PlayerShip(TgcMesh shipMesh, Vector3 initialPosition, Cannon cannon, Vector3 cannonOffset) : base(shipMesh, initialPosition, cannon, cannonOffset) { }
+        public PlayerShip(TgcMesh shipMesh, Vector3 initialPosition, Cannon cannon, Vector3 cannonOffset) : base(shipMesh, initialPosition, cannon, cannonOffset) 
+        {
+        }
 
         public override void renderAlive(float elapsedTime)
         {
@@ -71,5 +74,11 @@ namespace AlumnoEjemplos.TheDiscretaBoy
             ship.render();
             cannon.render(elapsedTime);
         }
+
+        public override string name()
+        {
+            return "Barco del jugador";
+        }
+
     }
 }
