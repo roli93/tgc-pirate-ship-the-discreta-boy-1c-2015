@@ -12,6 +12,8 @@ using TgcViewer.Utils.TgcSceneLoader;
 using TgcViewer.Utils.Input;
 using Microsoft.DirectX.DirectInput;
 using TgcViewer.Utils.TgcSkeletalAnimation;
+using TgcViewer.Utils;
+using TgcViewer.Utils._2D;
 
 namespace AlumnoEjemplos.TheDiscretaBoy
 
@@ -23,6 +25,8 @@ namespace AlumnoEjemplos.TheDiscretaBoy
 
     public abstract class GenericShip :AimingCapable
     {
+        public static int maximumLife = 300;
+
         internal TgcMesh ship;
         internal Status status = Status.Alive;
         internal float maxLinearSpeed = 500F;
@@ -31,12 +35,15 @@ namespace AlumnoEjemplos.TheDiscretaBoy
         internal float linearSpeed = 0F;
         internal float rotationalSpeed = (float)Math.PI * 3 / 4;
         internal Vector3 cannonOffset;
-        internal int life = 300;
         internal Vector3 initialPosition;
         internal float resurrectingElapsedTime;
         internal Status postBounceStatus;
         internal float acceleration = 1000F;
         internal Timer twinkler = new Timer(1000F);
+        internal int life = maximumLife;
+        public Barra barraDeVida;
+        public Explocion explocion;
+        public Hundimiento hundimiento;
 
         public GenericShip(TgcMesh shipMesh, Vector3 initialPosition, Cannon cannon, Vector3 cannonOffset) : base()
         {
@@ -46,6 +53,14 @@ namespace AlumnoEjemplos.TheDiscretaBoy
             cannon.Position = Position;
             cannon.Rotation = ship.Rotation;
             this.cannonOffset = cannonOffset;
+            iniciarBarra();
+            explocion = new Explocion();
+            hundimiento = new Hundimiento();
+        }
+
+        public void iniciarBarra()
+        {
+            barraDeVida = new Barra(new Vector2(0, 0), name());
         }
 
         public void moveForward(float elapsedTime)
@@ -109,9 +124,10 @@ namespace AlumnoEjemplos.TheDiscretaBoy
             }
         }
 
-        public void sink()
+        public virtual void sink()
         {
             status= Status.Sinking;
+            hundimiento.show();
         }
 
         internal void bounce(Status postBounceStatus)
@@ -197,17 +213,49 @@ namespace AlumnoEjemplos.TheDiscretaBoy
                     resurrectingElapsedTime = 0;
                 }
             }
+
+            barraDeVida.render();
+
         }
 
         public void beShot()
         {
-            life -= 25;
+            this.reduceLife(25);
+            this.showExplotion();
         }
 
-        public void dispose()
+        public void showExplotion()
+        {
+            explocion.show();
+        }
+
+        public virtual void dispose()
         {
             ship.dispose();
             cannon.dispose();
+            barraDeVida.dispose();
+        }
+
+        public virtual void reduceLife(int quantity)
+        {
+            life -= quantity;
+            barraDeVida.escalar(porcentajeDeVida());
+            log("Vida del " + this.name() + ": " + (porcentajeDeVida() * 100) + "%");
+        }
+
+        public virtual string name() 
+        {
+            return "Barco generico";
+        }
+
+        public float porcentajeDeVida()
+        {
+            return (float)life / (float)maximumLife;
+        }
+
+        public void log(string comment)
+        {
+            GuiController.Instance.Logger.log(comment);
         }
     }
 

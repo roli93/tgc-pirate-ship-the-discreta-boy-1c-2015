@@ -122,6 +122,7 @@ namespace AlumnoEjemplos.TheDiscretaBoy
             water.render();
             sky.render();
             enemyShip.render(elapsedTime);
+
         }
 
         public override void close()

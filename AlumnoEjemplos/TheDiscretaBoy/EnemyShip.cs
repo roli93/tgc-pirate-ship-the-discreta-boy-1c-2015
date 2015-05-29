@@ -22,7 +22,10 @@ namespace AlumnoEjemplos.TheDiscretaBoy
         private Timer timer = new Timer(2F);
         private Oscilator speedAdjuster = new Oscilator(50F, 50F);
 
-        public EnemyShip(TgcMesh shipMesh, Vector3 initialPosition, Cannon cannon, Vector3 cannonOffset) : base(shipMesh, initialPosition, cannon, cannonOffset) { }
+        public EnemyShip(TgcMesh shipMesh, Vector3 initialPosition, Cannon cannon, Vector3 cannonOffset) : base(shipMesh, initialPosition, cannon, cannonOffset) 
+        {
+            barraDeVida.alinearDerecha();
+        }
 
         private void shootPeriodically(float elapsedTime)
         {
@@ -89,6 +92,17 @@ namespace AlumnoEjemplos.TheDiscretaBoy
             moveForward(elapsedTime);
             ship.render();
             cannon.render(elapsedTime);
+        }
+
+        public override string name()
+        {
+            return "Barco enemigo";
+        }
+
+        public override void sink()
+        {
+            base.sink();
+            (new Triumph()).show();
         }
     }
 
