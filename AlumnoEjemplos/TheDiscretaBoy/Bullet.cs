@@ -24,6 +24,7 @@ namespace AlumnoEjemplos.TheDiscretaBoy
         public Vector2 InitialSpeed { get; set; }
         public TgcBoundingSphere BoundingSphere { get; set; }
         private bool shooting = false;
+        private Disparo disparo;
 
         public bool Visible { get;set;}
 
@@ -35,6 +36,7 @@ namespace AlumnoEjemplos.TheDiscretaBoy
             bullet.LevelOfDetail = 1;
             bullet.updateValues();
             BoundingSphere =  new TgcBoundingSphere(bullet.Position, 3);
+            disparo = new Disparo();
         }
 
         public void beShot(Cannon carrier) //Esto se puede mejorar, pero no es priorotario
@@ -49,6 +51,7 @@ namespace AlumnoEjemplos.TheDiscretaBoy
                 float orthogonalSpeedIncrement = carrier.LinearSpeed * (float)Math.Sin((float)carrier.RelativeRotation.Y);
                 linearSpeed = new Vector3(InitialSpeed.X + parallelSpeedIncrement, InitialSpeed.Y, orthogonalSpeedIncrement);
                 Visible = true;
+                disparo.show();
         }
 
         public void render(float elapsedTime)

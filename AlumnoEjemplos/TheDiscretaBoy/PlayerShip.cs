@@ -80,5 +80,11 @@ namespace AlumnoEjemplos.TheDiscretaBoy
             return "Barco del jugador";
         }
 
+        public override void sink()
+        {
+            base.sink();
+            (new Failure()).show();
+        }
+
     }
 }

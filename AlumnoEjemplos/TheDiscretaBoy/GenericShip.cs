@@ -13,6 +13,7 @@ using TgcViewer.Utils.Input;
 using Microsoft.DirectX.DirectInput;
 using TgcViewer.Utils.TgcSkeletalAnimation;
 using TgcViewer.Utils;
+using TgcViewer.Utils._2D;
 
 namespace AlumnoEjemplos.TheDiscretaBoy
 
@@ -36,6 +37,8 @@ namespace AlumnoEjemplos.TheDiscretaBoy
         internal Vector3 cannonOffset;
         internal int life = maximumLife;
         public Barra barraDeVida;
+        public Explocion explocion;
+        public Hundimiento hundimiento;
 
         public GenericShip(TgcMesh shipMesh, Vector3 initialPosition, Cannon cannon, Vector3 cannonOffset) : base()
         {
@@ -46,6 +49,8 @@ namespace AlumnoEjemplos.TheDiscretaBoy
             cannon.Rotation = ship.Rotation;
             this.cannonOffset = cannonOffset;
             iniciarBarra();
+            explocion = new Explocion();
+            hundimiento = new Hundimiento();
         }
 
         public void iniciarBarra()
@@ -114,9 +119,10 @@ namespace AlumnoEjemplos.TheDiscretaBoy
             }
         }
 
-        public void sink()
+        public virtual void sink()
         {
             status= Status.Sinking;
+            hundimiento.show();
         }
 
         public abstract void renderAlive(float elapsedTime);
@@ -155,6 +161,12 @@ namespace AlumnoEjemplos.TheDiscretaBoy
         public void beShot()
         {
             this.reduceLife(25);
+            this.showExplotion();
+        }
+
+        public void showExplotion()
+        {
+            explocion.show();
         }
 
         public virtual void dispose()
