@@ -35,6 +35,7 @@ namespace AlumnoEjemplos.TheDiscretaBoy
         internal float rotationalSpeed = (float)Math.PI * 3 / 4;
         internal Vector3 cannonOffset;
         internal int life = maximumLife;
+        public Barra barraDeVida;
 
         public GenericShip(TgcMesh shipMesh, Vector3 initialPosition, Cannon cannon, Vector3 cannonOffset) : base()
         {
@@ -44,6 +45,12 @@ namespace AlumnoEjemplos.TheDiscretaBoy
             cannon.Position = Position;
             cannon.Rotation = ship.Rotation;
             this.cannonOffset = cannonOffset;
+            iniciarBarra();
+        }
+
+        public void iniciarBarra()
+        {
+            barraDeVida = new Barra(new Vector2(0, 0), name());
         }
 
         public void moveForward(float elapsedTime)
@@ -141,6 +148,8 @@ namespace AlumnoEjemplos.TheDiscretaBoy
                 cannon.Position = ship.Position + cannonOffset;
                 ship.render();
             }
+
+            barraDeVida.render();
         }
 
         public void beShot()
@@ -148,16 +157,18 @@ namespace AlumnoEjemplos.TheDiscretaBoy
             this.reduceLife(25);
         }
 
-        public void dispose()
+        public virtual void dispose()
         {
             ship.dispose();
             cannon.dispose();
+            barraDeVida.dispose();
         }
 
         public virtual void reduceLife(int quantity)
         {
             life -= quantity;
-            GuiController.Instance.Logger.log("Vida del " + this.name() + ": " + (porcentajeDeVida() * 100) + "%");
+            barraDeVida.escalar(porcentajeDeVida());
+            log("Vida del " + this.name() + ": " + (porcentajeDeVida() * 100) + "%");
         }
 
         public virtual string name() 
@@ -168,6 +179,11 @@ namespace AlumnoEjemplos.TheDiscretaBoy
         public float porcentajeDeVida()
         {
             return (float)life / (float)maximumLife;
+        }
+
+        public void log(string comment)
+        {
+            GuiController.Instance.Logger.log(comment);
         }
     }
 

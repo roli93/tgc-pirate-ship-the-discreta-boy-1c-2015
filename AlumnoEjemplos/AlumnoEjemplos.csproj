@@ -88,6 +88,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="TheDiscretaBoy\AimingCapable.cs" />
+    <Compile Include="TheDiscretaBoy\Barra.cs" />
     <Compile Include="TheDiscretaBoy\Bullet.cs" />
     <Compile Include="TheDiscretaBoy\Cannon.cs" />
     <Compile Include="TheDiscretaBoy\EnemyShip.cs" />

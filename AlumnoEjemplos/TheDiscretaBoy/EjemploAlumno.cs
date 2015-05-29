@@ -13,7 +13,6 @@ using TgcViewer.Utils.Input;
 using Microsoft.DirectX.DirectInput;
 using TgcViewer.Utils.TgcSkeletalAnimation;
 using TgcViewer.Utils.Terrain;
-using TgcViewer.Utils._2D;
 
 namespace AlumnoEjemplos.TheDiscretaBoy
 {
@@ -28,7 +27,6 @@ namespace AlumnoEjemplos.TheDiscretaBoy
         public TgcSphere cielo;
         public Vector3 lastYposition = new Vector3(0, 0, 0);
         public GenericShip ship, enemy;
-        public TgcSprite barraDeVida;
 
         public override string getCategory()
         {
@@ -52,14 +50,6 @@ namespace AlumnoEjemplos.TheDiscretaBoy
         {
             EjemploAlumno.Instance = this;
 
-            //Crear Sprite de barra de vida
-            barraDeVida = new TgcSprite();
-            barraDeVida.Texture = TgcTexture.createTexture(GuiController.Instance.AlumnoEjemplosMediaDir + "\\Texturas\\barra_de_vida.png");
-            //La pongo arriba
-            barraDeVida.Position = new Vector2(0,0);
-            //La achico
-            barraDeVida.Scaling = new Vector2(0.4f, 0.4f);
-
             Microsoft.DirectX.Direct3D.Device d3dDevice = GuiController.Instance.D3dDevice;
             string texturesPath = GuiController.Instance.ExamplesMediaDir + "Texturas\\SkyboxSet1\\ThickCloudsWater\\";
             TgcSceneLoader loader = new TgcSceneLoader();
@@ -68,7 +58,7 @@ namespace AlumnoEjemplos.TheDiscretaBoy
             TgcScene sceneCanon = loader.loadSceneFromFile(GuiController.Instance.ExamplesMediaDir + "MeshCreator\\Meshes\\Armas\\Canon\\Canon.max-TgcScene.xml");
             
 
-            ship = new PlayerShip(meshShip, new Vector3(0, 2, 0),new Cannon(sceneCanon.Meshes[0], new Vector3(27,21,0)), new Vector3(0,1,0), barraDeVida);
+            ship = new PlayerShip(meshShip, new Vector3(0, 2, 0),new Cannon(sceneCanon.Meshes[0], new Vector3(27,21,0)), new Vector3(0,1,0));
 
             water = TgcBox.fromSize(new Vector3(0, 0, 0), new Vector3(10000, 1, 10000), Color.Aqua);
             water.setTexture(TgcTexture.createTexture(d3dDevice, texturesPath + "ThickCloudsWaterDown2048.png"));
@@ -118,9 +108,6 @@ namespace AlumnoEjemplos.TheDiscretaBoy
             cielo.render();
             enemy.render(elapsedTime);
 
-            GuiController.Instance.Drawer2D.beginDrawSprite();
-            barraDeVida.render();
-            GuiController.Instance.Drawer2D.endDrawSprite();
         }
 
         public override void close()
@@ -130,7 +117,6 @@ namespace AlumnoEjemplos.TheDiscretaBoy
             ship.dispose();
             cielo.dispose();
             enemy.dispose();
-            barraDeVida.dispose();
         }
 
 
