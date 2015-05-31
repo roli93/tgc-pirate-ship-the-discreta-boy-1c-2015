@@ -146,6 +146,10 @@ namespace AlumnoEjemplos.TheDiscretaBoy
 
         public abstract void renderAlive(float elapsedTime);
 
+        public bool isAlive() {
+            return this.status == Status.Alive;
+        }
+
         public virtual void render(float elapsedTime)
         {
             if (status == Status.Sinking)
@@ -238,9 +242,12 @@ namespace AlumnoEjemplos.TheDiscretaBoy
 
         public virtual void reduceLife(int quantity)
         {
-            life -= quantity;
-            barraDeVida.escalar(porcentajeDeVida());
-            log("Vida del " + this.name() + ": " + (porcentajeDeVida() * 100) + "%");
+            if(life > 0)
+            {
+                life = Math.Max(life - quantity, 0);
+                barraDeVida.escalar(porcentajeDeVida());
+                log("Vida del " + this.name() + ": " + (porcentajeDeVida() * 100) + "%");
+            }
         }
 
         public virtual string name() 
