@@ -86,7 +86,7 @@ namespace AlumnoEjemplos.TheDiscretaBoy
 
         public override string name()
         {
-            return "Barco del jugador";
+            return "You";
         }
 
         public override void sink()

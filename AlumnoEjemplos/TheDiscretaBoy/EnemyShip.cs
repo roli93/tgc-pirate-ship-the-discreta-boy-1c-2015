@@ -96,7 +96,7 @@ namespace AlumnoEjemplos.TheDiscretaBoy
 
         public override string name()
         {
-            return "Barco enemigo";
+            return "Enemy";
         }
 
         public override void sink()
