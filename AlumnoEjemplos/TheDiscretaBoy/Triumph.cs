@@ -9,7 +9,7 @@ using Microsoft.DirectX;
 
 namespace AlumnoEjemplos.TheDiscretaBoy
 {
-    class Triumph : Efecto
+    class Triumph : BattleEnded
     {
         private TgcSprite sprite;
 
