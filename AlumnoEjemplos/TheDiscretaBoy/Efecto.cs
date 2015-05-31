@@ -19,7 +19,7 @@ namespace AlumnoEjemplos.TheDiscretaBoy
 
         public abstract string soundDirectory();
 
-        public void show()
+        public virtual void show()
         {
             sound.play();
         }

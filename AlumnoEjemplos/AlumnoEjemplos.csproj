@@ -97,6 +97,7 @@
     <Compile Include="TheDiscretaBoy\Explocion.cs" />
     <Compile Include="TheDiscretaBoy\Failure.cs" />
     <Compile Include="TheDiscretaBoy\Hundimiento.cs" />
+    <Compile Include="TheDiscretaBoy\Notification.cs" />
     <Compile Include="TheDiscretaBoy\PlayerShip.cs" />
     <Compile Include="TheDiscretaBoy\Triumph.cs" />
     <Compile Include="TheDiscretaBoy\Various.cs" />

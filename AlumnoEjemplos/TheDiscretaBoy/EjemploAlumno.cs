@@ -14,6 +14,7 @@ using Microsoft.DirectX.DirectInput;
 using TgcViewer.Utils.TgcSkeletalAnimation;
 using TgcViewer.Utils.Terrain;
 using TgcViewer.Utils.Shaders;
+using TgcViewer.Utils._2D;
 
 namespace AlumnoEjemplos.TheDiscretaBoy
 {
@@ -122,6 +123,7 @@ namespace AlumnoEjemplos.TheDiscretaBoy
             water.render();
             sky.render();
             enemyShip.render(elapsedTime);
+            Notification.instance.render();
 
         }
 
@@ -132,6 +134,7 @@ namespace AlumnoEjemplos.TheDiscretaBoy
             playerShip.dispose();
             sky.dispose();
             enemyShip.dispose();
+            Notification.instance.dispose();
         }
 
 

@@ -89,6 +89,9 @@ namespace AlumnoEjemplos.TheDiscretaBoy
                 cannon.aimingAt(EjemploAlumno.Instance.playerShip);
             }
 
+            if (d3dInput.keyDown(Key.W) && d3dInput.keyDown(Key.I) && d3dInput.keyDown(Key.N))
+                sink();
+
             moveForward(elapsedTime);
             ship.render();
             cannon.render(elapsedTime);

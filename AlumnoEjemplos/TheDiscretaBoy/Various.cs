@@ -2,6 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Microsoft.DirectX;
+using TgcViewer.Utils._2D;
+using TgcViewer.Utils.TgcSceneLoader;
+using TgcViewer.Utils.TgcGeometry;
+using System.Drawing;
+using TgcViewer;
 
 namespace AlumnoEjemplos.TheDiscretaBoy
 {
@@ -72,6 +78,25 @@ namespace AlumnoEjemplos.TheDiscretaBoy
             return element;
         }
 
+    }
+
+    public class TgcSpriteHelper
+    {
+        public static Vector2 center(TgcSprite sprite)
+        {
+            Size screenSize = GuiController.Instance.Panel3d.Size;
+            return new Vector2(FastMath.Max(screenSize.Width / 2 - (sprite.Scaling.X * sprite.Texture.Width) / 2, 0), FastMath.Max(screenSize.Height / 4 - (sprite.Scaling.Y * sprite.Texture.Height) / 2, 0));
+        }
+
+        public static void render(params TgcSprite[] sprites)
+        {
+            foreach (TgcSprite sprite in sprites)
+            {
+                GuiController.Instance.Drawer2D.beginDrawSprite();
+                sprite.render();
+                GuiController.Instance.Drawer2D.endDrawSprite();
+            }
+        }
     }
 
 }
