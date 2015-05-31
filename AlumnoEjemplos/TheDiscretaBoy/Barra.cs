@@ -53,7 +53,6 @@ namespace AlumnoEjemplos.TheDiscretaBoy
             GuiController.Instance.Drawer2D.beginDrawSprite();
             nombre.render();
             sprite.render();
-            
             GuiController.Instance.Drawer2D.endDrawSprite();
         }
 

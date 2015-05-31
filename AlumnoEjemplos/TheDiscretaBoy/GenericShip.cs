@@ -246,7 +246,7 @@ namespace AlumnoEjemplos.TheDiscretaBoy
             {
                 life = Math.Max(life - quantity, 0);
                 barraDeVida.escalar(porcentajeDeVida());
-                log("Vida del " + this.name() + ": " + (porcentajeDeVida() * 100) + "%");
+                log("Vida de " + this.name() + ": " + (porcentajeDeVida() * 100) + "%");
             }
         }
 
