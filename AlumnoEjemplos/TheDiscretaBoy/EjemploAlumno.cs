@@ -21,6 +21,7 @@ namespace AlumnoEjemplos.TheDiscretaBoy
     /// <summary>
     /// Ejemplo del alumno
     /// </summary>
+
     public class EjemploAlumno : TgcExample
     {
         public static EjemploAlumno Instance { get; set; }
@@ -33,6 +34,8 @@ namespace AlumnoEjemplos.TheDiscretaBoy
         public Vector3 lastPlayerPosition;
         private TgcText2d playerMessage;
         public int enemiesQuantity = 5;
+        public Menu menu = new Menu();
+        public GameStatus status;
 
         public override string getCategory()
         {
@@ -55,6 +58,8 @@ namespace AlumnoEjemplos.TheDiscretaBoy
         public override void init()
         {
             EjemploAlumno.Instance = this;
+
+            this.status = new Playing();
 
             Microsoft.DirectX.Direct3D.Device d3dDevice = GuiController.Instance.D3dDevice;
             string texturesPath = GuiController.Instance.AlumnoEjemplosMediaDir + "Texturas\\SkyboxSet1\\ThickCloudsWater\\";
@@ -122,7 +127,7 @@ namespace AlumnoEjemplos.TheDiscretaBoy
             }
         }
 
-        public override void render(float elapsedTime)
+        public void renderPlaying(float elapsedTime)
         {
 
             GuiController.Instance.ThirdPersonCamera.updateCamera();
@@ -164,6 +169,11 @@ namespace AlumnoEjemplos.TheDiscretaBoy
             GuiController.Instance.Drawer2D.beginDrawSprite();
             playerMessage.render();
             GuiController.Instance.Drawer2D.endDrawSprite();
+        }
+
+        public override void render(float elapsedTime)
+        {
+            this.status.render(elapsedTime, this);
         }
 
         public void handleEnemySunk()
