@@ -118,7 +118,7 @@ namespace AlumnoEjemplos.TheDiscretaBoy
                 meshEnemy = sceneShip.Meshes[0];
                 sceneCanon = loader.loadSceneFromFile(GuiController.Instance.ExamplesMediaDir + "MeshCreator\\Meshes\\Armas\\Canon\\Canon.max-TgcScene.xml");
 
-                enemies.Add(new EnemyShip(meshEnemy, new Vector3(800 + (100*i), 2*i, 800 + (100*i)), new Cannon(sceneCanon.Meshes[0], new Vector3(27, 21, 0)), new Vector3(0, 1, 0), new Timer(1.5f + (i/2))));
+                enemies.Add(new EnemyShip(meshEnemy, new Vector3(800 + (300*i), 2, 800 + (300*i)), new Cannon(sceneCanon.Meshes[0], new Vector3(27, 21, 0)), new Vector3(0, 1, 0), new Timer(1.5f + (i/2))));
             }
         }
 
