@@ -84,7 +84,7 @@ VS_OUTPUT vs_main2( VS_INPUT Input )
    float Z = Input.Position.z;
    float X = Input.Position.x;
 
-   Input.Position.y = 40 * cos(2*(X/5 - time))  +  sin(2*(X/2-time));
+   Input.Position.y = 40 * cos(2*(X/5 - time))  +  sin(2*(Z/2-time));
    //Input.Position.z = Z * cos(time) + Y * sin(time);
 
    

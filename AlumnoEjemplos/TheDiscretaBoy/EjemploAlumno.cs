@@ -107,7 +107,7 @@ namespace AlumnoEjemplos.TheDiscretaBoy
             Vector2 texCoords;
             terrain.xzToHeightmapCoords(X, Z, out texCoords);
             float frecuencia = 10;
-            float ola = FastMath.Sin(2*(texCoords.X/2- time)) + 40 * FastMath.Cos(2*(texCoords.X / 5 - time));
+            float ola = FastMath.Sin(2*(texCoords.Y/2- time)) + 40 * FastMath.Cos(2*(texCoords.X / 5 - time));
             
             return (ola + heighM) * 0.1f * frecuencia;
         }

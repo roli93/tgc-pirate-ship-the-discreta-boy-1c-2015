@@ -167,7 +167,7 @@ namespace AlumnoEjemplos.TheDiscretaBoy
         {
             if (status == Status.Sinking)
             {
-
+                updatePosition();
                 ship.rotateZ((float)Math.PI * elapsedTime);
                 cannon.Position = ship.Position + cannonOffset;
                 cannon.Rotation = Rotation;
@@ -193,6 +193,7 @@ namespace AlumnoEjemplos.TheDiscretaBoy
             
             if (status == Status.Bouncing)
             {
+                updatePosition();
                 if (Math.Abs(linearSpeed) > 1)
                 {
                     if (!TgcCollisionUtils.testAABBAABB(EjemploAlumno.Instance.enemyShip.BoundingBox, BoundingBox))
@@ -212,6 +213,7 @@ namespace AlumnoEjemplos.TheDiscretaBoy
             if (status == Status.Resurrecting)
             {
                 Position = initialPosition;
+                updatePosition();
                 cannon.Position = Position + cannonOffset;
                 if(resurrectingElapsedTime < .7)
                 {
