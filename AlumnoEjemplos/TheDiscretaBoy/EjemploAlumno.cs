@@ -73,7 +73,6 @@ namespace AlumnoEjemplos.TheDiscretaBoy
             efectoOlas = TgcShaders.loadEffect(GuiController.Instance.AlumnoEjemplosMediaDir + "Shaders\\shaderOlas.fx");
             water.Effect = efectoOlas;
             water.Technique = "RenderScene";
-            GuiController.Instance.UserVars.addVar("terreno", water);
             
             sky = new TgcSphere();
             sky.Radius = 5000;
@@ -89,13 +88,15 @@ namespace AlumnoEjemplos.TheDiscretaBoy
             GuiController.Instance.Modifiers.addFloat("Diffuse", 0, 1, 0.6f);
             GuiController.Instance.Modifiers.addFloat("Specular", 0, 1, 0.5f);
             GuiController.Instance.Modifiers.addFloat("SpecularPower", 1, 100, 16); */
-           
+
+            createUserVars();
             initializeGame();
         }
 
         private void createUserVars()
         {
             GuiController.Instance.UserVars.addVar("time", 0f);
+            GuiController.Instance.UserVars.addVar("terreno", water);
         }
 
         public float alturaEnPunto(float X, float Z)
@@ -187,7 +188,7 @@ namespace AlumnoEjemplos.TheDiscretaBoy
             }
             time += elapsedTime;
             playerShip.render(elapsedTime);
-            water.Effect.SetValue("time", time);
+            water.Effect.SetValue("time",  (float)GuiController.Instance.UserVars.getValue("time"));
             water.render();
             sky.render();
             enemyShip.render(elapsedTime);
@@ -202,14 +203,10 @@ namespace AlumnoEjemplos.TheDiscretaBoy
 
         public void initializeGame() 
         {
-            createUserVars();
-            efectoOlas.SetValue("time", (float)GuiController.Instance.UserVars.getValue("time"));
-
             initializePlayerMessage("");
             Notification.instance.sprite = null;
             initializeShips();
             initializeCamera();
-            time = 0;
         }
 
         public override void close()
