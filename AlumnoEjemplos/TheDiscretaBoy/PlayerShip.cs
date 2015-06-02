@@ -75,13 +75,14 @@ namespace AlumnoEjemplos.TheDiscretaBoy
 
             if (!TgcCollisionUtils.testSphereAABB(EjemploAlumno.Instance.skyBoundaries, this.BoundingBox))
                 bounce(Status.Alive);
-            if (TgcCollisionUtils.testAABBAABB(EjemploAlumno.Instance.enemyShip.BoundingBox, BoundingBox))
-            {
-                crash();
-            }
+
+            foreach(EnemyShip enemyShip in EjemploAlumno.Instance.enemies)
+                if (TgcCollisionUtils.testAABBAABB(enemyShip.BoundingBox, BoundingBox))
+                    crash();
 
             ship.render();
             cannon.render(elapsedTime);
+            barraDeVida.render();
         }
 
         public override string name()

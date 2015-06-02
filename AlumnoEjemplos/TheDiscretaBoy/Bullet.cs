@@ -64,27 +64,30 @@ namespace AlumnoEjemplos.TheDiscretaBoy
                 if (bullet.Position.X > renderLimit.X || bullet.Position.Y > renderLimit.Y || bullet.Position.Z > renderLimit.Z ||
                     bullet.Position.X < -renderLimit.X || bullet.Position.Y < -renderLimit.Y || bullet.Position.Z < -renderLimit.Z)
                     Visible = false;
-                if (TgcCollisionUtils.testSphereAABB(BoundingSphere, EjemploAlumno.Instance.enemyShip.BoundingBox))
+                foreach(EnemyShip enemyShip in EjemploAlumno.Instance.enemies)
                 {
-              
-                    if (!shooting) //Para q no se apriete 20 millones de veces y espere sa que la suelten
+                    if (TgcCollisionUtils.testSphereAABB(BoundingSphere, enemyShip.BoundingBox))
                     {
-                        EjemploAlumno.Instance.enemyShip.beShot();
-                        shooting = true;
-                    }
-                }
-                else if (TgcCollisionUtils.testSphereAABB(BoundingSphere, EjemploAlumno.Instance.playerShip.BoundingBox))
-                {
 
-                    if (!shooting)
-                    {
-                        EjemploAlumno.Instance.playerShip.beShot();
-                        shooting = true;
+                        if (!shooting) //Para q no se apriete 20 millones de veces y espere sa que la suelten
+                        {
+                            enemyShip.beShot();
+                            shooting = true;
+                        }
                     }
-                }
-                else
-                {
-                    shooting = false;
+                    else if (TgcCollisionUtils.testSphereAABB(BoundingSphere, EjemploAlumno.Instance.playerShip.BoundingBox))
+                    {
+
+                        if (!shooting)
+                        {
+                            EjemploAlumno.Instance.playerShip.beShot();
+                            shooting = true;
+                        }
+                    }
+                    else
+                    {
+                        shooting = false;
+                    }
                 }
             }
 

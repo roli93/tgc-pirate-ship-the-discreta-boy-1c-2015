@@ -58,6 +58,10 @@ namespace AlumnoEjemplos.TheDiscretaBoy
             hundimiento = new Hundimiento();
         }
 
+        public bool isDead()
+        {
+            return (this.status == Status.Sunk) || (this.status == Status.Sinking);
+        }
         public void iniciarBarra()
         {
             barraDeVida = new Barra(new Vector2(0, 0), name());
@@ -137,10 +141,16 @@ namespace AlumnoEjemplos.TheDiscretaBoy
             status = Status.Bouncing;
         }
 
+        internal void bounceALot(Status postBounceStatus)
+        {
+            linearSpeed *= -3;
+            this.postBounceStatus = postBounceStatus;
+            status = Status.Bouncing;
+        }
 
         internal void crash()
         {
-            life -= 25;
+            reduceLife(25);
             bounce(Status.Resurrecting);
         }
 
@@ -172,7 +182,6 @@ namespace AlumnoEjemplos.TheDiscretaBoy
 
             if (status == Status.Sunk)
             {
-                GuiController.Instance.ThirdPersonCamera.Enable = false;
                 ship.move(0, -100F * elapsedTime, 0);
                 cannon.Position = ship.Position + cannonOffset;
                 ship.render();
@@ -180,16 +189,20 @@ namespace AlumnoEjemplos.TheDiscretaBoy
             
             if (status == Status.Bouncing)
             {
-                if (Math.Abs(linearSpeed) > 1)
+                foreach(EnemyShip enemyShip in EjemploAlumno.Instance.enemies)
                 {
-                    if (!TgcCollisionUtils.testAABBAABB(EjemploAlumno.Instance.enemyShip.BoundingBox, BoundingBox))
-                        if (linearSpeed > 0)
-                            desaccelerate(elapsedTime);
-                        else
-                            accelerate(elapsedTime);
+                    if (Math.Abs(linearSpeed) > 1)
+                    {
+                        if (!TgcCollisionUtils.testAABBAABB(enemyShip.BoundingBox, BoundingBox))
+                            if (linearSpeed > 0)
+                                desaccelerate(elapsedTime);
+                            else
+                                accelerate(elapsedTime);
+                    }
+                    else
+                        status = postBounceStatus;
                 }
-                else
-                    status = postBounceStatus;
+                
                 moveForward(elapsedTime);
                 ship.render();
                 cannon.render(elapsedTime);
@@ -217,8 +230,6 @@ namespace AlumnoEjemplos.TheDiscretaBoy
                     resurrectingElapsedTime = 0;
                 }
             }
-
-            barraDeVida.render();
 
         }
 
