@@ -36,9 +36,6 @@ namespace AlumnoEjemplos.TheDiscretaBoy
         string currentHeightmap;
         string currentTexture;
         float time;
-        
-        
-
 
         public override string getCategory()
         {
@@ -92,8 +89,6 @@ namespace AlumnoEjemplos.TheDiscretaBoy
             GuiController.Instance.Modifiers.addFloat("Diffuse", 0, 1, 0.6f);
             GuiController.Instance.Modifiers.addFloat("Specular", 0, 1, 0.5f);
             GuiController.Instance.Modifiers.addFloat("SpecularPower", 1, 100, 16); */
-
-            createUserVars();
            
             initializeGame();
         }
@@ -207,6 +202,9 @@ namespace AlumnoEjemplos.TheDiscretaBoy
 
         public void initializeGame() 
         {
+            createUserVars();
+            efectoOlas.SetValue("time", (float)GuiController.Instance.UserVars.getValue("time"));
+
             initializePlayerMessage("");
             Notification.instance.sprite = null;
             initializeShips();
