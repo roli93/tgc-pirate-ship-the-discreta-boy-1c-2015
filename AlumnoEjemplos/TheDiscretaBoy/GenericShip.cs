@@ -144,7 +144,20 @@ namespace AlumnoEjemplos.TheDiscretaBoy
             bounce(Status.Resurrecting);
         }
 
-        public abstract void renderAlive(float elapsedTime);
+        public virtual void renderAlive(float elapsedTime) 
+        {
+            updatePosition();
+        }
+
+        public void updatePosition()
+        {
+            float Y = EjemploAlumno.Instance.alturaEnPunto(this.Position.X, this.Position.Z);
+            this.Position = new Vector3(
+                this.Position.X,
+                Y,
+                this.Position.Z);
+            //log("La posicion Y de " + this.name() + " es " + Y);
+        }
 
         public bool isAlive() {
             return this.status == Status.Alive;

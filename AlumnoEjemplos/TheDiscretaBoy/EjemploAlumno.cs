@@ -76,11 +76,8 @@ namespace AlumnoEjemplos.TheDiscretaBoy
             efectoOlas = TgcShaders.loadEffect(GuiController.Instance.AlumnoEjemplosMediaDir + "Shaders\\shaderOlas.fx");
             water.Effect = efectoOlas;
             water.Technique = "RenderScene";
-
-
-
-
-
+            GuiController.Instance.UserVars.addVar("terreno", water);
+            
             sky = new TgcSphere();
             sky.Radius = 5000;
             sky.setTexture(TgcTexture.createTexture(d3dDevice, texturesPath + "sky-dome-panorma2.jpg"));
@@ -95,8 +92,28 @@ namespace AlumnoEjemplos.TheDiscretaBoy
             GuiController.Instance.Modifiers.addFloat("Diffuse", 0, 1, 0.6f);
             GuiController.Instance.Modifiers.addFloat("Specular", 0, 1, 0.5f);
             GuiController.Instance.Modifiers.addFloat("SpecularPower", 1, 100, 16); */
+
+            createUserVars();
            
             initializeGame();
+        }
+
+        private void createUserVars()
+        {
+            GuiController.Instance.UserVars.addVar("time", 0f);
+        }
+
+        public float alturaEnPunto(float X, float Z)
+        {
+            SmartTerrain terrain = (SmartTerrain)GuiController.Instance.UserVars.getValue("terreno");
+            float time = (float)GuiController.Instance.UserVars.getValue("time");
+            float heighM = meshShip.Scale.Y;
+            Vector2 texCoords;
+            terrain.xzToHeightmapCoords(X, Z, out texCoords);
+            float frecuencia = 10;
+            float ola = FastMath.Sin(2*(texCoords.X/2- time)) + 40 * FastMath.Cos(2*(texCoords.X / 5 - time));
+            
+            return (ola + heighM) * 0.1f * frecuencia;
         }
 
         public void initializePlayerMessage(string message)
@@ -169,6 +186,10 @@ namespace AlumnoEjemplos.TheDiscretaBoy
             {
                 initializeGame();
             }
+            if (d3dInput.keyDown(Key.Escape))
+            {
+                close();
+            }
             time += elapsedTime;
             playerShip.render(elapsedTime);
             water.Effect.SetValue("time", time);
@@ -180,6 +201,8 @@ namespace AlumnoEjemplos.TheDiscretaBoy
             GuiController.Instance.Drawer2D.beginDrawSprite();
             playerMessage.render();
             GuiController.Instance.Drawer2D.endDrawSprite();
+
+            setUsersVars();
         }
 
         public void initializeGame() 
@@ -202,7 +225,10 @@ namespace AlumnoEjemplos.TheDiscretaBoy
             playerMessage.dispose();
         }
 
-
+        public void setUsersVars()
+        {
+            GuiController.Instance.UserVars.setValue("time", ((float)GuiController.Instance.UserVars.getValue("time") + GuiController.Instance.ElapsedTime));
+        }
 
     }
 }
