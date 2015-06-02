@@ -25,12 +25,20 @@ namespace AlumnoEjemplos.TheDiscretaBoy
     {
         public static EjemploAlumno Instance { get; set; }
         public TgcMesh meshShip, meshEnemy;
-        public TgcBox water;
+        public SmartTerrain water;
         public TgcSphere sky;
         public GenericShip playerShip, enemyShip;
         public TgcBoundingSphere skyBoundaries;
         public Vector3 lastPlayerPosition;
         private TgcText2d playerMessage;
+        Microsoft.DirectX.Direct3D.Effect efectoOlas;
+        Microsoft.DirectX.Direct3D.Effect efectoCascada;
+        string currentHeightmap;
+        string currentTexture;
+        float time;
+        
+        
+
 
         public override string getCategory()
         {
@@ -57,14 +65,27 @@ namespace AlumnoEjemplos.TheDiscretaBoy
             Microsoft.DirectX.Direct3D.Device d3dDevice = GuiController.Instance.D3dDevice;
             string texturesPath = GuiController.Instance.AlumnoEjemplosMediaDir + "Texturas\\SkyboxSet1\\ThickCloudsWater\\";
             
-            water = TgcBox.fromSize(new Vector3(0, 0, 0), new Vector3(10000, 1, 10000), Color.Aqua);
-            water.setTexture(TgcTexture.createTexture(d3dDevice, texturesPath + "ThickCloudsWaterDown2048.png"));
+           /* water = TgcBox.fromSize(new Vector3(0, 0, 0), new Vector3(10000, 1, 10000), Color.Aqua);
+            water.setTexture(TgcTexture.createTexture(d3dDevice, texturesPath + "ThickCloudsWaterDown2048.png"))*/;
+
+            currentHeightmap = GuiController.Instance.AlumnoEjemplosMediaDir + "texturas\\PerlinNoise.jpg";
+            currentTexture =  texturesPath + "ThickCloudsWaterDown2048.png";
+            water = new SmartTerrain();
+            water.loadHeightmap(currentHeightmap, 200, /* (float)GuiController.Instance.Modifiers["WorldSize"], (float)GuiController.Instance.Modifiers["AlturaMarea"]*/1, new Vector3(0, 0, 0));
+            water.loadTexture(currentTexture);
+            efectoOlas = TgcShaders.loadEffect(GuiController.Instance.AlumnoEjemplosMediaDir + "Shaders\\shaderOlas.fx");
+            water.Effect = efectoOlas;
+            water.Technique = "RenderScene";
+
+
+
+
 
             sky = new TgcSphere();
             sky.Radius = 5000;
             sky.setTexture(TgcTexture.createTexture(d3dDevice, texturesPath + "sky-dome-panorma2.jpg"));
             sky.LevelOfDetail = 1;
-            sky.Position = water.Position;
+            sky.Position = water.Center;
             sky.rotateY(-(float)Math.PI * 1 / 4);
             sky.updateValues();
 
@@ -74,7 +95,7 @@ namespace AlumnoEjemplos.TheDiscretaBoy
             GuiController.Instance.Modifiers.addFloat("Diffuse", 0, 1, 0.6f);
             GuiController.Instance.Modifiers.addFloat("Specular", 0, 1, 0.5f);
             GuiController.Instance.Modifiers.addFloat("SpecularPower", 1, 100, 16); */
-
+           
             initializeGame();
         }
 
@@ -148,8 +169,9 @@ namespace AlumnoEjemplos.TheDiscretaBoy
             {
                 initializeGame();
             }
-
+            time += elapsedTime;
             playerShip.render(elapsedTime);
+            water.Effect.SetValue("time", time);
             water.render();
             sky.render();
             enemyShip.render(elapsedTime);
@@ -166,6 +188,7 @@ namespace AlumnoEjemplos.TheDiscretaBoy
             Notification.instance.sprite = null;
             initializeShips();
             initializeCamera();
+            time = 0;
         }
 
         public override void close()
