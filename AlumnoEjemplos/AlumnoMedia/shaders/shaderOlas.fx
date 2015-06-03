@@ -108,12 +108,7 @@ VS_OUTPUT vs_main2( VS_INPUT Input )
 //Pixel Shader
 float4 ps_main( float2 Texcoord: TEXCOORD0, float4 Color:COLOR0) : COLOR0
 {      
-	// Obtener el texel de textura
-	// diffuseMap es el sampler, Texcoord son las coordenadas interpoladas
-	float4 fvBaseColor = tex2D( diffuseMap, Texcoord );
-	// combino color y textura
-	// en este ejemplo combino un 80% el color de la textura y un 20%el del vertice
-	return 0.8*fvBaseColor + 0.2*Color;
+	return tex2D( diffuseMap, Texcoord );
 }
 
 
