@@ -89,8 +89,18 @@ namespace AlumnoEjemplos.TheDiscretaBoy
 
         public void render(float elapsedTime)
         {
-            foreach(Bullet bullet in bullets)
+            renderAction(elapsedTime);
+            renderOnlyVisible(elapsedTime);
+        }
+
+        public void renderAction(float elapsedTime)
+        {
+            foreach (Bullet bullet in bullets)
                 bullet.render(elapsedTime);
+        }
+
+        public void renderOnlyVisible(float elapsedTime)
+        {
             cannon.render();
         }
 

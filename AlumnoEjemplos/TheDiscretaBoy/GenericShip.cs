@@ -14,21 +14,17 @@ using Microsoft.DirectX.DirectInput;
 using TgcViewer.Utils.TgcSkeletalAnimation;
 using TgcViewer.Utils;
 using TgcViewer.Utils._2D;
+using AlumnoEjemplos.TheDiscretaBoy.ShipStates;
 
 namespace AlumnoEjemplos.TheDiscretaBoy
 
 {
-    public enum Status 
-    {
-        Alive, Sinking, Sunk, Bouncing, Resurrecting
-    }
-
     public abstract class GenericShip :AimingCapable
     {
         public static int maximumLife = 300;
 
         internal TgcMesh ship;
-        internal Status status = Status.Alive;
+        internal ShipState status = new Alive();
         internal float maxLinearSpeed = 500F;
         internal float minLinearSpeed = -500F;
         internal Cannon cannon;
@@ -37,7 +33,6 @@ namespace AlumnoEjemplos.TheDiscretaBoy
         internal Vector3 cannonOffset;
         internal Vector3 initialPosition;
         internal float resurrectingElapsedTime;
-        internal Status postBounceStatus;
         internal float acceleration = 1000F;
         internal Timer twinkler = new Timer(1000F);
         internal int life = maximumLife;
@@ -46,8 +41,7 @@ namespace AlumnoEjemplos.TheDiscretaBoy
         public Hundimiento hundimiento;
 
         public abstract void renderPlaying(float elapsedTime);
-        public abstract void renderOnlyVisible(float elapsedTime);
-        public virtual void renderPaused(float elapsedTime)
+        public void renderPaused(float elapsedTime)
         {
             renderOnlyVisible(elapsedTime);
         }
@@ -67,7 +61,7 @@ namespace AlumnoEjemplos.TheDiscretaBoy
 
         public bool isDead()
         {
-            return (this.status == Status.Sunk) || (this.status == Status.Sinking);
+            return this.status.isDead(this);
         }
         public void iniciarBarra()
         {
@@ -137,29 +131,17 @@ namespace AlumnoEjemplos.TheDiscretaBoy
 
         public virtual void sink()
         {
-            status= Status.Sinking;
-            hundimiento.show();
+            status.sink(this);
         }
 
-        internal void bounce(Status postBounceStatus)
+        internal void bounce(ShipState postBounceStatus)
         {
-            linearSpeed *= -1;
-            this.postBounceStatus = postBounceStatus;
-            status = Status.Bouncing;
-        }
-
-        internal void bounceALot(Status postBounceStatus)
-        {
-            linearSpeed *= -1;
-            this.postBounceStatus = postBounceStatus;
-            status = Status.Bouncing;
-            //log("Bounce a lot!");
+            this.status.bounce(this, postBounceStatus);
         }
 
         internal void crash()
         {
-            reduceLife(25);
-            bounce(Status.Resurrecting);
+            this.status.crash(this);
         }
 
         public virtual void renderAlive(float elapsedTime) 
@@ -174,21 +156,28 @@ namespace AlumnoEjemplos.TheDiscretaBoy
                 this.Position.X,
                 Y,
                 this.Position.Z);
-            //log("La posicion Y de " + this.name() + " es " + Y);
         }
 
-        public bool isAlive() {
-            return this.status == Status.Alive;
+        public void renderOnlyVisible(float elapsedTime)
+        {
+            this.status.renderOnlyVisible(this, elapsedTime);
+        }
+
+        public void updateCannonPosition()
+        {
+            this.cannon.Position = ship.Position + cannonOffset;
+            this.cannon.Rotation = Rotation;
+        }
+
+        public void renderMesh()
+        {
+            this.ship.render();
         }
 
         public virtual void render(float elapsedTime)
         {
             if (status == Status.Sinking)
             {
-                updatePosition();
-                ship.rotateZ((float)Math.PI * elapsedTime);
-                cannon.Position = ship.Position + cannonOffset;
-                cannon.Rotation = Rotation;
                 if (Rotation.Z >= Math.Abs(Math.PI))
                     status = Status.Sunk;
                 ship.render();

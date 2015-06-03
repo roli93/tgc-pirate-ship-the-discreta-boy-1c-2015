@@ -103,17 +103,5 @@ namespace AlumnoEjemplos.TheDiscretaBoy
             this.render(elapsedTime);
         }
 
-        public override void renderOnlyVisible(float elapsedTime)
-        {
-            base.renderAlive(elapsedTime);
-            ship.render();
-            cannon.renderOnlyVisible(elapsedTime);
-        }
-
-        public override void renderPaused(float elapsedTime)
-        {
-            renderOnlyVisible(elapsedTime);
-        }
-
     }
 }
