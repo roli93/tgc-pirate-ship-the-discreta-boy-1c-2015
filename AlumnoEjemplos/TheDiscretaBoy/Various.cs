@@ -99,4 +99,14 @@ namespace AlumnoEjemplos.TheDiscretaBoy
         }
     }
 
+    public class DiscretaTgcCollisionUtils : TgcCollisionUtils
+    {
+        public static bool collidesWith(TgcBoundingBox main, List<TgcBoundingBox> boxes)
+        {
+            foreach (TgcBoundingBox box in boxes)
+                if (TgcCollisionUtils.testAABBAABB(box, main)) return true;
+            return false;
+        }
+    }
+
 }

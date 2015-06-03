@@ -143,10 +143,10 @@ namespace AlumnoEjemplos.TheDiscretaBoy
 
         internal void bounceALot(Status postBounceStatus)
         {
-            linearSpeed *= -3;
+            linearSpeed *= -1;
             this.postBounceStatus = postBounceStatus;
             status = Status.Bouncing;
-            log("Bounce a lot!");
+            //log("Bounce a lot!");
         }
 
         internal void crash()
@@ -204,19 +204,15 @@ namespace AlumnoEjemplos.TheDiscretaBoy
             if (status == Status.Bouncing)
             {
                 updatePosition();
-                foreach (EnemyShip enemyShip in EjemploAlumno.Instance.enemies)
+                if (Math.Abs(linearSpeed) > 1)
                 {
-                    if (Math.Abs(linearSpeed) > 1)
-                    {
-                        if (!TgcCollisionUtils.testAABBAABB(enemyShip.BoundingBox, BoundingBox))
-                            if (linearSpeed > 0)
-                                desaccelerate(elapsedTime);
-                            else
-                                accelerate(elapsedTime);
-                    }
+                    if (linearSpeed > 0)
+                        desaccelerate(elapsedTime);
                     else
-                        status = postBounceStatus;
+                        accelerate(elapsedTime);
                 }
+                else
+                    status = postBounceStatus;
                 
                 moveForward(elapsedTime);
                 ship.render();
