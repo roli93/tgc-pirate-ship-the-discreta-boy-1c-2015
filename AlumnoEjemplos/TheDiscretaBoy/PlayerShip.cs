@@ -24,7 +24,6 @@ namespace AlumnoEjemplos.TheDiscretaBoy
 
         public override void renderAlive(float elapsedTime)
         {
-            base.renderAlive(elapsedTime);
 
             TgcD3dInput d3dInput = GuiController.Instance.D3dInput;
 
@@ -82,9 +81,10 @@ namespace AlumnoEjemplos.TheDiscretaBoy
                 if (TgcCollisionUtils.testAABBAABB(enemyShip.BoundingBox, BoundingBox))
                     crash();
 
-            ship.render();
-            cannon.render(elapsedTime);
+            renderOnlyVisible(elapsedTime);
+
             barraDeVida.render();
+            cannon.renderAction(elapsedTime);
         }
 
         public override string name()
@@ -96,6 +96,23 @@ namespace AlumnoEjemplos.TheDiscretaBoy
         {
             base.sink();
             (new Failure()).show();
+        }
+
+        public override void renderPlaying(float elapsedTime)
+        {
+            this.render(elapsedTime);
+        }
+
+        public override void renderOnlyVisible(float elapsedTime)
+        {
+            base.renderAlive(elapsedTime);
+            ship.render();
+            cannon.renderOnlyVisible(elapsedTime);
+        }
+
+        public override void renderPaused(float elapsedTime)
+        {
+            renderOnlyVisible(elapsedTime);
         }
 
     }

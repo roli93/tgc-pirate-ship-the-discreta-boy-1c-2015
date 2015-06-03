@@ -8,5 +8,10 @@ namespace AlumnoEjemplos.TheDiscretaBoy
     public abstract class GameStatus
     {
         public abstract void render(float elapsedTime, EjemploAlumno game);
+        
+        public virtual void battleEnded(EjemploAlumno game)
+        {
+            game.status = new Paused();
+        }
     }
 }

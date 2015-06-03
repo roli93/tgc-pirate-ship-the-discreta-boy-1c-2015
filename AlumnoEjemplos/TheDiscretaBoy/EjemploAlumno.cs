@@ -34,7 +34,7 @@ namespace AlumnoEjemplos.TheDiscretaBoy
         public Vector3 lastPlayerPosition;
         private TgcText2d playerMessage;
 
-        public int enemiesQuantity = 5;
+        public int enemiesQuantity = 1;
         public Menu menu = new Menu();
         public GameStatus status;
 
@@ -100,6 +100,7 @@ namespace AlumnoEjemplos.TheDiscretaBoy
 
             createUserVars();
             initializeGame();
+            initializePlayerMessage("Presione 'R' para reiniciar.");
         }
 
         private void createUserVars()
@@ -165,7 +166,43 @@ namespace AlumnoEjemplos.TheDiscretaBoy
 
         public void renderPlaying(float elapsedTime)
         {
+            renderShipsPlaying(elapsedTime);
+        }
 
+        public void renderPaused(float elapsedTime)
+        {
+            renderMessage();
+            renderShipsPaused(elapsedTime);
+        }
+
+        public void renderMessage()
+        {
+            GuiController.Instance.Drawer2D.beginDrawSprite();
+            playerMessage.render();
+            GuiController.Instance.Drawer2D.endDrawSprite();
+        }
+
+        public void renderShipsPlaying(float elapsedTime)
+        {
+            playerShip.renderPlaying(elapsedTime);
+            renderEnemiesPlaying(elapsedTime);
+        }
+
+        public void renderShipsPaused(float elapsedTime)
+        {
+            allShips().ForEach((ship) => ship.renderPaused(elapsedTime));
+        }
+
+        private List<GenericShip> allShips()
+        {
+            List<GenericShip> allShips = new List<GenericShip>();
+            allShips.AddRange(enemies);
+            allShips.Add(playerShip);
+            return allShips;
+        }
+
+        public override void render(float elapsedTime)
+        {
             GuiController.Instance.ThirdPersonCamera.updateCamera();
             GuiController.Instance.ThirdPersonCamera.Target = playerShip.Position;
 
@@ -191,32 +228,36 @@ namespace AlumnoEjemplos.TheDiscretaBoy
             playerShip.cannon.cannon.Technique = "DefaultTechnique";
             water.Technique = "DefaultTechnique";*/
 
-            if (d3dInput.keyDown(Key.R))
-            {
-                initializeGame();
-            }
+            handleReinitialization(d3dInput);
+            handleGameQuit(d3dInput);
+
+            time += elapsedTime;
+            
+            water.Effect.SetValue("time", (float)GuiController.Instance.UserVars.getValue("time"));
+            water.render();
+            sky.render();
+            
+            //Notification.instance.render();
+
+            setUsersVars();
+
+            this.status.render(elapsedTime, this);
+        }
+
+        private void handleGameQuit(TgcD3dInput d3dInput)
+        {
             if (d3dInput.keyDown(Key.Escape))
             {
                 close();
             }
-            time += elapsedTime;
-            playerShip.render(elapsedTime);
-            water.Effect.SetValue("time",  (float)GuiController.Instance.UserVars.getValue("time"));
-            water.render();
-            sky.render();
-            renderEnemies(elapsedTime);
-            Notification.instance.render();
-            
-            GuiController.Instance.Drawer2D.beginDrawSprite();
-            playerMessage.render();
-            GuiController.Instance.Drawer2D.endDrawSprite();
-
-            setUsersVars();
         }
 
-        public override void render(float elapsedTime)
+        private void handleReinitialization(TgcD3dInput d3dInput)
         {
-            this.status.render(elapsedTime, this);
+            if (d3dInput.keyDown(Key.R))
+            {
+                initializeGame();
+            }
         }
 
         public void handleEnemySunk()
@@ -234,7 +275,6 @@ namespace AlumnoEjemplos.TheDiscretaBoy
 
         public void initializeGame() 
         {
-            initializePlayerMessage("");
             Notification.instance.sprite = null;
             initializeShips();
             initializeCamera();
@@ -251,10 +291,10 @@ namespace AlumnoEjemplos.TheDiscretaBoy
             playerMessage.dispose();
         }
 
-        private void renderEnemies(float elapsedTime)
+        private void renderEnemiesPlaying(float elapsedTime)
         {
             foreach (EnemyShip enemyShip in enemies)
-                enemyShip.render(elapsedTime);
+                enemyShip.renderPlaying(elapsedTime);
         }
         
         public void setUsersVars()
@@ -266,6 +306,12 @@ namespace AlumnoEjemplos.TheDiscretaBoy
         {
             foreach (EnemyShip enemyShip in enemies)
                 enemyShip.dispose();
+        }
+
+        internal void battleEnded()
+        {
+            this.status.battleEnded(this);
+            GuiController.Instance.ThirdPersonCamera.Enable = false;
         }
     }
 }

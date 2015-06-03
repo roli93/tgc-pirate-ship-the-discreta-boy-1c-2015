@@ -45,6 +45,13 @@ namespace AlumnoEjemplos.TheDiscretaBoy
         public Explocion explocion;
         public Hundimiento hundimiento;
 
+        public abstract void renderPlaying(float elapsedTime);
+        public abstract void renderOnlyVisible(float elapsedTime);
+        public virtual void renderPaused(float elapsedTime)
+        {
+            renderOnlyVisible(elapsedTime);
+        }
+
         public GenericShip(TgcMesh shipMesh, Vector3 initialPosition, Cannon cannon, Vector3 cannonOffset) : base()
         {
             ship = shipMesh;

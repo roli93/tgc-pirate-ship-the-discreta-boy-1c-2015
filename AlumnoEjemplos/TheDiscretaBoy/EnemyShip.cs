@@ -118,6 +118,11 @@ namespace AlumnoEjemplos.TheDiscretaBoy
             base.sink();
             EjemploAlumno.Instance.handleEnemySunk();
         }
+
+        public override void renderPlaying(float elapsedTime)
+        {
+            this.render(elapsedTime);
+        }
     }
 
 }

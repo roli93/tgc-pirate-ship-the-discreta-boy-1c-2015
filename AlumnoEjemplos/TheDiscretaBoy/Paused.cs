@@ -9,7 +9,7 @@ namespace AlumnoEjemplos.TheDiscretaBoy
     {
         public override void render(float elapsedTime, EjemploAlumno game)
         {
-            throw new NotImplementedException();
+            game.renderPaused(elapsedTime);
         }
     }
 }

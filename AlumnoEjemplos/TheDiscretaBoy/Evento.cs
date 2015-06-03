@@ -7,11 +7,11 @@ using TgcViewer;
 
 namespace AlumnoEjemplos.TheDiscretaBoy
 {
-    public abstract class Efecto
+    public abstract class Evento
     {
         TgcStaticSound sound;
 
-        public Efecto()
+        public Evento()
         {
             sound = new TgcStaticSound();
             sound.loadSound(GuiController.Instance.AlumnoEjemplosMediaDir + soundDirectory());

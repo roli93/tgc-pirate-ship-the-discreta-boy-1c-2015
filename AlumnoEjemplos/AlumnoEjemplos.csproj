@@ -93,7 +93,7 @@
     <Compile Include="TheDiscretaBoy\Bullet.cs" />
     <Compile Include="TheDiscretaBoy\Cannon.cs" />
     <Compile Include="TheDiscretaBoy\Disparo.cs" />
-    <Compile Include="TheDiscretaBoy\Efecto.cs" />
+    <Compile Include="TheDiscretaBoy\Evento.cs" />
     <Compile Include="TheDiscretaBoy\EnemyShip.cs" />
     <Compile Include="TheDiscretaBoy\Explocion.cs" />
     <Compile Include="TheDiscretaBoy\Failure.cs" />

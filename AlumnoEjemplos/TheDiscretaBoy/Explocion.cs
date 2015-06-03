@@ -5,7 +5,7 @@ using System.Text;
 
 namespace AlumnoEjemplos.TheDiscretaBoy
 {
-    public class Explocion : Efecto
+    public class Explocion : Evento
     {
         public override string soundDirectory()
         {

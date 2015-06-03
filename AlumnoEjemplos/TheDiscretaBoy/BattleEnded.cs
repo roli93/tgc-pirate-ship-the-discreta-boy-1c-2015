@@ -8,14 +8,13 @@ using TgcViewer;
 
 namespace AlumnoEjemplos.TheDiscretaBoy
 {
-    public abstract class BattleEnded : Efecto
+    public abstract class BattleEnded : Evento
     {
 
         public override void show()
         {
             base.show();
-            GuiController.Instance.ThirdPersonCamera.Enable = false;
-            EjemploAlumno.Instance.initializePlayerMessage("Presione 'R' para volver a jugar");
+            EjemploAlumno.Instance.battleEnded();
         }
     }
 }
