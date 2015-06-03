@@ -24,6 +24,8 @@ namespace AlumnoEjemplos.TheDiscretaBoy
 
         public override void renderAlive(float elapsedTime)
         {
+            base.renderAlive(elapsedTime);
+
             TgcD3dInput d3dInput = GuiController.Instance.D3dInput;
 
             if (d3dInput.keyDown(Key.W))

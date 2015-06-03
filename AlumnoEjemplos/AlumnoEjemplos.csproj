@@ -104,6 +104,7 @@
     <Compile Include="TheDiscretaBoy\Paused.cs" />
     <Compile Include="TheDiscretaBoy\PlayerShip.cs" />
     <Compile Include="TheDiscretaBoy\Playing.cs" />
+    <Compile Include="TheDiscretaBoy\SmartTerrain.cs" />
     <Compile Include="TheDiscretaBoy\Triumph.cs" />
     <Compile Include="TheDiscretaBoy\Various.cs" />
     <Compile Include="TheDiscretaBoy\EjemploAlumno.cs" />

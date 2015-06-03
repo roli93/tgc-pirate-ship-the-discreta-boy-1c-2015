@@ -154,7 +154,20 @@ namespace AlumnoEjemplos.TheDiscretaBoy
             bounce(Status.Resurrecting);
         }
 
-        public abstract void renderAlive(float elapsedTime);
+        public virtual void renderAlive(float elapsedTime) 
+        {
+            updatePosition();
+        }
+
+        public void updatePosition()
+        {
+            float Y = EjemploAlumno.Instance.alturaEnPunto(this.Position.X, this.Position.Z);
+            this.Position = new Vector3(
+                this.Position.X,
+                Y,
+                this.Position.Z);
+            //log("La posicion Y de " + this.name() + " es " + Y);
+        }
 
         public bool isAlive() {
             return this.status == Status.Alive;
@@ -164,7 +177,7 @@ namespace AlumnoEjemplos.TheDiscretaBoy
         {
             if (status == Status.Sinking)
             {
-
+                updatePosition();
                 ship.rotateZ((float)Math.PI * elapsedTime);
                 cannon.Position = ship.Position + cannonOffset;
                 cannon.Rotation = Rotation;
@@ -190,6 +203,7 @@ namespace AlumnoEjemplos.TheDiscretaBoy
             if (status == Status.Bouncing)
             {
                 foreach(EnemyShip enemyShip in EjemploAlumno.Instance.enemies)
+                updatePosition();
                 {
                     if (Math.Abs(linearSpeed) > 1)
                     {
@@ -212,6 +226,7 @@ namespace AlumnoEjemplos.TheDiscretaBoy
             if (status == Status.Resurrecting)
             {
                 Position = initialPosition;
+                updatePosition();
                 cannon.Position = Position + cannonOffset;
                 if(resurrectingElapsedTime < .7)
                 {
