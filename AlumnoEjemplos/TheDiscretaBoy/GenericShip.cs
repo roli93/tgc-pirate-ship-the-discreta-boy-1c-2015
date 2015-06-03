@@ -146,6 +146,7 @@ namespace AlumnoEjemplos.TheDiscretaBoy
             linearSpeed *= -3;
             this.postBounceStatus = postBounceStatus;
             status = Status.Bouncing;
+            log("Bounce a lot!");
         }
 
         internal void crash()
@@ -202,8 +203,8 @@ namespace AlumnoEjemplos.TheDiscretaBoy
             
             if (status == Status.Bouncing)
             {
-                foreach(EnemyShip enemyShip in EjemploAlumno.Instance.enemies)
                 updatePosition();
+                foreach (EnemyShip enemyShip in EjemploAlumno.Instance.enemies)
                 {
                     if (Math.Abs(linearSpeed) > 1)
                     {
