@@ -46,6 +46,9 @@ namespace AlumnoEjemplos.TheDiscretaBoy
             renderOnlyVisible(elapsedTime);
         }
 
+        public virtual void renderBar()
+        {}
+
         public GenericShip(TgcMesh shipMesh, Vector3 initialPosition, Cannon cannon, Vector3 cannonOffset) : base()
         {
             ship = shipMesh;
@@ -63,6 +66,7 @@ namespace AlumnoEjemplos.TheDiscretaBoy
         {
             return this.status.isDead(this);
         }
+
         public void iniciarBarra()
         {
             barraDeVida = new Barra(new Vector2(0, 0), name());
@@ -158,7 +162,7 @@ namespace AlumnoEjemplos.TheDiscretaBoy
                 this.Position.Z);
         }
 
-        public void renderOnlyVisible(float elapsedTime)
+        public virtual void renderOnlyVisible(float elapsedTime)
         {
             this.status.renderOnlyVisible(this, elapsedTime);
         }

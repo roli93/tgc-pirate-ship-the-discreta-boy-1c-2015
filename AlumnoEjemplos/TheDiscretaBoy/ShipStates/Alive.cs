@@ -15,6 +15,7 @@ namespace AlumnoEjemplos.TheDiscretaBoy.ShipStates
         public override void renderOnlyVisible(GenericShip ship, float elapsedTime)
         {
             ship.floatOrSink();
+            ship.renderBar();
             base.renderOnlyVisible(ship, elapsedTime);
         }
 

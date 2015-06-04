@@ -22,12 +22,19 @@ namespace AlumnoEjemplos.TheDiscretaBoy
         {
         }
 
+        public override void renderBar()
+        {
+            base.renderBar();
+            barraDeVida.render();
+        }
+
         public override void handleInput(float elapsedTime)
         {
             TgcD3dInput d3dInput = GuiController.Instance.D3dInput;
 
-            if (d3dInput.keyDown(Key.W))
+            if (d3dInput.keyDown(Key.W)){
                 accelerate(elapsedTime);
+            }
             else if (linearSpeed > 1F)
                 desaccelerate(elapsedTime);
             else if (d3dInput.keyDown(Key.S))
@@ -97,5 +104,10 @@ namespace AlumnoEjemplos.TheDiscretaBoy
             this.status.renderPlaying(this, elapsedTime);
         }
 
+        public override void renderOnlyVisible(float elapsedTime)
+        {
+            base.renderOnlyVisible(elapsedTime);
+            this.barraDeVida.render();
+        }
     }
 }
