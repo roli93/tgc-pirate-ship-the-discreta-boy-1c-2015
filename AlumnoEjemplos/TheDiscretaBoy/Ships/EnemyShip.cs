@@ -12,6 +12,7 @@ using TgcViewer.Utils.TgcSceneLoader;
 using TgcViewer.Utils.Input;
 using Microsoft.DirectX.DirectInput;
 using TgcViewer.Utils.TgcSkeletalAnimation;
+using AlumnoEjemplos.TheDiscretaBoy.ShipStates;
 
 namespace AlumnoEjemplos.TheDiscretaBoy
 {
@@ -21,6 +22,8 @@ namespace AlumnoEjemplos.TheDiscretaBoy
         private GenericShip victim = EjemploAlumno.Instance.playerShip;
         private Timer timer;
         private Oscilator speedAdjuster = new Oscilator(50F, 50F);
+
+        public override void handleInput(float elapsedTime) { }
 
         public EnemyShip(TgcMesh shipMesh, Vector3 initialPosition, Cannon cannon, Vector3 cannonOffset, Timer timer) : base(shipMesh, initialPosition, cannon, cannonOffset) 
         {
@@ -63,7 +66,7 @@ namespace AlumnoEjemplos.TheDiscretaBoy
             }
         }
 
-        public override void renderAlive(float elapsedTime)
+        public override void renderPlaying(float elapsedTime)
         {
             base.renderAlive(elapsedTime);
 
@@ -101,11 +104,10 @@ namespace AlumnoEjemplos.TheDiscretaBoy
             {
                 if(enemyShip != this)
                     if (TgcCollisionUtils.testAABBAABB(enemyShip.BoundingBox, BoundingBox))
-                        bounceALot(Status.Alive);
+                        bounce(new Alive());
             }
 
-            ship.render();
-            cannon.render(elapsedTime);
+            this.renderMesh(elapsedTime);
         }
 
         public override string name()
@@ -119,10 +121,6 @@ namespace AlumnoEjemplos.TheDiscretaBoy
             EjemploAlumno.Instance.handleEnemySunk();
         }
 
-        public override void renderPlaying(float elapsedTime)
-        {
-            this.render(elapsedTime);
-        }
     }
 
 }

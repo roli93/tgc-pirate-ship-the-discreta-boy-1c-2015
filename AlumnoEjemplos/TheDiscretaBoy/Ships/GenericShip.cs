@@ -32,15 +32,15 @@ namespace AlumnoEjemplos.TheDiscretaBoy
         internal float rotationalSpeed = (float)Math.PI * 3 / 4;
         internal Vector3 cannonOffset;
         internal Vector3 initialPosition;
-        internal float resurrectingElapsedTime;
         internal float acceleration = 1000F;
-        internal Timer twinkler = new Timer(1000F);
         internal int life = maximumLife;
         public Barra barraDeVida;
         public Explocion explocion;
         public Hundimiento hundimiento;
 
         public abstract void renderPlaying(float elapsedTime);
+        public abstract void handleInput(float elapsedTime);
+
         public void renderPaused(float elapsedTime)
         {
             renderOnlyVisible(elapsedTime);
@@ -169,76 +169,37 @@ namespace AlumnoEjemplos.TheDiscretaBoy
             this.cannon.Rotation = Rotation;
         }
 
-        public void renderMesh()
+        public void renderMesh(float elapsedTime)
         {
+            updateCannonPosition();
             this.ship.render();
+            this.cannon.renderMesh(elapsedTime);
         }
 
-        public virtual void render(float elapsedTime)
+        public virtual bool noMoreLife()
         {
-            if (status == Status.Sinking)
-            {
-                if (Rotation.Z >= Math.Abs(Math.PI))
-                    status = Status.Sunk;
-                ship.render();
-                cannon.render(elapsedTime);
-            }
+            return this.life <= 0;
+        }
 
-            if (status == Status.Alive)
-                if (life <= 0)
-                    sink();
+        public virtual void floatOrSink() 
+        {
+            if (this.noMoreLife())
+                this.sink();
+        }
+
+        public virtual void bounceAndThen(ShipState postBounceState, float elapsedTime)
+        {
+            if (Math.Abs(this.linearSpeed) > 1)
+            {
+                if (this.linearSpeed > 0)
+                    this.desaccelerate(elapsedTime);
                 else
-                    renderAlive(elapsedTime);
-
-            if (status == Status.Sunk)
-            {
-                ship.move(0, -100F * elapsedTime, 0);
-                cannon.Position = ship.Position + cannonOffset;
-                ship.render();
+                    this.accelerate(elapsedTime);
             }
-            
-            if (status == Status.Bouncing)
+            else
             {
-                updatePosition();
-                if (Math.Abs(linearSpeed) > 1)
-                {
-                    if (linearSpeed > 0)
-                        desaccelerate(elapsedTime);
-                    else
-                        accelerate(elapsedTime);
-                }
-                else
-                    status = postBounceStatus;
-                
-                moveForward(elapsedTime);
-                ship.render();
-                cannon.render(elapsedTime);
+                this.status = postBounceState;
             }
-
-
-            if (status == Status.Resurrecting)
-            {
-                Position = initialPosition;
-                updatePosition();
-                cannon.Position = Position + cannonOffset;
-                if(resurrectingElapsedTime < .7)
-                {
-                    resurrectingElapsedTime+= elapsedTime;
-                    twinkler.doWhenItsTimeTo(() =>
-                                                    {
-                                                        ship.render();
-                                                        cannon.render(elapsedTime);
-                                                    },
-                                                    elapsedTime
-                                             );
-                }
-                else
-                {
-                    status = Status.Alive;
-                    resurrectingElapsedTime = 0;
-                }
-            }
-
         }
 
         public void beShot()
@@ -250,6 +211,11 @@ namespace AlumnoEjemplos.TheDiscretaBoy
         public void showExplotion()
         {
             explocion.show();
+        }
+        public void returnToOrigin()
+        {
+            Position = initialPosition;
+            updatePosition();
         }
 
         public virtual void dispose()

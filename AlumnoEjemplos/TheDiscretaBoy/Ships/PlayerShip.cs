@@ -22,9 +22,8 @@ namespace AlumnoEjemplos.TheDiscretaBoy
         {
         }
 
-        public override void renderAlive(float elapsedTime)
+        public override void handleInput(float elapsedTime)
         {
-
             TgcD3dInput d3dInput = GuiController.Instance.D3dInput;
 
             if (d3dInput.keyDown(Key.W))
@@ -72,18 +71,13 @@ namespace AlumnoEjemplos.TheDiscretaBoy
                 cannon.shoot();
             }
 
-            moveForward(elapsedTime);
-
             if (!TgcCollisionUtils.testSphereAABB(EjemploAlumno.Instance.skyBoundaries, this.BoundingBox))
-                bounce(Status.Alive);
+                this.status.crashWithSky(this);
 
-            foreach(EnemyShip enemyShip in EjemploAlumno.Instance.enemies)
+            foreach (EnemyShip enemyShip in EjemploAlumno.Instance.enemies)
                 if (TgcCollisionUtils.testAABBAABB(enemyShip.BoundingBox, BoundingBox))
                     crash();
 
-            renderOnlyVisible(elapsedTime);
-
-            barraDeVida.render();
             cannon.renderAction(elapsedTime);
         }
 
@@ -100,7 +94,7 @@ namespace AlumnoEjemplos.TheDiscretaBoy
 
         public override void renderPlaying(float elapsedTime)
         {
-            this.render(elapsedTime);
+            this.status.renderPlaying(this, elapsedTime);
         }
 
     }

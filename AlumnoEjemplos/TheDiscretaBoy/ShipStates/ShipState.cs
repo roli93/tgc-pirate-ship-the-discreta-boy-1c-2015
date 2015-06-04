@@ -32,12 +32,30 @@ namespace AlumnoEjemplos.TheDiscretaBoy.ShipStates
             ship.bounce(new Resurrecting());
         }
 
+        public void crashWithSky(GenericShip ship)
+        {
+            ship.bounce(new Alive());
+        }
+
         public virtual void renderOnlyVisible(GenericShip ship, float elapsedTime)
         {
             ship.updatePosition();
             ship.updateCannonPosition();
-            ship.renderMesh();
-            ship.cannon.renderOnlyVisible(elapsedTime);
+            ship.renderMesh(elapsedTime);
+        }
+
+        public abstract void renderAction(GenericShip ship, float elapsedTime);
+
+        public virtual void continueOrCompleteSinking(GenericShip ship)
+        {
+            if (ship.Rotation.Z >= Math.Abs(Math.PI))
+                ship.status = new Sunk();
+        }
+
+        internal void renderPlaying(PlayerShip ship, float elapsedTime)
+        {
+            this.renderOnlyVisible(ship, elapsedTime);
+            this.renderAction(ship, elapsedTime);
         }
     }
 

@@ -15,6 +15,7 @@ using TgcViewer.Utils.TgcSkeletalAnimation;
 using TgcViewer.Utils.Terrain;
 using TgcViewer.Utils.Shaders;
 using TgcViewer.Utils._2D;
+using AlumnoEjemplos.TheDiscretaBoy.ShipStates;
 
 namespace AlumnoEjemplos.TheDiscretaBoy
 {
