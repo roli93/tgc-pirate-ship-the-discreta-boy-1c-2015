@@ -99,19 +99,17 @@ namespace AlumnoEjemplos.TheDiscretaBoy
 
         private void createUserVars()
         {
-            GuiController.Instance.UserVars.addVar("time", 0f);
             GuiController.Instance.UserVars.addVar("terreno", water);
         }
 
         public float alturaEnPunto(float X, float Z)
         {
             SmartTerrain terrain = (SmartTerrain)GuiController.Instance.UserVars.getValue("terreno");
-            float time = (float)GuiController.Instance.UserVars.getValue("time");
             float heighM = meshShip.Scale.Y;
             Vector2 texCoords;
             terrain.xzToHeightmapCoords(X, Z, out texCoords);
             float frecuencia = 10;
-            float ola = FastMath.Sin(2*(texCoords.Y/2- time)) + 40 * FastMath.Cos(2*(texCoords.X / 5 - time));
+            float ola = FastMath.Sin(2*(texCoords.Y/2- time)) + 40 * FastMath.Cos(2*(texCoords.X / 5 - this.time));
             
             return (ola + heighM) * 0.1f * frecuencia;
         }
@@ -191,7 +189,7 @@ namespace AlumnoEjemplos.TheDiscretaBoy
             }
             time += elapsedTime;
             playerShip.render(elapsedTime);
-            water.Effect.SetValue("time",  (float)GuiController.Instance.UserVars.getValue("time"));
+            water.Effect.SetValue("time",  time);
             water.render();
 
             sky.render();
@@ -208,7 +206,6 @@ namespace AlumnoEjemplos.TheDiscretaBoy
             playerMessage.render();
             GuiController.Instance.Drawer2D.endDrawSprite();
 
-            setUsersVars();
         }
 
         public void renderBars()
@@ -234,11 +231,6 @@ namespace AlumnoEjemplos.TheDiscretaBoy
             enemyShip.dispose();
             Notification.instance.dispose();
             playerMessage.dispose();
-        }
-
-        public void setUsersVars()
-        {
-            GuiController.Instance.UserVars.setValue("time", ((float)GuiController.Instance.UserVars.getValue("time") + GuiController.Instance.ElapsedTime));
         }
 
     }
