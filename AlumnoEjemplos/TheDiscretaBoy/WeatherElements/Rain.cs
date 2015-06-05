@@ -37,7 +37,6 @@ namespace AlumnoEjemplos.TheDiscretaBoy.WeatherElements
                     player.resume();
                     EjemploAlumno.Instance.useSkyTexture(
                         TgcTexture.createTexture(
-                            GuiController.Instance.D3dDevice,
                             GuiController.Instance.AlumnoEjemplosMediaDir + "Texturas\\storm_sky.jpg"));
                 } 
                 GuiController.Instance.Drawer2D.beginDrawSprite();

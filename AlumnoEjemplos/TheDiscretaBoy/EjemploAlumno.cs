@@ -99,9 +99,8 @@ namespace AlumnoEjemplos.TheDiscretaBoy
 
         public void useDefaultSkyTexture()
         {
-            this.sky.setTexture(
+            this.useSkyTexture(
                 TgcTexture.createTexture(
-                GuiController.Instance.D3dDevice,
                 GuiController.Instance.AlumnoEjemplosMediaDir + "Texturas\\SkyboxSet1\\ThickCloudsWater\\sky-dome-panorma2.jpg"));
         }
 
