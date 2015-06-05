@@ -8,6 +8,11 @@ namespace AlumnoEjemplos.TheDiscretaBoy.ShipStates
     public abstract class ShipState
     {
         public abstract bool isDead(GenericShip ship);
+
+        public virtual void updatePosition(GenericShip ship)
+        {
+            ship.placeAtSurface();
+        }
         
         public bool isAlive(GenericShip ship)
         {
@@ -40,7 +45,6 @@ namespace AlumnoEjemplos.TheDiscretaBoy.ShipStates
         public virtual void renderOnlyVisible(GenericShip ship, float elapsedTime)
         {
             ship.updatePosition();
-            ship.updateCannonPosition();
             ship.renderMesh(elapsedTime);
         }
 
@@ -52,7 +56,7 @@ namespace AlumnoEjemplos.TheDiscretaBoy.ShipStates
                 ship.status = new Sunk();
         }
 
-        internal void renderPlaying(PlayerShip ship, float elapsedTime)
+        public void renderPlaying(PlayerShip ship, float elapsedTime)
         {
             this.renderOnlyVisible(ship, elapsedTime);
             this.renderAction(ship, elapsedTime);

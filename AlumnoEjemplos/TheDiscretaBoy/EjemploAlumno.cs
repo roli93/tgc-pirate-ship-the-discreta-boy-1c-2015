@@ -185,8 +185,7 @@ namespace AlumnoEjemplos.TheDiscretaBoy
 
         public void renderShipsPlaying(float elapsedTime)
         {
-            playerShip.renderPlaying(elapsedTime);
-            renderEnemiesPlaying(elapsedTime);
+            allShips().ForEach((ship) => ship.renderPlaying(elapsedTime));
         }
 
         public void renderShipsPaused(float elapsedTime)
@@ -237,8 +236,6 @@ namespace AlumnoEjemplos.TheDiscretaBoy
             water.Effect.SetValue("time", (float)GuiController.Instance.UserVars.getValue("time"));
             water.render();
             sky.render();
-            
-            //Notification.instance.render();
 
             setUsersVars();
 
@@ -290,12 +287,6 @@ namespace AlumnoEjemplos.TheDiscretaBoy
             disposeEnemies();
             Notification.instance.dispose();
             playerMessage.dispose();
-        }
-
-        private void renderEnemiesPlaying(float elapsedTime)
-        {
-            foreach (EnemyShip enemyShip in enemies)
-                enemyShip.renderPlaying(elapsedTime);
         }
         
         public void setUsersVars()

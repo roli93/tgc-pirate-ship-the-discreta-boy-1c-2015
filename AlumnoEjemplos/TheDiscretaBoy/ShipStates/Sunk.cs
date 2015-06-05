@@ -7,6 +7,9 @@ namespace AlumnoEjemplos.TheDiscretaBoy.ShipStates
 {
     public class Sunk : ShipState
     {
+        public override void updatePosition(GenericShip ship)
+        { }
+        
         public override bool isDead(GenericShip ship)
         {
             return true;

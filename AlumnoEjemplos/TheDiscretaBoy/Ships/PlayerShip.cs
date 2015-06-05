@@ -64,7 +64,6 @@ namespace AlumnoEjemplos.TheDiscretaBoy
             if (d3dInput.keyDown(Key.LeftArrow))
             {
                 cannon.turnLeft(elapsedTime);
-
             }
 
             if (d3dInput.keyDown(Key.RightArrow))
@@ -85,7 +84,6 @@ namespace AlumnoEjemplos.TheDiscretaBoy
                 if (TgcCollisionUtils.testAABBAABB(enemyShip.BoundingBox, BoundingBox))
                     crash();
 
-            cannon.renderAction(elapsedTime);
         }
 
         public override string name()
@@ -101,6 +99,7 @@ namespace AlumnoEjemplos.TheDiscretaBoy
 
         public override void renderPlaying(float elapsedTime)
         {
+            base.renderPlaying(elapsedTime);
             this.status.renderPlaying(this, elapsedTime);
         }
 
@@ -108,6 +107,11 @@ namespace AlumnoEjemplos.TheDiscretaBoy
         {
             base.renderOnlyVisible(elapsedTime);
             this.barraDeVida.render();
+        }
+
+        public override void renderAction(float elapsedTime)
+        {
+            this.handleInput(elapsedTime);
         }
     }
 }

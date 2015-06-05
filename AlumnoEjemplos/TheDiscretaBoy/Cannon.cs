@@ -33,7 +33,7 @@ namespace AlumnoEjemplos.TheDiscretaBoy
             LinearSpeed = 0F;
             cannon = cannonMesh;
             this.ShootingOffset = shootingPosition;
-            for (int i = 0; i <50; i++)
+            for (int i = 0; i < 50; i++)
             {
                 bullets.Add(new Bullet());
             }
@@ -87,15 +87,12 @@ namespace AlumnoEjemplos.TheDiscretaBoy
             }
         }
 
-        public void renderAction(float elapsedTime)
-        {
-            foreach (Bullet bullet in bullets)
-                bullet.render(elapsedTime);
-        }
-
         public void renderMesh(float elapsedTime)
         {
             cannon.render();
+
+            foreach (Bullet bullet in bullets)
+                bullet.render(elapsedTime);
         }
 
         public override void turnRight(float elapsedTime)

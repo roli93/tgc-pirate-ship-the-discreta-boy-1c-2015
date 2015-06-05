@@ -38,8 +38,14 @@ namespace AlumnoEjemplos.TheDiscretaBoy
         public Explocion explocion;
         public Hundimiento hundimiento;
 
-        public abstract void renderPlaying(float elapsedTime);
+        public virtual void renderPlaying(float elapsedTime)
+        {
+            moveForward(elapsedTime);
+            this.renderAction(elapsedTime);
+        }
+
         public abstract void handleInput(float elapsedTime);
+        public abstract void renderAction(float elapsedTime);
 
         public void renderPaused(float elapsedTime)
         {
@@ -74,7 +80,6 @@ namespace AlumnoEjemplos.TheDiscretaBoy
 
         public void moveForward(float elapsedTime)
         {
-
             ship.moveOrientedY((linearSpeed > 500F ? 500F : linearSpeed) * elapsedTime);
             cannon.Position = ship.Position + cannonOffset;
             cannon.LinearSpeed = linearSpeed;
@@ -148,12 +153,12 @@ namespace AlumnoEjemplos.TheDiscretaBoy
             this.status.crash(this);
         }
 
-        public virtual void renderAlive(float elapsedTime) 
+        public void updatePosition()
         {
-            updatePosition();
+            this.status.updatePosition(this);
         }
 
-        public void updatePosition()
+        public void placeAtSurface()
         {
             float Y = EjemploAlumno.Instance.alturaEnPunto(this.Position.X, this.Position.Z);
             this.Position = new Vector3(
@@ -175,7 +180,7 @@ namespace AlumnoEjemplos.TheDiscretaBoy
 
         public void renderMesh(float elapsedTime)
         {
-            updateCannonPosition();
+            this.updateCannonPosition();
             this.ship.render();
             this.cannon.renderMesh(elapsedTime);
         }

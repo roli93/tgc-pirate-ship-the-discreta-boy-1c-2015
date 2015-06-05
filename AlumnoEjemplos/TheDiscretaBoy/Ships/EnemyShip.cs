@@ -66,10 +66,8 @@ namespace AlumnoEjemplos.TheDiscretaBoy
             }
         }
 
-        public override void renderPlaying(float elapsedTime)
+        public override void renderAction(float elapsedTime)
         {
-            base.renderAlive(elapsedTime);
-
             TgcD3dInput d3dInput = GuiController.Instance.D3dInput;
 
             float distancte = distanceToVictim();
@@ -98,15 +96,19 @@ namespace AlumnoEjemplos.TheDiscretaBoy
             if (d3dInput.keyDown(Key.W) && d3dInput.keyDown(Key.I) && d3dInput.keyDown(Key.N))
                 sink();
 
-            moveForward(elapsedTime);
-
             foreach (EnemyShip enemyShip in EjemploAlumno.Instance.enemies)
             {
-                if(enemyShip != this)
+                if (enemyShip != this)
                     if (TgcCollisionUtils.testAABBAABB(enemyShip.BoundingBox, BoundingBox))
                         bounce(new Alive());
             }
+        }
 
+        public override void renderPlaying(float elapsedTime)
+        {
+            this.moveForward(elapsedTime);
+            this.updatePosition();
+            this.renderAction(elapsedTime);
             this.renderMesh(elapsedTime);
         }
 
