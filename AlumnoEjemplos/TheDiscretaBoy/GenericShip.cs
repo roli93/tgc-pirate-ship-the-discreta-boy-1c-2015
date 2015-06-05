@@ -232,9 +232,11 @@ namespace AlumnoEjemplos.TheDiscretaBoy
                     resurrectingElapsedTime = 0;
                 }
             }
+        }
 
+        public void renderBar()
+        {
             barraDeVida.render();
-
         }
 
         public void beShot()

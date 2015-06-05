@@ -92,6 +92,8 @@
     <Compile Include="TheDiscretaBoy\BattleEnded.cs" />
     <Compile Include="TheDiscretaBoy\Bullet.cs" />
     <Compile Include="TheDiscretaBoy\Cannon.cs" />
+    <Compile Include="TheDiscretaBoy\WeatherElements\Rain.cs" />
+    <Compile Include="TheDiscretaBoy\WeatherElements\Weather.cs" />
     <Compile Include="TheDiscretaBoy\Disparo.cs" />
     <Compile Include="TheDiscretaBoy\Efecto.cs" />
     <Compile Include="TheDiscretaBoy\EnemyShip.cs" />

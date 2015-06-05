@@ -15,6 +15,7 @@ using TgcViewer.Utils.TgcSkeletalAnimation;
 using TgcViewer.Utils.Terrain;
 using TgcViewer.Utils.Shaders;
 using TgcViewer.Utils._2D;
+using AlumnoEjemplos.TheDiscretaBoy.WeatherElements;
 
 namespace AlumnoEjemplos.TheDiscretaBoy
 {
@@ -36,6 +37,7 @@ namespace AlumnoEjemplos.TheDiscretaBoy
         string currentHeightmap;
         string currentTexture;
         float time;
+        public Weather weather;
 
         public override string getCategory()
         {
@@ -88,6 +90,8 @@ namespace AlumnoEjemplos.TheDiscretaBoy
             GuiController.Instance.Modifiers.addFloat("Diffuse", 0, 1, 0.6f);
             GuiController.Instance.Modifiers.addFloat("Specular", 0, 1, 0.5f);
             GuiController.Instance.Modifiers.addFloat("SpecularPower", 1, 100, 16); */
+
+            this.weather = new Weather();
 
             createUserVars();
             initializeGame();
@@ -152,7 +156,6 @@ namespace AlumnoEjemplos.TheDiscretaBoy
 
         public override void render(float elapsedTime)
         {
-
             GuiController.Instance.ThirdPersonCamera.updateCamera();
             GuiController.Instance.ThirdPersonCamera.Target = playerShip.Position;
 
@@ -190,8 +193,15 @@ namespace AlumnoEjemplos.TheDiscretaBoy
             playerShip.render(elapsedTime);
             water.Effect.SetValue("time",  (float)GuiController.Instance.UserVars.getValue("time"));
             water.render();
+
             sky.render();
+
             enemyShip.render(elapsedTime);
+
+            weather.render();
+
+            renderBars();
+
             Notification.instance.render();
             
             GuiController.Instance.Drawer2D.beginDrawSprite();
@@ -199,6 +209,12 @@ namespace AlumnoEjemplos.TheDiscretaBoy
             GuiController.Instance.Drawer2D.endDrawSprite();
 
             setUsersVars();
+        }
+
+        public void renderBars()
+        {
+            playerShip.renderBar();
+            enemyShip.renderBar();
         }
 
         public void initializeGame() 
