@@ -78,7 +78,7 @@ namespace AlumnoEjemplos.TheDiscretaBoy
             
             sky = new TgcSphere();
             sky.Radius = 5000;
-            sky.setTexture(TgcTexture.createTexture(d3dDevice, texturesPath + "sky-dome-panorma2.jpg"));
+            this.useDefaultSkyTexture();
             sky.LevelOfDetail = 1;
             sky.Position = water.Center;
             sky.rotateY(-(float)Math.PI * 1 / 4);
@@ -95,6 +95,19 @@ namespace AlumnoEjemplos.TheDiscretaBoy
 
             createUserVars();
             initializeGame();
+        }
+
+        public void useDefaultSkyTexture()
+        {
+            this.sky.setTexture(
+                TgcTexture.createTexture(
+                GuiController.Instance.D3dDevice,
+                GuiController.Instance.AlumnoEjemplosMediaDir + "Texturas\\SkyboxSet1\\ThickCloudsWater\\sky-dome-panorma2.jpg"));
+        }
+
+        public void useSkyTexture(TgcTexture texture)
+        {
+            this.sky.setTexture(texture);
         }
 
         private void createUserVars()

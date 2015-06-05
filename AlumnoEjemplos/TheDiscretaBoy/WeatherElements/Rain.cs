@@ -6,14 +6,11 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Text;
-
 using Microsoft.DirectX.Direct3D;
-using System.Drawing;
-using Microsoft.DirectX;
 using TgcViewer.Utils.Modifiers;
 using TgcViewer.Utils.Sound;
-using TgcViewer.Utils._2D;
 using System.IO;
+using TgcViewer.Utils.TgcSceneLoader;
 
 namespace AlumnoEjemplos.TheDiscretaBoy.WeatherElements
 {
@@ -36,7 +33,13 @@ namespace AlumnoEjemplos.TheDiscretaBoy.WeatherElements
             if ((bool)GuiController.Instance.Modifiers.getValue("tormenta"))
             {
                 if (player.getStatus() == TgcMp3Player.States.Paused)
+                { 
                     player.resume();
+                    EjemploAlumno.Instance.useSkyTexture(
+                        TgcTexture.createTexture(
+                            GuiController.Instance.D3dDevice,
+                            GuiController.Instance.AlumnoEjemplosMediaDir + "Texturas\\storm_sky.jpg"));
+                } 
                 GuiController.Instance.Drawer2D.beginDrawSprite();
                 updateAndRender();
                 GuiController.Instance.Drawer2D.endDrawSprite();
@@ -44,8 +47,14 @@ namespace AlumnoEjemplos.TheDiscretaBoy.WeatherElements
             else
             {
                 if (player.getStatus() == TgcMp3Player.States.Playing)
+                {
                     player.pause();
-            }
+                }
+                else
+                {
+                    EjemploAlumno.Instance.useDefaultSkyTexture();
+                } 
+           }
         }
     }
 }
