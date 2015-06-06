@@ -88,26 +88,26 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="TheDiscretaBoy\AimingCapable.cs" />
-    <Compile Include="TheDiscretaBoy\Barra.cs" />
+    <Compile Include="TheDiscretaBoy\Ships\Components\Barra.cs" />
     <Compile Include="TheDiscretaBoy\BattleEnded.cs" />
-    <Compile Include="TheDiscretaBoy\Bullet.cs" />
-    <Compile Include="TheDiscretaBoy\Cannon.cs" />
+    <Compile Include="TheDiscretaBoy\Ships\Components\Bullet.cs" />
+    <Compile Include="TheDiscretaBoy\Ships\Components\Cannon.cs" />
     <Compile Include="TheDiscretaBoy\WeatherElements\Rain.cs" />
     <Compile Include="TheDiscretaBoy\WeatherElements\Weather.cs" />
     <Compile Include="TheDiscretaBoy\Disparo.cs" />
     <Compile Include="TheDiscretaBoy\Efecto.cs" />
-    <Compile Include="TheDiscretaBoy\EnemyShip.cs" />
+    <Compile Include="TheDiscretaBoy\Ships\EnemyShip.cs" />
     <Compile Include="TheDiscretaBoy\Explocion.cs" />
     <Compile Include="TheDiscretaBoy\Failure.cs" />
     <Compile Include="TheDiscretaBoy\Hundimiento.cs" />
     <Compile Include="TheDiscretaBoy\Notification.cs" />
-    <Compile Include="TheDiscretaBoy\PlayerShip.cs" />
+    <Compile Include="TheDiscretaBoy\Ships\PlayerShip.cs" />
     <Compile Include="TheDiscretaBoy\SmartTerrain.cs" />
     <Compile Include="TheDiscretaBoy\Triumph.cs" />
     <Compile Include="TheDiscretaBoy\Various.cs" />
     <Compile Include="TheDiscretaBoy\EjemploAlumno.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="TheDiscretaBoy\GenericShip.cs" />
+    <Compile Include="TheDiscretaBoy\Ships\GenericShip.cs" />
     <Compile Include="TheDiscretaBoy\WeatherElements\Wind.cs" />
   </ItemGroup>
   <ItemGroup>
