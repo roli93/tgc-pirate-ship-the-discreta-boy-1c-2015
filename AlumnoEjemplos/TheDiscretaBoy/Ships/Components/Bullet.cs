@@ -57,17 +57,13 @@ namespace AlumnoEjemplos.TheDiscretaBoy
 
         private void handleCollisionWith(GenericShip ship)
         {
-            if (TgcCollisionUtils.testSphereAABB(BoundingSphere, ship.BoundingBox))
+            if(!this.shooting)
             {
-                if (!shooting) //Para q no se apriete 20 millones de veces y espere sa que la suelten
+                if (TgcCollisionUtils.testSphereAABB(BoundingSphere, ship.BoundingBox))
                 {
                     ship.beShot();
                     shooting = true;
                 }
-            }
-            else
-            {
-                shooting = false;
             }
         }
 
