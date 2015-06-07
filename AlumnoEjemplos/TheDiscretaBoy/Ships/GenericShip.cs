@@ -143,10 +143,7 @@ namespace AlumnoEjemplos.TheDiscretaBoy
         }
 
 
-        public virtual void crash()
-        {
-            bounce(Status.Resurrecting);
-        }
+        public abstract void crash();
 
         public void handleShipCollision(GenericShip ship)
         {

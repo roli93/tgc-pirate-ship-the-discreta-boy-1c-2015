@@ -40,7 +40,7 @@ namespace AlumnoEjemplos.TheDiscretaBoy
         float time;
         public Weather weather;
 
-        public int enemiesQuantity = 1;
+        public int enemiesQuantity = 5;
 
         public override string getCategory()
         {

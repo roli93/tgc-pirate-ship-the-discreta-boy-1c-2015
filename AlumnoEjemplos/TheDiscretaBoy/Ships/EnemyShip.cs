@@ -28,6 +28,11 @@ namespace AlumnoEjemplos.TheDiscretaBoy
             this.timer = timer;
         }
 
+        public override void crash()
+        {
+            this.bounce(Status.Alive);
+        }
+
         private void shootPeriodically(float elapsedTime)
         {
             if (!cannon.aimingAt(victim))

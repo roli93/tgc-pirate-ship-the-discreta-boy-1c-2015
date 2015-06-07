@@ -81,7 +81,7 @@ namespace AlumnoEjemplos.TheDiscretaBoy
 
         public override void crash()
         {
-            base.crash();
+            this.bounce(Status.Resurrecting);
             this.life -= 25;
         }
         public override string name()
