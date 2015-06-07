@@ -224,7 +224,6 @@ namespace AlumnoEjemplos.TheDiscretaBoy
                 close();
             }
             time += elapsedTime;
-            playerShip.render(elapsedTime);
             water.Effect.SetValue("time",  time);
             water.render();
 
