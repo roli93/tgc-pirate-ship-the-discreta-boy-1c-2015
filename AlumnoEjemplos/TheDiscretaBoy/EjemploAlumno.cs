@@ -266,7 +266,8 @@ namespace AlumnoEjemplos.TheDiscretaBoy
 
         public void renderBars()
         {
-            forEachShip((Action<GenericShip>)((ship)=> ship.renderBar()));
+            //forEachShip((Action<GenericShip>)((ship)=> ship.renderBar()));
+            playerShip.renderBar();
         }
 
         public void initializeGame() 
