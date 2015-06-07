@@ -55,6 +55,22 @@ namespace AlumnoEjemplos.TheDiscretaBoy
                 disparo.show();
         }
 
+        private void handleCollisionWith(GenericShip ship)
+        {
+            if (TgcCollisionUtils.testSphereAABB(BoundingSphere, ship.BoundingBox))
+            {
+                if (!shooting) //Para q no se apriete 20 millones de veces y espere sa que la suelten
+                {
+                    ship.beShot();
+                    shooting = true;
+                }
+            }
+            else
+            {
+                shooting = false;
+            }
+        }
+
         public void render(float elapsedTime)
         {
             if (Visible)
@@ -64,28 +80,7 @@ namespace AlumnoEjemplos.TheDiscretaBoy
                 if (bullet.Position.X > renderLimit.X || bullet.Position.Y > renderLimit.Y || bullet.Position.Z > renderLimit.Z ||
                     bullet.Position.X < -renderLimit.X || bullet.Position.Y < -renderLimit.Y || bullet.Position.Z < -renderLimit.Z)
                     Visible = false;
-                if (TgcCollisionUtils.testSphereAABB(BoundingSphere, EjemploAlumno.Instance.enemyShip.BoundingBox))
-                {
-              
-                    if (!shooting) //Para q no se apriete 20 millones de veces y espere sa que la suelten
-                    {
-                        EjemploAlumno.Instance.enemyShip.beShot();
-                        shooting = true;
-                    }
-                }
-                else if (TgcCollisionUtils.testSphereAABB(BoundingSphere, EjemploAlumno.Instance.playerShip.BoundingBox))
-                {
-
-                    if (!shooting)
-                    {
-                        EjemploAlumno.Instance.playerShip.beShot();
-                        shooting = true;
-                    }
-                }
-                else
-                {
-                    shooting = false;
-                }
+                EjemploAlumno.Instance.forEachShip((ShipCommand)handleCollisionWith);
             }
 
 

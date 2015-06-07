@@ -28,7 +28,8 @@ namespace AlumnoEjemplos.TheDiscretaBoy
         public TgcMesh meshShip, meshEnemy;
         public SmartTerrain water;
         public TgcSphere sky;
-        public GenericShip playerShip, enemyShip;
+        public GenericShip playerShip;
+        public List<EnemyShip> enemies = new List<EnemyShip>();
         public TgcBoundingSphere skyBoundaries;
         public Vector3 lastPlayerPosition;
         private TgcText2d playerMessage;
@@ -38,6 +39,8 @@ namespace AlumnoEjemplos.TheDiscretaBoy
         string currentTexture;
         float time;
         public Weather weather;
+
+        public int enemiesQuantity = 1;
 
         public override string getCategory()
         {
@@ -161,8 +164,29 @@ namespace AlumnoEjemplos.TheDiscretaBoy
             meshEnemy = sceneShip.Meshes[0];
             sceneCanon = loader.loadSceneFromFile(GuiController.Instance.ExamplesMediaDir + "MeshCreator\\Meshes\\Armas\\Canon\\Canon.max-TgcScene.xml");
 
-            enemyShip = new EnemyShip(meshEnemy, new Vector3(1000, 2, 1000), new Cannon(sceneCanon.Meshes[0], new Vector3(27, 21, 0)), new Vector3(0, 1, 0));
+            enemies.Clear();
+            for (int i = 0; i < enemiesQuantity; i++)
+            {
+                sceneShip = loader.loadSceneFromFile(GuiController.Instance.ExamplesMediaDir + "MeshCreator\\Meshes\\Vehiculos\\Canoa\\Canoa-TgcScene.xml");
+                meshEnemy = sceneShip.Meshes[0];
+                sceneCanon = loader.loadSceneFromFile(GuiController.Instance.ExamplesMediaDir + "MeshCreator\\Meshes\\Armas\\Canon\\Canon.max-TgcScene.xml");
+
+                enemies.Add(new EnemyShip(meshEnemy, new Vector3(800 + (300*i), 2, 800 + (300*i)), new Cannon(sceneCanon.Meshes[0], new Vector3(27, 21, 0)), new Vector3(0, 1, 0), new Timer(1.5f + (i/2))));
+            }
         }
+
+        public void handleEnemySunk()
+        {
+            if (allEnemiesSunk())
+                (new Triumph()).show();
+        }
+
+        public bool allEnemiesSunk()
+        {
+            foreach (EnemyShip enemyShip in enemies)
+                if (!enemyShip.isDead()) return false;
+            return true;
+         }
 
         public override void render(float elapsedTime)
         {
@@ -206,7 +230,7 @@ namespace AlumnoEjemplos.TheDiscretaBoy
 
             sky.render();
 
-            enemyShip.render(elapsedTime);
+            forEachShip((Action<GenericShip>)((ship) => ship.render(elapsedTime)));
 
             weather.render();
 
@@ -220,10 +244,30 @@ namespace AlumnoEjemplos.TheDiscretaBoy
 
         }
 
+        public void forEachShip(Action<GenericShip> todo)
+        {
+            allShips().ForEach(todo);
+        }
+
+        public void forEachShip(ShipCommand toDo) 
+        {
+            foreach(GenericShip ship in allShips())
+            {
+                toDo(ship);
+            }
+        }
+
+        public List<GenericShip> allShips()
+        {
+            List<GenericShip> allShips = new List<GenericShip>();
+            allShips.AddRange(enemies);
+            allShips.Add(playerShip);
+            return allShips;
+        }
+
         public void renderBars()
         {
-            playerShip.renderBar();
-            enemyShip.renderBar();
+            forEachShip((Action<GenericShip>)((ship)=> ship.renderBar()));
         }
 
         public void initializeGame() 
@@ -238,9 +282,8 @@ namespace AlumnoEjemplos.TheDiscretaBoy
         {
 
             water.dispose();
-            playerShip.dispose();
             sky.dispose();
-            enemyShip.dispose();
+            forEachShip((Action<GenericShip>)((ship) => ship.dispose()));
             Notification.instance.dispose();
             playerMessage.dispose();
         }
