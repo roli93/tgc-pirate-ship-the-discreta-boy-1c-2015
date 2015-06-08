@@ -10,9 +10,13 @@ namespace AlumnoEjemplos.TheDiscretaBoy
 {
     public abstract class BattleEnded : Efecto
     {
+        public string spritePath;
+
         public override void show()
         {
             base.show();
+            EjemploAlumno.Instance.menu.setHeader(this.spritePath);
+            EjemploAlumno.Instance.stop();
         }
     }
 }

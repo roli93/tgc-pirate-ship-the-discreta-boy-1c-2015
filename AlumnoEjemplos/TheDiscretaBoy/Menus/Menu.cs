@@ -60,7 +60,7 @@ namespace AlumnoEjemplos.TheDiscretaBoy.Menus
                 6);
         }
 
-        private void setHeader(string headerPath)
+        public void setHeader(string headerPath)
         {
             TgcSprite sprite = new TgcSprite();
             sprite.Texture = TgcTexture.createTexture(GuiController.Instance.AlumnoEjemplosMediaDir + headerPath);
