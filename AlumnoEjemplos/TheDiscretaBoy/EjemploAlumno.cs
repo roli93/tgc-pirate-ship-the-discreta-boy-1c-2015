@@ -118,6 +118,18 @@ namespace AlumnoEjemplos.TheDiscretaBoy
             this.status = GameStatus.Playing;
         }
 
+        public bool crashingWithAnyOther(GenericShip ship)
+        {
+            foreach (GenericShip anotherShip in this.allShips())
+            {
+                if (ship.crashingWith(anotherShip))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
         public void useDefaultSkyTexture()
         {
             this.useSkyTexture(

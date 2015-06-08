@@ -152,8 +152,6 @@ namespace AlumnoEjemplos.TheDiscretaBoy
                     this.crash();
         }
 
-
-
         public virtual void renderAlive(float elapsedTime) 
         {
             updatePosition();
@@ -174,6 +172,11 @@ namespace AlumnoEjemplos.TheDiscretaBoy
 
         public bool isAlive() {
             return this.status == Status.Alive;
+        }
+
+        public bool crashingWith(GenericShip ship)
+        {
+            return (this != ship) && TgcCollisionUtils.testAABBAABB(ship.BoundingBox, this.BoundingBox);
         }
 
         public virtual void render(float elapsedTime)
@@ -208,17 +211,11 @@ namespace AlumnoEjemplos.TheDiscretaBoy
                 updatePosition();
                 if (Math.Abs(linearSpeed) > 1)
                 {
-                    foreach (GenericShip ship in EjemploAlumno.Instance.allShips())
-                    {
-                        if(ship != this)
-                        {
-                            if (!TgcCollisionUtils.testAABBAABB(ship.BoundingBox, BoundingBox))
-                                if (linearSpeed > 0)
-                                    desaccelerate(elapsedTime);
-                                else
-                                    accelerate(elapsedTime);
-                        }
-                    }
+                    if (!EjemploAlumno.Instance.crashingWithAnyOther(this))
+                        if (linearSpeed > 0)
+                            desaccelerate(elapsedTime);
+                        else
+                            accelerate(elapsedTime);
                 }
                 else
                     status = postBounceStatus;
@@ -226,7 +223,6 @@ namespace AlumnoEjemplos.TheDiscretaBoy
                 this.ship.render();
                 cannon.render(elapsedTime);
             }
-
 
             if (status == Status.Resurrecting)
             {
