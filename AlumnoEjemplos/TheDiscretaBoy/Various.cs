@@ -99,4 +99,12 @@ namespace AlumnoEjemplos.TheDiscretaBoy
         }
     }
 
+    public class ScreenHelper
+    {
+        public static Size size()
+        {
+            return GuiController.Instance.Panel3d.Size;
+        }
+    }
+
 }
