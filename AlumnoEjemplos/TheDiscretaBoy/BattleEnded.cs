@@ -15,6 +15,7 @@ namespace AlumnoEjemplos.TheDiscretaBoy
         public override void show()
         {
             base.show();
+            GuiController.Instance.ThirdPersonCamera.Enable = false;
             EjemploAlumno.Instance.menu.setHeader(this.spritePath);
             EjemploAlumno.Instance.stop();
         }

@@ -198,7 +198,6 @@ namespace AlumnoEjemplos.TheDiscretaBoy
 
             if (status == Status.Sunk)
             {
-                GuiController.Instance.ThirdPersonCamera.Enable = false;
                 ship.move(0, -100F * elapsedTime, 0);
                 cannon.Position = ship.Position + cannonOffset;
                 ship.render();

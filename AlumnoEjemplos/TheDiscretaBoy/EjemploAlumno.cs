@@ -181,7 +181,9 @@ namespace AlumnoEjemplos.TheDiscretaBoy
         public void handleEnemySunk()
         {
             if (allEnemiesSunk())
+            {
                 (new Triumph()).show();
+            }
         }
 
         public bool allEnemiesSunk()
