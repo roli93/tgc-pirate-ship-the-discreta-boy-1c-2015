@@ -159,6 +159,20 @@ namespace AlumnoEjemplos.TheDiscretaBoy
             return (ola + heighM) * 0.1f * frecuencia;
         }
 
+        public Vector3 normalEnPunto(float X, float Z)
+        {
+            float delta = 0.3f;
+            float alturaN = this.alturaEnPunto(X, Z + delta);
+            float alturaS = this.alturaEnPunto(X, Z - delta);
+            float alturaE = this.alturaEnPunto(X + delta, Z);
+            float alturaO = this.alturaEnPunto(X - delta, Z);
+
+            Vector3 vectorEO = new Vector3(delta * 2, alturaE - alturaO, 0);
+            Vector3 vectorNS = new Vector3(0, alturaN - alturaS, delta * 2);
+
+            return Vector3.Cross(vectorNS, vectorEO);
+        }
+
         public void initializeCamera()
         {
             GuiController.Instance.ThirdPersonCamera.Enable = true;

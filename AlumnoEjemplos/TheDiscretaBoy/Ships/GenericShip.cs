@@ -44,6 +44,7 @@ namespace AlumnoEjemplos.TheDiscretaBoy
         public Barra barraDeVida;
         public Explocion explocion;
         public Hundimiento hundimiento;
+        public Vector3 normal;
 
         public GenericShip(TgcMesh shipMesh, Vector3 initialPosition, Cannon cannon, Vector3 cannonOffset) : base()
         {
@@ -56,6 +57,7 @@ namespace AlumnoEjemplos.TheDiscretaBoy
             iniciarBarra();
             explocion = new Explocion();
             hundimiento = new Hundimiento();
+            this.normal = EjemploAlumno.Instance.normalEnPunto(this.Position.X, this.Position.Z);
         }
 
         public bool isDead()
@@ -167,7 +169,11 @@ namespace AlumnoEjemplos.TheDiscretaBoy
                 this.Position.X,
                 Y,
                 this.Position.Z);
-            //log("La posicion Y de " + this.name() + " es " + Y);
+
+            Vector3 previousNormal = this.normal;
+            this.normal = EjemploAlumno.Instance.normalEnPunto(this.Position.X, this.Position.Z);
+            this.ship.rotateX(-(FastMath.Atan2(normal.Z, normal.Y) - FastMath.Atan2(previousNormal.Z, previousNormal.Y)));
+            this.ship.rotateZ(-(FastMath.Atan2(normal.X, normal.Y) - FastMath.Atan2(previousNormal.X, previousNormal.Y)));
         }
 
         public bool isAlive() {
@@ -177,6 +183,15 @@ namespace AlumnoEjemplos.TheDiscretaBoy
         public bool crashingWith(GenericShip ship)
         {
             return (this != ship) && TgcCollisionUtils.testAABBAABB(ship.BoundingBox, this.BoundingBox);
+        }
+
+        public void drawNormal()
+        {
+            TgcArrow normalDibujable = new TgcArrow();
+            normalDibujable.PStart = this.Position;
+            normalDibujable.PEnd = this.Position + Vector3.Multiply(this.normal, 200);
+            normalDibujable.updateValues();
+            normalDibujable.render();
         }
 
         public virtual void render(float elapsedTime)
