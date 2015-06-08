@@ -29,7 +29,6 @@ namespace AlumnoEjemplos.TheDiscretaBoy
         public override void show()
         {
             base.show();
-            Notification.instance.sprite = this.sprite;
         }
     }
 }

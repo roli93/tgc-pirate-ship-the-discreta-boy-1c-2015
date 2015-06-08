@@ -16,12 +16,19 @@ using TgcViewer.Utils.Terrain;
 using TgcViewer.Utils.Shaders;
 using TgcViewer.Utils._2D;
 using AlumnoEjemplos.TheDiscretaBoy.WeatherElements;
+using AlumnoEjemplos.TheDiscretaBoy.Menus;
 
 namespace AlumnoEjemplos.TheDiscretaBoy
 {
     /// <summary>
     /// Ejemplo del alumno
     /// </summary>
+
+    public enum GameStatus
+    {
+        Playing, Stopped, UnStarted
+    }
+
     public class EjemploAlumno : TgcExample
     {
         public static EjemploAlumno Instance { get; set; }
@@ -32,15 +39,15 @@ namespace AlumnoEjemplos.TheDiscretaBoy
         public List<EnemyShip> enemies = new List<EnemyShip>();
         public TgcBoundingSphere skyBoundaries;
         public Vector3 lastPlayerPosition;
-        private TgcText2d playerMessage;
         Microsoft.DirectX.Direct3D.Effect efectoOlas;
         Microsoft.DirectX.Direct3D.Effect efectoCascada;
         string currentHeightmap;
         string currentTexture;
         float time;
         public Weather weather;
-
-        public int enemiesQuantity = 5;
+        public GameStatus status;
+        public int enemiesQuantity = 0;
+        public Menu menu = new Menu("\\Texturas\\logo.png");
 
         public override string getCategory()
         {
@@ -97,7 +104,18 @@ namespace AlumnoEjemplos.TheDiscretaBoy
             this.weather = new Weather();
 
             createUserVars();
+            this.status = GameStatus.UnStarted;
+        }
+
+        public void stop()
+        {
+            this.status = GameStatus.Stopped;
+        }
+
+        public void play()
+        {
             initializeGame();
+            this.status = GameStatus.Playing;
         }
 
         public void useDefaultSkyTexture()
@@ -127,21 +145,6 @@ namespace AlumnoEjemplos.TheDiscretaBoy
             float ola = FastMath.Sin(2*(texCoords.Y/2- time)) + 40 * FastMath.Cos(2*(texCoords.X / 5 - this.time));
             
             return (ola + heighM) * 0.1f * frecuencia;
-        }
-
-        public void initializePlayerMessage(string message)
-        {
-            playerMessage = new TgcText2d();
-            playerMessage.Text = message;
-            playerMessage.changeFont(new System.Drawing.Font("Tahoma", 30));
-            playerMessage.Color = Color.WhiteSmoke;
-            playerMessage.Align = TgcText2d.TextAlign.CENTER;
-            playerMessage.Size = new Size(1000, 150);
-
-            Size screenSize = GuiController.Instance.Panel3d.Size;
-            Size textSize = playerMessage.Size;
-            playerMessage.Position = new Point(FastMath.Max(screenSize.Width / 2 - textSize.Width / 2, 0), screenSize.Height * 2 / 3);
-            
         }
 
         public void initializeCamera()
@@ -190,56 +193,59 @@ namespace AlumnoEjemplos.TheDiscretaBoy
 
         public override void render(float elapsedTime)
         {
-            GuiController.Instance.ThirdPersonCamera.updateCamera();
-            GuiController.Instance.ThirdPersonCamera.Target = playerShip.Position;
+            if (this.status == GameStatus.UnStarted)
+            {
+                menu.render(this);
+            }
+            else
+            {
+                GuiController.Instance.ThirdPersonCamera.updateCamera();
+                GuiController.Instance.ThirdPersonCamera.Target = playerShip.Position;
 
-            TgcD3dInput d3dInput = GuiController.Instance.D3dInput;
+                TgcD3dInput d3dInput = GuiController.Instance.D3dInput;
 
-            /*Microsoft.DirectX.Direct3D.Effect effect;
+                /*Microsoft.DirectX.Direct3D.Effect effect;
 
-            effect = TgcShaders.loadEffect(GuiController.Instance.ExamplesDir + "Shaders\\WorkshopShaders\\Shaders\\PhongShading.fx"); ;
+                effect = TgcShaders.loadEffect(GuiController.Instance.ExamplesDir + "Shaders\\WorkshopShaders\\Shaders\\PhongShading.fx"); ;
 
-            effect.SetValue("fvLightPosition", TgcParserUtils.vector3ToFloat3Array(GuiController.Instance.ThirdPersonCamera.getPosition() + new Vector3(0, 2000, 0)));
-            effect.SetValue("fvEyePosition", TgcParserUtils.vector3ToFloat3Array(GuiController.Instance.ThirdPersonCamera.getPosition()));
-            effect.SetValue("k_la", (float)GuiController.Instance.Modifiers["Ambient"]);
-            effect.SetValue("k_ld", (float)GuiController.Instance.Modifiers["Diffuse"]);
-            effect.SetValue("k_ls", (float)GuiController.Instance.Modifiers["Specular"]);
-            effect.SetValue("fSpecularPower", (float)GuiController.Instance.Modifiers["SpecularPower"]);
+                effect.SetValue("fvLightPosition", TgcParserUtils.vector3ToFloat3Array(GuiController.Instance.ThirdPersonCamera.getPosition() + new Vector3(0, 2000, 0)));
+                effect.SetValue("fvEyePosition", TgcParserUtils.vector3ToFloat3Array(GuiController.Instance.ThirdPersonCamera.getPosition()));
+                effect.SetValue("k_la", (float)GuiController.Instance.Modifiers["Ambient"]);
+                effect.SetValue("k_ld", (float)GuiController.Instance.Modifiers["Diffuse"]);
+                effect.SetValue("k_ls", (float)GuiController.Instance.Modifiers["Specular"]);
+                effect.SetValue("fSpecularPower", (float)GuiController.Instance.Modifiers["SpecularPower"]);
 
-            playerShip.ship.Effect = effect;
-            playerShip.cannon.cannon.Effect = effect;
-            water.Effect = effect;
+                playerShip.ship.Effect = effect;
+                playerShip.cannon.cannon.Effect = effect;
+                water.Effect = effect;
             
 
-            playerShip.ship.Technique = "DefaultTechnique";
-            playerShip.cannon.cannon.Technique = "DefaultTechnique";
-            water.Technique = "DefaultTechnique";*/
+                playerShip.ship.Technique = "DefaultTechnique";
+                playerShip.cannon.cannon.Technique = "DefaultTechnique";
+                water.Technique = "DefaultTechnique";*/
 
-            if (d3dInput.keyDown(Key.R))
-            {
-                initializeGame();
+                if (d3dInput.keyDown(Key.Escape))
+                {
+                    close();
+                }
+                time += elapsedTime;
+                water.Effect.SetValue("time", time);
+                water.render();
+
+                sky.render();
+
+                forEachShip((Action<GenericShip>)((ship) => ship.render(elapsedTime)));
+
+                weather.render();
+
+                renderBars();
+                
+                if (this.status == GameStatus.Stopped)
+                {
+                    menu.render(this);
+                }
+                
             }
-            if (d3dInput.keyDown(Key.Escape))
-            {
-                close();
-            }
-            time += elapsedTime;
-            water.Effect.SetValue("time",  time);
-            water.render();
-
-            sky.render();
-
-            forEachShip((Action<GenericShip>)((ship) => ship.render(elapsedTime)));
-
-            weather.render();
-
-            renderBars();
-
-            Notification.instance.render();
-            
-            GuiController.Instance.Drawer2D.beginDrawSprite();
-            playerMessage.render();
-            GuiController.Instance.Drawer2D.endDrawSprite();
 
         }
 
@@ -272,8 +278,6 @@ namespace AlumnoEjemplos.TheDiscretaBoy
 
         public void initializeGame() 
         {
-            initializePlayerMessage("");
-            Notification.instance.sprite = null;
             initializeShips();
             initializeCamera();
         }
@@ -284,8 +288,6 @@ namespace AlumnoEjemplos.TheDiscretaBoy
             water.dispose();
             sky.dispose();
             forEachShip((Action<GenericShip>)((ship) => ship.dispose()));
-            Notification.instance.dispose();
-            playerMessage.dispose();
         }
 
     }

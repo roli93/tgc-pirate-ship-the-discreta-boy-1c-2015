@@ -10,13 +10,9 @@ namespace AlumnoEjemplos.TheDiscretaBoy
 {
     public abstract class BattleEnded : Efecto
     {
-
-        
-
         public override void show()
         {
             base.show();
-            EjemploAlumno.Instance.initializePlayerMessage("Presione 'R' para volver a jugar");
         }
     }
 }
