@@ -24,9 +24,14 @@ namespace AlumnoEjemplos.TheDiscretaBoy.Menus
     public class Menu
     {
         public List<MenuButton> buttons = new List<MenuButton>();
+        public TgcSprite defaultBackgroud = new TgcSprite();
 
         public Menu(string headerPath)
         {
+            this.defaultBackgroud.Texture = TgcTexture.createTexture(
+                GuiController.Instance.AlumnoEjemplosMediaDir + "\\Texturas\\background.jpg");
+            this.defaultBackgroud.Position = new Vector2(0, 0);
+
             this.setHeader(headerPath);
 
             addDifficultyButton(
@@ -83,6 +88,10 @@ namespace AlumnoEjemplos.TheDiscretaBoy.Menus
         public void render(EjemploAlumno game)
         {
             GuiController.Instance.Drawer2D.beginDrawSprite();
+            if (game.status == GameStatus.UnStarted)
+            {
+                this.defaultBackgroud.render();
+            }
             handleClicks(game);
             buttons.ForEach(button => button.render());
             GuiController.Instance.Drawer2D.endDrawSprite();
