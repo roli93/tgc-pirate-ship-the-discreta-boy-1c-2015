@@ -32,6 +32,16 @@ namespace AlumnoEjemplos.TheDiscretaBoy.Menus
             this.defaultBackgroud.Texture = TgcTexture.createTexture(
                 GuiController.Instance.AlumnoEjemplosMediaDir + "\\Texturas\\background.jpg");
             this.defaultBackgroud.Position = new Vector2(0, 0);
+            Size screensize = GuiController.Instance.Panel3d.Size;
+            this.defaultBackgroud.Scaling = new Vector2(
+                (float)screensize.Width / this.defaultBackgroud.Texture.Width,
+                (float)screensize.Height / this.defaultBackgroud.Texture.Height);
+            GuiController.Instance.Logger.log(
+                "Ancho: "+
+                ((float)screensize.Width / this.defaultBackgroud.Texture.Width) + 
+                "\n Alto:" +
+                ((float)screensize.Height / this.defaultBackgroud.Texture.Height)
+                );
 
             this.setHeader(headerPath);
 
