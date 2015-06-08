@@ -22,7 +22,7 @@ namespace AlumnoEjemplos.TheDiscretaBoy
     {
         Alive, Sinking, Sunk, Bouncing, Resurrecting
     }
-
+    public delegate void ShipCommand(GenericShip ship);
     public abstract class GenericShip :AimingCapable
     {
         public static int maximumLife = 300;
@@ -56,6 +56,11 @@ namespace AlumnoEjemplos.TheDiscretaBoy
             iniciarBarra();
             explocion = new Explocion();
             hundimiento = new Hundimiento();
+        }
+
+        public bool isDead()
+        {
+            return (this.status == Status.Sinking) || (this.status == Status.Sunk);
         }
 
         public void iniciarBarra()
@@ -138,15 +143,21 @@ namespace AlumnoEjemplos.TheDiscretaBoy
         }
 
 
-        internal void crash()
+        public abstract void crash();
+
+        public void handleShipCollision(GenericShip ship)
         {
-            life -= 25;
-            bounce(Status.Resurrecting);
+            if (ship != this)
+                if (TgcCollisionUtils.testAABBAABB(ship.BoundingBox, this.BoundingBox))
+                    this.crash();
         }
 
         public virtual void renderAlive(float elapsedTime) 
         {
             updatePosition();
+            EjemploAlumno.Instance.forEachShip((ShipCommand)handleShipCollision);
+            this.ship.render();
+            this.cannon.render(elapsedTime);
         }
 
         public void updatePosition()
@@ -161,6 +172,11 @@ namespace AlumnoEjemplos.TheDiscretaBoy
 
         public bool isAlive() {
             return this.status == Status.Alive;
+        }
+
+        public bool crashingWith(GenericShip ship)
+        {
+            return (this != ship) && TgcCollisionUtils.testAABBAABB(ship.BoundingBox, this.BoundingBox);
         }
 
         public virtual void render(float elapsedTime)
@@ -185,7 +201,6 @@ namespace AlumnoEjemplos.TheDiscretaBoy
 
             if (status == Status.Sunk)
             {
-                GuiController.Instance.ThirdPersonCamera.Enable = false;
                 ship.move(0, -100F * elapsedTime, 0);
                 cannon.Position = ship.Position + cannonOffset;
                 ship.render();
@@ -196,7 +211,7 @@ namespace AlumnoEjemplos.TheDiscretaBoy
                 updatePosition();
                 if (Math.Abs(linearSpeed) > 1)
                 {
-                    if (!TgcCollisionUtils.testAABBAABB(EjemploAlumno.Instance.enemyShip.BoundingBox, BoundingBox))
+                    if (!EjemploAlumno.Instance.crashingWithAnyOther(this))
                         if (linearSpeed > 0)
                             desaccelerate(elapsedTime);
                         else
@@ -205,10 +220,9 @@ namespace AlumnoEjemplos.TheDiscretaBoy
                 else
                     status = postBounceStatus;
                 moveForward(elapsedTime);
-                ship.render();
+                this.ship.render();
                 cannon.render(elapsedTime);
             }
-
 
             if (status == Status.Resurrecting)
             {
@@ -220,7 +234,7 @@ namespace AlumnoEjemplos.TheDiscretaBoy
                     resurrectingElapsedTime+= elapsedTime;
                     twinkler.doWhenItsTimeTo(() =>
                                                     {
-                                                        ship.render();
+                                                        this.ship.render();
                                                         cannon.render(elapsedTime);
                                                     },
                                                     elapsedTime

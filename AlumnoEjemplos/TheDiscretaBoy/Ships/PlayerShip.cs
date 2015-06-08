@@ -24,8 +24,6 @@ namespace AlumnoEjemplos.TheDiscretaBoy
 
         public override void renderAlive(float elapsedTime)
         {
-            base.renderAlive(elapsedTime);
-
             TgcD3dInput d3dInput = GuiController.Instance.D3dInput;
 
             if (d3dInput.keyDown(Key.W))
@@ -77,15 +75,15 @@ namespace AlumnoEjemplos.TheDiscretaBoy
 
             if (!TgcCollisionUtils.testSphereAABB(EjemploAlumno.Instance.skyBoundaries, this.BoundingBox))
                 bounce(Status.Alive);
-            if (TgcCollisionUtils.testAABBAABB(EjemploAlumno.Instance.enemyShip.BoundingBox, BoundingBox))
-            {
-                crash();
-            }
 
-            ship.render();
-            cannon.render(elapsedTime);
+            base.renderAlive(elapsedTime);
         }
 
+        public override void crash()
+        {
+            this.bounce(Status.Resurrecting);
+            this.life -= 25;
+        }
         public override string name()
         {
             return "You";

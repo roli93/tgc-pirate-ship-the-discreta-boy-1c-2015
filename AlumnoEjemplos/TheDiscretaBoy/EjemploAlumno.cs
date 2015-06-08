@@ -16,28 +16,38 @@ using TgcViewer.Utils.Terrain;
 using TgcViewer.Utils.Shaders;
 using TgcViewer.Utils._2D;
 using AlumnoEjemplos.TheDiscretaBoy.WeatherElements;
+using AlumnoEjemplos.TheDiscretaBoy.Menus;
 
 namespace AlumnoEjemplos.TheDiscretaBoy
 {
     /// <summary>
     /// Ejemplo del alumno
     /// </summary>
+
+    public enum GameStatus
+    {
+        Playing, Stopped, UnStarted
+    }
+
     public class EjemploAlumno : TgcExample
     {
         public static EjemploAlumno Instance { get; set; }
         public TgcMesh meshShip, meshEnemy;
         public SmartTerrain water;
         public TgcSphere sky;
-        public GenericShip playerShip, enemyShip;
+        public GenericShip playerShip;
+        public List<EnemyShip> enemies = new List<EnemyShip>();
         public TgcBoundingSphere skyBoundaries;
         public Vector3 lastPlayerPosition;
-        private TgcText2d playerMessage;
         Microsoft.DirectX.Direct3D.Effect efectoOlas;
         Microsoft.DirectX.Direct3D.Effect efectoCascada;
         string currentHeightmap;
         string currentTexture;
         float time;
         public Weather weather;
+        public GameStatus status;
+        public int enemiesQuantity = 0;
+        public Menu menu = new Menu("\\Texturas\\logo.png");
 
         public override string getCategory()
         {
@@ -94,7 +104,30 @@ namespace AlumnoEjemplos.TheDiscretaBoy
             this.weather = new Weather();
 
             createUserVars();
+            this.status = GameStatus.UnStarted;
+        }
+
+        public void stop()
+        {
+            this.status = GameStatus.Stopped;
+        }
+
+        public void play()
+        {
             initializeGame();
+            this.status = GameStatus.Playing;
+        }
+
+        public bool crashingWithAnyOther(GenericShip ship)
+        {
+            foreach (GenericShip anotherShip in this.allShips())
+            {
+                if (ship.crashingWith(anotherShip))
+                {
+                    return true;
+                }
+            }
+            return false;
         }
 
         public void useDefaultSkyTexture()
@@ -126,21 +159,6 @@ namespace AlumnoEjemplos.TheDiscretaBoy
             return (ola + heighM) * 0.1f * frecuencia;
         }
 
-        public void initializePlayerMessage(string message)
-        {
-            playerMessage = new TgcText2d();
-            playerMessage.Text = message;
-            playerMessage.changeFont(new System.Drawing.Font("Tahoma", 30));
-            playerMessage.Color = Color.WhiteSmoke;
-            playerMessage.Align = TgcText2d.TextAlign.CENTER;
-            playerMessage.Size = new Size(1000, 150);
-
-            Size screenSize = GuiController.Instance.Panel3d.Size;
-            Size textSize = playerMessage.Size;
-            playerMessage.Position = new Point(FastMath.Max(screenSize.Width / 2 - textSize.Width / 2, 0), screenSize.Height * 2 / 3);
-            
-        }
-
         public void initializeCamera()
         {
             GuiController.Instance.ThirdPersonCamera.Enable = true;
@@ -161,75 +179,119 @@ namespace AlumnoEjemplos.TheDiscretaBoy
             meshEnemy = sceneShip.Meshes[0];
             sceneCanon = loader.loadSceneFromFile(GuiController.Instance.ExamplesMediaDir + "MeshCreator\\Meshes\\Armas\\Canon\\Canon.max-TgcScene.xml");
 
-            enemyShip = new EnemyShip(meshEnemy, new Vector3(1000, 2, 1000), new Cannon(sceneCanon.Meshes[0], new Vector3(27, 21, 0)), new Vector3(0, 1, 0));
+            enemies.Clear();
+            for (int i = 0; i < enemiesQuantity; i++)
+            {
+                sceneShip = loader.loadSceneFromFile(GuiController.Instance.ExamplesMediaDir + "MeshCreator\\Meshes\\Vehiculos\\Canoa\\Canoa-TgcScene.xml");
+                meshEnemy = sceneShip.Meshes[0];
+                sceneCanon = loader.loadSceneFromFile(GuiController.Instance.ExamplesMediaDir + "MeshCreator\\Meshes\\Armas\\Canon\\Canon.max-TgcScene.xml");
+
+                enemies.Add(new EnemyShip(meshEnemy, new Vector3(800 + (300*i), 2, 800 + (300*i)), new Cannon(sceneCanon.Meshes[0], new Vector3(27, 21, 0)), new Vector3(0, 1, 0), new Timer(1.5f + (i/2))));
+            }
         }
+
+        public void handleEnemySunk()
+        {
+            if (allEnemiesSunk())
+            {
+                (new Triumph()).show();
+            }
+        }
+
+        public bool allEnemiesSunk()
+        {
+            foreach (EnemyShip enemyShip in enemies)
+                if (!enemyShip.isDead()) return false;
+            return true;
+         }
 
         public override void render(float elapsedTime)
         {
-            GuiController.Instance.ThirdPersonCamera.updateCamera();
-            GuiController.Instance.ThirdPersonCamera.Target = playerShip.Position;
+            if (this.status == GameStatus.UnStarted)
+            {
+                menu.render(this);
+            }
+            else
+            {
+                GuiController.Instance.ThirdPersonCamera.updateCamera();
+                GuiController.Instance.ThirdPersonCamera.Target = playerShip.Position;
 
-            TgcD3dInput d3dInput = GuiController.Instance.D3dInput;
+                TgcD3dInput d3dInput = GuiController.Instance.D3dInput;
 
-            /*Microsoft.DirectX.Direct3D.Effect effect;
+                /*Microsoft.DirectX.Direct3D.Effect effect;
 
-            effect = TgcShaders.loadEffect(GuiController.Instance.ExamplesDir + "Shaders\\WorkshopShaders\\Shaders\\PhongShading.fx"); ;
+                effect = TgcShaders.loadEffect(GuiController.Instance.ExamplesDir + "Shaders\\WorkshopShaders\\Shaders\\PhongShading.fx"); ;
 
-            effect.SetValue("fvLightPosition", TgcParserUtils.vector3ToFloat3Array(GuiController.Instance.ThirdPersonCamera.getPosition() + new Vector3(0, 2000, 0)));
-            effect.SetValue("fvEyePosition", TgcParserUtils.vector3ToFloat3Array(GuiController.Instance.ThirdPersonCamera.getPosition()));
-            effect.SetValue("k_la", (float)GuiController.Instance.Modifiers["Ambient"]);
-            effect.SetValue("k_ld", (float)GuiController.Instance.Modifiers["Diffuse"]);
-            effect.SetValue("k_ls", (float)GuiController.Instance.Modifiers["Specular"]);
-            effect.SetValue("fSpecularPower", (float)GuiController.Instance.Modifiers["SpecularPower"]);
+                effect.SetValue("fvLightPosition", TgcParserUtils.vector3ToFloat3Array(GuiController.Instance.ThirdPersonCamera.getPosition() + new Vector3(0, 2000, 0)));
+                effect.SetValue("fvEyePosition", TgcParserUtils.vector3ToFloat3Array(GuiController.Instance.ThirdPersonCamera.getPosition()));
+                effect.SetValue("k_la", (float)GuiController.Instance.Modifiers["Ambient"]);
+                effect.SetValue("k_ld", (float)GuiController.Instance.Modifiers["Diffuse"]);
+                effect.SetValue("k_ls", (float)GuiController.Instance.Modifiers["Specular"]);
+                effect.SetValue("fSpecularPower", (float)GuiController.Instance.Modifiers["SpecularPower"]);
 
-            playerShip.ship.Effect = effect;
-            playerShip.cannon.cannon.Effect = effect;
-            water.Effect = effect;
+                playerShip.ship.Effect = effect;
+                playerShip.cannon.cannon.Effect = effect;
+                water.Effect = effect;
             
 
-            playerShip.ship.Technique = "DefaultTechnique";
-            playerShip.cannon.cannon.Technique = "DefaultTechnique";
-            water.Technique = "DefaultTechnique";*/
+                playerShip.ship.Technique = "DefaultTechnique";
+                playerShip.cannon.cannon.Technique = "DefaultTechnique";
+                water.Technique = "DefaultTechnique";*/
 
-            if (d3dInput.keyDown(Key.R))
-            {
-                initializeGame();
+                if (d3dInput.keyDown(Key.Escape))
+                {
+                    close();
+                }
+                time += elapsedTime;
+                water.Effect.SetValue("time", time);
+                water.render();
+
+                sky.render();
+
+                forEachShip((Action<GenericShip>)((ship) => ship.render(elapsedTime)));
+
+                weather.render();
+
+                renderBars();
+                
+                if (this.status == GameStatus.Stopped)
+                {
+                    menu.render(this);
+                }
+                
             }
-            if (d3dInput.keyDown(Key.Escape))
+
+        }
+
+        public void forEachShip(Action<GenericShip> todo)
+        {
+            allShips().ForEach(todo);
+        }
+
+        public void forEachShip(ShipCommand toDo) 
+        {
+            foreach(GenericShip ship in allShips())
             {
-                close();
+                toDo(ship);
             }
-            time += elapsedTime;
-            playerShip.render(elapsedTime);
-            water.Effect.SetValue("time",  time);
-            water.render();
+        }
 
-            sky.render();
-
-            enemyShip.render(elapsedTime);
-
-            weather.render();
-
-            renderBars();
-
-            Notification.instance.render();
-            
-            GuiController.Instance.Drawer2D.beginDrawSprite();
-            playerMessage.render();
-            GuiController.Instance.Drawer2D.endDrawSprite();
-
+        public List<GenericShip> allShips()
+        {
+            List<GenericShip> allShips = new List<GenericShip>();
+            allShips.AddRange(enemies);
+            allShips.Add(playerShip);
+            return allShips;
         }
 
         public void renderBars()
         {
+            //forEachShip((Action<GenericShip>)((ship)=> ship.renderBar()));
             playerShip.renderBar();
-            enemyShip.renderBar();
         }
 
         public void initializeGame() 
         {
-            initializePlayerMessage("");
-            Notification.instance.sprite = null;
             initializeShips();
             initializeCamera();
         }
@@ -238,11 +300,8 @@ namespace AlumnoEjemplos.TheDiscretaBoy
         {
 
             water.dispose();
-            playerShip.dispose();
             sky.dispose();
-            enemyShip.dispose();
-            Notification.instance.dispose();
-            playerMessage.dispose();
+            forEachShip((Action<GenericShip>)((ship) => ship.dispose()));
         }
 
     }

@@ -10,13 +10,14 @@ namespace AlumnoEjemplos.TheDiscretaBoy
 {
     public abstract class BattleEnded : Efecto
     {
-
-        
+        public string spritePath;
 
         public override void show()
         {
             base.show();
-            EjemploAlumno.Instance.initializePlayerMessage("Presione 'R' para volver a jugar");
+            GuiController.Instance.ThirdPersonCamera.Enable = false;
+            EjemploAlumno.Instance.menu.setHeader(this.spritePath);
+            EjemploAlumno.Instance.stop();
         }
     }
 }

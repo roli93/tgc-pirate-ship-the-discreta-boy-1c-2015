@@ -19,12 +19,18 @@ namespace AlumnoEjemplos.TheDiscretaBoy
     public class EnemyShip : GenericShip
     {
         private GenericShip victim = EjemploAlumno.Instance.playerShip;
-        private Timer timer = new Timer(2F);
+        private Timer timer;
         private Oscilator speedAdjuster = new Oscilator(50F, 50F);
 
-        public EnemyShip(TgcMesh shipMesh, Vector3 initialPosition, Cannon cannon, Vector3 cannonOffset) : base(shipMesh, initialPosition, cannon, cannonOffset) 
+        public EnemyShip(TgcMesh shipMesh, Vector3 initialPosition, Cannon cannon, Vector3 cannonOffset, Timer timer) : base(shipMesh, initialPosition, cannon, cannonOffset)
         {
             barraDeVida.alinearDerecha();
+            this.timer = timer;
+        }
+
+        public override void crash()
+        {
+            this.bounce(Status.Alive);
         }
 
         private void shootPeriodically(float elapsedTime)
@@ -64,8 +70,6 @@ namespace AlumnoEjemplos.TheDiscretaBoy
 
         public override void renderAlive(float elapsedTime)
         {
-            base.renderAlive(elapsedTime);
-
             TgcD3dInput d3dInput = GuiController.Instance.D3dInput;
 
             float distancte = distanceToVictim();
@@ -95,8 +99,8 @@ namespace AlumnoEjemplos.TheDiscretaBoy
                 sink();
 
             moveForward(elapsedTime);
-            ship.render();
-            cannon.render(elapsedTime);
+
+            base.renderAlive(elapsedTime); 
         }
 
         public override string name()
@@ -107,7 +111,7 @@ namespace AlumnoEjemplos.TheDiscretaBoy
         public override void sink()
         {
             base.sink();
-            (new Triumph()).show();
+            EjemploAlumno.Instance.handleEnemySunk();
         }
     }
 
