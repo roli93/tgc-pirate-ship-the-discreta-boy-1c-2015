@@ -21,7 +21,7 @@ namespace AlumnoEjemplos.TheDiscretaBoy.Menus
             this.sprite.Scaling = new Vector2(.18f,.18f);
             this.sprite.Position = new Vector2(
                 (GuiController.Instance.Panel3d.Size.Width - this.width()) / 2,
-                100 + (index * 1.2f * this.height()));
+                100 + (index * ((float)ScreenHelper.size().Height/400) * this.height()));
         }
 
         private float width()
