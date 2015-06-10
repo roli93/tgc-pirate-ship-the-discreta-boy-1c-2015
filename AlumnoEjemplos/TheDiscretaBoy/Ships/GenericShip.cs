@@ -174,6 +174,13 @@ namespace AlumnoEjemplos.TheDiscretaBoy
             this.normal = EjemploAlumno.Instance.normalEnPunto(this.Position.X, this.Position.Z);
             this.ship.rotateX(-(FastMath.Atan2(normal.Z, normal.Y) - FastMath.Atan2(previousNormal.Z, previousNormal.Y)));
             this.ship.rotateZ(-(FastMath.Atan2(normal.X, normal.Y) - FastMath.Atan2(previousNormal.X, previousNormal.Y)));
+
+            this.updateCannonPosition();
+        }
+
+        public void updateCannonPosition()
+        {
+            cannon.Rotation = this.Rotation;
         }
 
         public bool isAlive() {
