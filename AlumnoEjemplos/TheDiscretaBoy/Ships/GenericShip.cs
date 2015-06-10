@@ -172,7 +172,7 @@ namespace AlumnoEjemplos.TheDiscretaBoy
 
             Vector3 previousNormal = this.normal;
             this.normal = EjemploAlumno.Instance.normalEnPunto(this.Position.X, this.Position.Z);
-            float rotationX = (FastMath.Atan2(normal.Z, normal.Y) - FastMath.Atan2(previousNormal.Z, previousNormal.Y));
+            float rotationX = -(FastMath.Atan2(normal.Z, normal.Y) - FastMath.Atan2(previousNormal.Z, previousNormal.Y));
             float rotationZ = -(FastMath.Atan2(normal.X, normal.Y) - FastMath.Atan2(previousNormal.X, previousNormal.Y));
             this.ship.rotateX(rotationX);
             this.ship.rotateZ(rotationZ);
@@ -193,13 +193,16 @@ namespace AlumnoEjemplos.TheDiscretaBoy
         {
             TgcArrow normalDibujable = new TgcArrow();
             normalDibujable.PStart = this.Position;
-            normalDibujable.PEnd = this.Position + Vector3.Multiply(this.normal, 200);
+            normalDibujable.PEnd = this.Position + Vector3.Multiply(this.normal, 20000);
             normalDibujable.updateValues();
             normalDibujable.render();
         }
 
         public virtual void render(float elapsedTime)
         {
+            if(EjemploAlumno.Instance.environment == Environment.Development)
+                drawNormal();
+            
             if (status == Status.Sinking)
             {
                 updatePosition();

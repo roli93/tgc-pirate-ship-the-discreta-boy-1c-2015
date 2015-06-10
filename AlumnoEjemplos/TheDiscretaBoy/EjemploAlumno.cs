@@ -29,6 +29,11 @@ namespace AlumnoEjemplos.TheDiscretaBoy
         Playing, Stopped, UnStarted
     }
 
+    public enum Environment
+    {
+        Development, Production
+    }
+
     public class EjemploAlumno : TgcExample
     {
         public static EjemploAlumno Instance { get; set; }
@@ -48,6 +53,7 @@ namespace AlumnoEjemplos.TheDiscretaBoy
         public GameStatus status;
         public int enemiesQuantity = 0;
         public Menu menu = new Menu("\\Texturas\\logo.png");
+        public Environment environment = Environment.Production;
 
         public override string getCategory()
         {
@@ -146,6 +152,7 @@ namespace AlumnoEjemplos.TheDiscretaBoy
         {
             GuiController.Instance.UserVars.addVar("terreno", water);
             GuiController.Instance.Modifiers.addFloat("Altura del oleaje", 0, 100, 40f);
+            GuiController.Instance.Modifiers.addBoolean("Desarrollo", "Desarrollo", false);
         }
 
         public float alturaEnPunto(float X, float Z)
@@ -220,8 +227,18 @@ namespace AlumnoEjemplos.TheDiscretaBoy
             return true;
          }
 
+        public void updateEnvironment()
+        {
+            if ((bool)GuiController.Instance.Modifiers.getValue("Desarrollo"))
+                this.environment = Environment.Development;
+            else
+                this.environment = Environment.Production;
+        }
+
         public override void render(float elapsedTime)
         {
+            updateEnvironment();
+
             if (this.status == GameStatus.UnStarted)
             {
                 menu.render(this);
