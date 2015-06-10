@@ -145,6 +145,7 @@ namespace AlumnoEjemplos.TheDiscretaBoy
         private void createUserVars()
         {
             GuiController.Instance.UserVars.addVar("terreno", water);
+            GuiController.Instance.Modifiers.addFloat("Altura del oleaje", 0, 100, 40f);
         }
 
         public float alturaEnPunto(float X, float Z)
@@ -154,7 +155,7 @@ namespace AlumnoEjemplos.TheDiscretaBoy
             Vector2 texCoords;
             terrain.xzToHeightmapCoords(X, Z, out texCoords);
             float frecuencia = 10;
-            float ola = FastMath.Sin(2*(texCoords.Y/2- time)) + 40 * FastMath.Cos(2*(texCoords.X / 5 - this.time));
+            float ola = FastMath.Sin(2 * (texCoords.Y / 2 - time)) + (float)GuiController.Instance.Modifiers.getValue("Altura del oleaje") * FastMath.Cos(2 * (texCoords.X / 5 - this.time));
             
             return (ola + heighM) * 0.1f * frecuencia;
         }
@@ -258,6 +259,7 @@ namespace AlumnoEjemplos.TheDiscretaBoy
                 }
                 time += elapsedTime;
                 water.Effect.SetValue("time", time);
+                water.Effect.SetValue("altura", (float)GuiController.Instance.Modifiers.getValue("Altura del oleaje"));
                 water.render();
 
                 sky.render();
