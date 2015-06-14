@@ -58,6 +58,7 @@ namespace AlumnoEjemplos.TheDiscretaBoy
             explocion = new Explocion();
             hundimiento = new Hundimiento();
             this.normal = EjemploAlumno.Instance.normalEnPunto(this.Position.X, this.Position.Z);
+
         }
 
         public bool isDead()
@@ -72,12 +73,26 @@ namespace AlumnoEjemplos.TheDiscretaBoy
 
         public void moveForward(float elapsedTime)
         {
-
-            ship.moveOrientedY((linearSpeed > 500F ? 500F : linearSpeed) * elapsedTime);
+            float groundSpeed = this.linearSpeed * this.groundParallelism();
+            groundSpeed += (groundSpeed * direction().Y * (groundSpeed > 0 ? (-1) : 1));
+            ship.moveOrientedY(FastMath.Min(this.maxLinearSpeed, groundSpeed) * elapsedTime);
             cannon.Position = ship.Position + cannonOffset;
             cannon.LinearSpeed = linearSpeed;
         }
 
+        public Vector3 direction()
+        {
+            Vector2 nextPos = new Vector2(FastMath.Sin(Rotation.Y), FastMath.Cos(Rotation.Y));
+            nextPos.Normalize();
+            nextPos *= 50;
+            Vector3 direction = new Vector3(
+                nextPos.X,
+                EjemploAlumno.Instance.alturaEnPunto(Position.X + nextPos.X, Position.Z + nextPos.Y), 
+                nextPos.Y);
+            direction.Normalize();
+            return direction;
+        }
+        
         internal override TgcMesh getMesh()
         {
             return ship;
@@ -156,13 +171,13 @@ namespace AlumnoEjemplos.TheDiscretaBoy
 
         public virtual void renderAlive(float elapsedTime) 
         {
-            updatePosition();
+            adaptToSurface();
             EjemploAlumno.Instance.forEachShip((ShipCommand)handleShipCollision);
             this.ship.render();
             this.cannon.render(elapsedTime);
         }
 
-        public void updatePosition()
+        public void adaptToSurface()
         {
             float Y = EjemploAlumno.Instance.alturaEnPunto(this.Position.X, this.Position.Z);
             this.Position = new Vector3(
@@ -192,20 +207,49 @@ namespace AlumnoEjemplos.TheDiscretaBoy
         public void drawNormal()
         {
             TgcArrow normalDibujable = new TgcArrow();
+            normalDibujable.BodyColor = Color.Red;
+            normalDibujable.Thickness = 2.5f;
             normalDibujable.PStart = this.Position;
             normalDibujable.PEnd = this.Position + Vector3.Multiply(this.normal, 20000);
             normalDibujable.updateValues();
             normalDibujable.render();
         }
 
+        public void drawDirection()
+        {
+            TgcArrow directionDibujable = new TgcArrow();
+            directionDibujable.BodyColor = Color.Yellow;
+            directionDibujable.Thickness = 2.5f;
+            directionDibujable.PStart = this.Position;
+            directionDibujable.PEnd = this.Position + Vector3.Multiply(this.direction(), 500);
+            directionDibujable.updateValues();
+            directionDibujable.render();
+        }
+
+        public float groundParallelism()
+        {
+            return this.normal.Y / FastMath.Sqrt(
+                (this.normal.X*this.normal.X) + 
+                (this.normal.Y*this.normal.Y) + 
+                (this.normal.Z*this.normal.Z));
+        }
+
+        public float groundOrtogonality(){
+            float groundParallelism = this.groundParallelism();
+            return FastMath.Sqrt(1 - (groundParallelism * groundParallelism));
+        }
+
         public virtual void render(float elapsedTime)
         {
-            if(EjemploAlumno.Instance.environment == Environment.Development)
+            if (EjemploAlumno.Instance.environment == Environment.Development)
+            {
                 drawNormal();
+                drawDirection();
+            }
             
             if (status == Status.Sinking)
             {
-                updatePosition();
+                adaptToSurface();
                 ship.rotateZ((float)Math.PI * elapsedTime);
                 cannon.Position = ship.Position + cannonOffset;
                 cannon.Rotation = Rotation;
@@ -230,7 +274,7 @@ namespace AlumnoEjemplos.TheDiscretaBoy
             
             if (status == Status.Bouncing)
             {
-                updatePosition();
+                adaptToSurface();
                 if (Math.Abs(linearSpeed) > 1)
                 {
                     if (!EjemploAlumno.Instance.crashingWithAnyOther(this))
@@ -249,7 +293,7 @@ namespace AlumnoEjemplos.TheDiscretaBoy
             if (status == Status.Resurrecting)
             {
                 Position = initialPosition;
-                updatePosition();
+                adaptToSurface();
                 cannon.Position = Position + cannonOffset;
                 if(resurrectingElapsedTime < .7)
                 {
@@ -295,12 +339,9 @@ namespace AlumnoEjemplos.TheDiscretaBoy
 
         public virtual void reduceLife(int quantity)
         {
-            if(life > 0)
-            {
-                life = Math.Max(life - quantity, 0);
-                barraDeVida.escalar(porcentajeDeVida());
-                log("Vida de " + this.name() + ": " + (porcentajeDeVida() * 100) + "%");
-            }
+            life = Math.Max(life - quantity, 0);
+            barraDeVida.escalar(porcentajeDeVida());
+            log("Vida de " + this.name() + ": " + (porcentajeDeVida() * 100) + "%");
         }
 
         public virtual string name() 
