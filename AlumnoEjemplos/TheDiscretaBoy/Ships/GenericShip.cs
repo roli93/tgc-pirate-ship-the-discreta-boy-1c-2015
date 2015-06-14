@@ -74,7 +74,7 @@ namespace AlumnoEjemplos.TheDiscretaBoy
         public void moveForward(float elapsedTime)
         {
             float groundSpeed = this.linearSpeed * this.groundParallelism();
-            groundSpeed += (groundSpeed * direction().Y * (groundSpeed > 0 ? (-1) : 1));
+            groundSpeed += (groundSpeed * direction().Y * .5f * (groundSpeed > 0 ? (-1) : 1));
             ship.moveOrientedY(FastMath.Min(this.maxLinearSpeed, groundSpeed) * elapsedTime);
             cannon.Position = ship.Position + cannonOffset;
             cannon.LinearSpeed = linearSpeed;
@@ -83,8 +83,6 @@ namespace AlumnoEjemplos.TheDiscretaBoy
         public Vector3 direction()
         {
             Vector2 nextPos = new Vector2(FastMath.Sin(Rotation.Y), FastMath.Cos(Rotation.Y));
-            nextPos.Normalize();
-            nextPos *= 50;
             Vector3 direction = new Vector3(
                 nextPos.X,
                 EjemploAlumno.Instance.alturaEnPunto(Position.X + nextPos.X, Position.Z + nextPos.Y), 
