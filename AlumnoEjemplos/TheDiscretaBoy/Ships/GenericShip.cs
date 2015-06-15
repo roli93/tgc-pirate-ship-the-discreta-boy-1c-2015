@@ -188,8 +188,9 @@ namespace AlumnoEjemplos.TheDiscretaBoy
             Vector3 previousNormal = this.normal;
             this.normal = EjemploAlumno.Instance.normalEnPunto(this.Position.X, this.Position.Z);
 
-            float previousWaterInclinationX = this.waterInclinationX, previousWaterInclinationZ = this.waterInclinationZ;
-            this.waterInclinationX = FastMath.Atan2(normal.Z, normal.Y);
+            float previousWaterInclinationX = this.waterInclinationX;
+            float previousWaterInclinationZ = this.waterInclinationZ;
+            this.waterInclinationX = FastMath.Atan2(normal.X, normal.Y) * -FastMath.Sin(Rotation.Y);
             this.waterInclinationZ = FastMath.Atan2(normal.X, normal.Y) * FastMath.Cos(Rotation.Y);
 
             float rotationX = previousWaterInclinationX - waterInclinationX;
