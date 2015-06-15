@@ -46,6 +46,7 @@ namespace AlumnoEjemplos.TheDiscretaBoy
         public Hundimiento hundimiento;
         public Vector3 normal;
         public Vector3 directionVersor;
+        public float waterInclinationX = 0, waterInclinationZ = 0;
 
         public GenericShip(TgcMesh shipMesh, Vector3 initialPosition, Cannon cannon, Vector3 cannonOffset) : base()
         {
@@ -186,8 +187,14 @@ namespace AlumnoEjemplos.TheDiscretaBoy
 
             Vector3 previousNormal = this.normal;
             this.normal = EjemploAlumno.Instance.normalEnPunto(this.Position.X, this.Position.Z);
-            float rotationX = FastMath.Atan2(previousNormal.Z, previousNormal.Y) - FastMath.Atan2(normal.Z, normal.Y);
-            float rotationZ = (FastMath.Atan2(previousNormal.X, previousNormal.Y) - FastMath.Atan2(normal.X, normal.Y)) * FastMath.Cos(Rotation.Y);
+
+            float previousWaterInclinationX = this.waterInclinationX, previousWaterInclinationZ = this.waterInclinationZ;
+            this.waterInclinationX = FastMath.Atan2(normal.Z, normal.Y);
+            this.waterInclinationZ = FastMath.Atan2(normal.X, normal.Y) * FastMath.Cos(Rotation.Y);
+
+            float rotationX = previousWaterInclinationX - waterInclinationX;
+            float rotationZ = previousWaterInclinationZ - waterInclinationZ;
+            
             this.ship.rotateX(rotationX);
             this.ship.rotateZ(rotationZ);
             this.cannon.getMesh().rotateX(rotationX);
