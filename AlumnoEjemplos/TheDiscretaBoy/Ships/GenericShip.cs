@@ -186,8 +186,8 @@ namespace AlumnoEjemplos.TheDiscretaBoy
 
             Vector3 previousNormal = this.normal;
             this.normal = EjemploAlumno.Instance.normalEnPunto(this.Position.X, this.Position.Z);
-            float rotationX = -(FastMath.Atan2(normal.Z, normal.Y) - FastMath.Atan2(previousNormal.Z, previousNormal.Y));
-            float rotationZ = -(FastMath.Atan2(normal.X, normal.Y) - FastMath.Atan2(previousNormal.X, previousNormal.Y));
+            float rotationX = FastMath.Atan2(previousNormal.Z, previousNormal.Y) - FastMath.Atan2(normal.Z, normal.Y);
+            float rotationZ = (FastMath.Atan2(previousNormal.X, previousNormal.Y) - FastMath.Atan2(normal.X, normal.Y)) * FastMath.Cos(Rotation.Y);
             this.ship.rotateX(rotationX);
             this.ship.rotateZ(rotationZ);
             this.cannon.getMesh().rotateX(rotationX);
