@@ -45,6 +45,7 @@ namespace AlumnoEjemplos.TheDiscretaBoy
         public Explocion explocion;
         public Hundimiento hundimiento;
         public Vector3 normal;
+        public Vector3 directionVersor;
 
         public GenericShip(TgcMesh shipMesh, Vector3 initialPosition, Cannon cannon, Vector3 cannonOffset) : base()
         {
@@ -74,13 +75,13 @@ namespace AlumnoEjemplos.TheDiscretaBoy
         public void moveForward(float elapsedTime)
         {
             float groundSpeed = this.linearSpeed * this.groundParallelism();
-            groundSpeed += (groundSpeed * direction().Y * .5f * (groundSpeed > 0 ? (-1) : 1));
+            groundSpeed += (groundSpeed * directionVersor.Y * .5f * (groundSpeed > 0 ? (-1) : 1));
             ship.moveOrientedY(FastMath.Min(this.maxLinearSpeed, groundSpeed) * elapsedTime);
             cannon.Position = ship.Position + cannonOffset;
             cannon.LinearSpeed = linearSpeed;
         }
 
-        public Vector3 direction()
+        public void updateDirectionVersor()
         {
             Vector2 nextPos = new Vector2(FastMath.Sin(Rotation.Y), FastMath.Cos(Rotation.Y));
             Vector3 direction = new Vector3(
@@ -88,7 +89,7 @@ namespace AlumnoEjemplos.TheDiscretaBoy
                 EjemploAlumno.Instance.alturaEnPunto(Position.X + nextPos.X, Position.Z + nextPos.Y), 
                 nextPos.Y);
             direction.Normalize();
-            return direction;
+            this.directionVersor = direction;
         }
         
         internal override TgcMesh getMesh()
@@ -219,7 +220,7 @@ namespace AlumnoEjemplos.TheDiscretaBoy
             directionDibujable.BodyColor = Color.Yellow;
             directionDibujable.Thickness = 2.5f;
             directionDibujable.PStart = this.Position;
-            directionDibujable.PEnd = this.Position + Vector3.Multiply(this.direction(), 500);
+            directionDibujable.PEnd = this.Position + Vector3.Multiply(this.directionVersor, 500);
             directionDibujable.updateValues();
             directionDibujable.render();
         }
@@ -239,6 +240,8 @@ namespace AlumnoEjemplos.TheDiscretaBoy
 
         public virtual void render(float elapsedTime)
         {
+            updateDirectionVersor();
+
             if (EjemploAlumno.Instance.environment == Environment.Development)
             {
                 drawNormal();
