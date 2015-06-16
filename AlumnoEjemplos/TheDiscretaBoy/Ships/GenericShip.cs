@@ -198,7 +198,7 @@ namespace AlumnoEjemplos.TheDiscretaBoy
             
             this.ship.rotateX(rotationX);
             this.ship.rotateZ(rotationZ);
-            this.cannon.getMesh().rotateX(rotationX);
+            this.cannon.getMesh().rotateX(rotationX * FastMath.Cos(cannon.RelativeRotation.Y));
             this.cannon.getMesh().rotateZ(rotationZ);
         }
 

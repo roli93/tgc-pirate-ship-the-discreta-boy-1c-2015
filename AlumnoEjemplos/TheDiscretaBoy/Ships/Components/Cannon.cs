@@ -67,7 +67,9 @@ namespace AlumnoEjemplos.TheDiscretaBoy
 
         private void rotate(float elapsedTime, float speed)
         {
-            cannon.rotateY(speed * elapsedTime);
+            float rotationY = speed * elapsedTime; 
+            cannon.rotateY(rotationY);
+
             updateDirection(elapsedTime, speed);
         }
 
