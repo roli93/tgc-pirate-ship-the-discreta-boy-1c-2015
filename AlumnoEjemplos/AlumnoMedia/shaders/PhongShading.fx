@@ -1,5 +1,5 @@
 // ---------------------------------------------------------
-// Ejemplo shader Minimo:
+// Ejemplo shader Trivial: Phong Shading:
 // ---------------------------------------------------------
 
 /**************************************************************************************/
@@ -24,81 +24,6 @@ sampler2D diffuseMap = sampler_state
 	MIPFILTER = LINEAR;
 };
 
-float time = 0;
-float altura = 40;
-
-
-/**************************************************************************************/
-/* RenderScene */
-/**************************************************************************************/
-
-//Input del Vertex Shader
-struct VS_INPUT_LIGHT
-{
-	float4 Position : POSITION0;
-	float3 Normal :   NORMAL0;
-	float4 Color : COLOR;
-	float2 Texcoord : TEXCOORD0;
-
-
-};
-
-//Output del Vertex Shader
-struct VS_OUTPUT_LIGHT
-{
-	float4 Position :        POSITION0;
-	float2 Texcoord :        TEXCOORD0;
-	float3 Norm :          TEXCOORD1;			// Normales
-	float3 Pos :   		TEXCOORD2;		// Posicion real 3d
-	float4 Color :			COLOR0;
-};
-
-
-
-// Ejemplo de un vertex shader que anima la posicion de los vertices 
-// ------------------------------------------------------------------
-VS_OUTPUT_LIGHT vs_main2( VS_INPUT_LIGHT Input )
-{
-   VS_OUTPUT_LIGHT Output;
-
-   // Animar posicion
-   float Y = Input.Position.y;
-   float Z = Input.Position.z;
-   float X = Input.Position.x;
-
-   Input.Position.y = altura * cos(2*(X/5 - time))  +  sin(2*(Z/2-time));
-   //Input.Position.z = Z * cos(time) + Y * sin(time);
-      
-   //Proyectar posicion
-   Output.Position = mul( Input.Position, matWorldViewProj);
-   
-   //Propago las coordenadas de textura
-   Output.Texcoord = Input.Texcoord;
-
-   //Propago el color x vertice
-   Output.Color = Input.Color;
-
-   // Calculo la posicion real (en world space)
-   float4 pos_real = mul(Input.Position, matWorld);
-	   // Y la propago usando las coordenadas de texturas 2 (*)
-	   Output.Pos = float3(pos_real.x, pos_real.y, pos_real.z);
-
-   // Transformo la normal y la normalizo (si la escala no es uniforme usar la inversa Traspta)
-   //Output.Norm = normalize(mul(Input.Normal,matInverseTransposeWorld));
-   Output.Norm = normalize(mul(Input.Normal, matWorld));
-
-   return(Output);
-   
-}
-
-//Pixel Shader
-float4 ps_main( float2 Texcoord: TEXCOORD0, float4 Color:COLOR0) : COLOR0
-{      
-	return tex2D( diffuseMap, Texcoord );
-}
-
-//-------------------------------------------------------------------------------------------------ILUMINACION---------------------------------------------------------------------//
-
 float3 fvLightPosition = float3(-100.00, 100.00, -100.00);
 float3 fvEyePosition = float3(0.00, 0.00, -100.00);
 float k_la = 0.3;							// luz ambiente global
@@ -109,6 +34,54 @@ float fSpecularPower = 16.84;				// exponente de la luz specular
 
 
 
+/**************************************************************************************/
+/* DefaultTechnique */
+/**************************************************************************************/
+
+//Input del Vertex Shader
+struct VS_INPUT
+{
+	float4 Position : POSITION0;
+	float3 Normal :   NORMAL0;
+	float4 Color : COLOR;
+	float2 Texcoord : TEXCOORD0;
+
+
+};
+
+//Output del Vertex Shader
+struct VS_OUTPUT
+{
+	float4 Position :        POSITION0;
+	float2 Texcoord :        TEXCOORD0;
+	float3 Norm :          TEXCOORD1;			// Normales
+	float3 Pos :   		TEXCOORD2;		// Posicion real 3d
+};
+
+//Vertex Shader
+VS_OUTPUT vs_main(VS_INPUT Input)
+{
+	VS_OUTPUT Output;
+
+	//Proyectar posicion
+	Output.Position = mul(Input.Position, matWorldViewProj);
+
+	//Propagamos las coordenadas de textura
+	Output.Texcoord = Input.Texcoord;
+
+	// Calculo la posicion real (en world space)
+	float4 pos_real = mul(Input.Position, matWorld);
+		// Y la propago usando las coordenadas de texturas 2 (*)
+		Output.Pos = float3(pos_real.x, pos_real.y, pos_real.z);
+
+	// Transformo la normal y la normalizo (si la escala no es uniforme usar la inversa Traspta)
+	//Output.Norm = normalize(mul(Input.Normal,matInverseTransposeWorld));
+	Output.Norm = normalize(mul(Input.Normal, matWorld));
+	return(Output);
+
+}
+
+
 // (*) Usar las coordenadas de texturas 2, 3 y demas es un "hack" habitual,
 // que permite pasarle al pixel shader distintas variables que se calculan por vertice
 // El rasterizer se ocupa de que al PS le lleguen los valores interpolados. 
@@ -117,7 +90,7 @@ float fSpecularPower = 16.84;				// exponente de la luz specular
 // 
 
 //Pixel Shader
-float4 ps_main_light(float3 Texcoord: TEXCOORD0, float3 N : TEXCOORD1,
+float4 ps_main(float3 Texcoord: TEXCOORD0, float3 N : TEXCOORD1,
 	float3 Pos : TEXCOORD2) : COLOR0
 {
 	float ld = 0;		// luz difusa
@@ -162,13 +135,14 @@ float4 ps_main_light(float3 Texcoord: TEXCOORD0, float3 N : TEXCOORD1,
 	return RGBColor;
 }
 
-// ------------------------------------------------------------------
-technique RenderScene
+technique DefaultTechnique
 {
-   pass Pass_0
-   {
-	  VertexShader = compile vs_2_0 vs_main2();
-	  PixelShader = compile ps_2_0 ps_main_light();
-   }
+	pass Pass_0
+	{
+		VertexShader = compile vs_2_0 vs_main();
+		PixelShader = compile ps_2_0 ps_main();
+	}
 
 }
+
+
