@@ -35,7 +35,10 @@ namespace AlumnoEjemplos.TheDiscretaBoy
             this.ShootingOffset = shootingPosition;
             for (int i = 0; i <50; i++)
             {
-                bullets.Add(new Bullet());
+                Bullet bullet = new Bullet();
+                bullet.setEffect(EjemploAlumno.Instance.effect, "DefaultTechnique");
+                bullets.Add(bullet);
+               
             }
             currentBullet = bullets.GetNext();
         }

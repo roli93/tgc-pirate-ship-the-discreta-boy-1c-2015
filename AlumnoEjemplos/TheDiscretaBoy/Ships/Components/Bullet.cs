@@ -99,5 +99,11 @@ namespace AlumnoEjemplos.TheDiscretaBoy
         {
             bullet.dispose();
         }
+
+        internal void setEffect(Microsoft.DirectX.Direct3D.Effect effect, string techinique)
+        {
+            bullet.Effect = effect;
+            bullet.Technique = techinique;
+        }
     }
 }

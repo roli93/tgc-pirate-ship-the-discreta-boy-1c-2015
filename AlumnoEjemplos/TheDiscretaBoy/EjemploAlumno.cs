@@ -104,11 +104,11 @@ namespace AlumnoEjemplos.TheDiscretaBoy
 
             skyBoundaries = new TgcBoundingSphere(sky.Position + new Vector3(0,0,-1800), 2100);
             sky.updateValues();
-            GuiController.Instance.Modifiers.addVertex3f("LightPosition", new Vector3(-5000, -5000, -5000), new Vector3(2000, 2000, 2000), skyBoundaries.Position + new Vector3(0, 0, 0));
+            GuiController.Instance.Modifiers.addVertex3f("LightPosition", new Vector3(-5000, -5000, -5000), new Vector3(5000, 5000, 5000), GuiController.Instance.ThirdPersonCamera.getPosition() + new Vector3(0,600, 2000));
             GuiController.Instance.Modifiers.addFloat("Ambient", 0, 1, 0.5f);
             GuiController.Instance.Modifiers.addFloat("Diffuse", 0, 1, 0.6f);
             GuiController.Instance.Modifiers.addFloat("Specular", 0, 1, 0.5f);
-            GuiController.Instance.Modifiers.addFloat("SpecularPower", 1, 10, 1);
+            GuiController.Instance.Modifiers.addFloat("SpecularPower", 1, 100, 1);
 
             lightBox = TgcBox.fromSize(new Vector3(5, 5, 5), Color.Yellow);
 
@@ -266,8 +266,6 @@ namespace AlumnoEjemplos.TheDiscretaBoy
 
                 Vector3 lightPosition = new Vector3(0, 400, -5000);
 
-                lightBox.Position = lightPosition;
-            
                 //Cargar variables de shader
                 effect.SetValue("fvLightPosition", TgcParserUtils.vector3ToFloat3Array(lightPosition));
                 effect.SetValue("fvEyePosition", TgcParserUtils.vector3ToFloat3Array(GuiController.Instance.ThirdPersonCamera.getPosition()));
@@ -276,12 +274,16 @@ namespace AlumnoEjemplos.TheDiscretaBoy
                 effect.SetValue("k_ls", 0.35F);
                 effect.SetValue("fSpecularPower", 10);
 
-                water.Effect.SetValue("fvLightPosition", TgcParserUtils.vector3ToFloat3Array(GuiController.Instance.ThirdPersonCamera.getPosition() + new Vector3(0, 2000, 0)));
-                water.Effect.SetValue("fvEyePosition", TgcParserUtils.vector3ToFloat3Array(GuiController.Instance.RotCamera.getPosition()));
-                water.Effect.SetValue("k_la", 1);
-                water.Effect.SetValue("k_ld", 0);
-                water.Effect.SetValue("k_ls", 1);
-                water.Effect.SetValue("fSpecularPower", 1.9F);
+                Vector3 waterLightPos = playerShip.Position + new Vector3(0, 600, 2000) - new Vector3(-100, 2, -1800);
+
+                lightBox.Position = waterLightPos;
+
+                water.Effect.SetValue("fvLightPosition", TgcParserUtils.vector3ToFloat3Array(waterLightPos));
+                water.Effect.SetValue("fvEyePosition", TgcParserUtils.vector3ToFloat3Array(GuiController.Instance.ThirdPersonCamera.getPosition()));
+                water.Effect.SetValue("k_la", 0.8F);
+                water.Effect.SetValue("k_ld", 1);
+                water.Effect.SetValue("k_ls", 0.9F);
+                water.Effect.SetValue("fSpecularPower", 30);
 
                 playerShip.ship.Effect = effect;
                 playerShip.cannon.cannon.Effect = effect;
@@ -300,7 +302,7 @@ namespace AlumnoEjemplos.TheDiscretaBoy
                 water.render();
 
                 sky.render();
-                lightBox.render();
+          //      lightBox.render();
 
                 forEachShip((Action<GenericShip>)((ship) => ship.render(elapsedTime)));
 
