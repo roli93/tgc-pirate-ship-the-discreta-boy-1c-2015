@@ -54,7 +54,7 @@ namespace AlumnoEjemplos.TheDiscretaBoy
             this.initialPosition = Position = initialPosition;
             this.cannon = cannon;
             cannon.Position = Position;
-            cannon.Rotation = ship.Rotation;
+            cannon.Rotation = ship.Rotation ;
             this.cannonOffset = cannonOffset;
             iniciarBarra();
             explocion = new Explocion();
@@ -301,7 +301,6 @@ namespace AlumnoEjemplos.TheDiscretaBoy
 
             if (status == Status.Resurrecting)
             {
-                Position = initialPosition;
                 adaptToSurface();
                 cannon.Position = Position + cannonOffset;
                 if(resurrectingElapsedTime < .7)

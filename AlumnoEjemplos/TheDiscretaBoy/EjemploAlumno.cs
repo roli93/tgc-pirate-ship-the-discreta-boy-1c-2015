@@ -56,6 +56,7 @@ namespace AlumnoEjemplos.TheDiscretaBoy
         public Environment environment = Environment.Production;
         public Microsoft.DirectX.Direct3D.Effect effect;
         TgcBox lightBox;
+        public Vector3 waterLightPos;
 
         public override string getCategory()
         {
@@ -104,11 +105,7 @@ namespace AlumnoEjemplos.TheDiscretaBoy
 
             skyBoundaries = new TgcBoundingSphere(sky.Position + new Vector3(0,0,-1800), 2100);
             sky.updateValues();
-            GuiController.Instance.Modifiers.addVertex3f("LightPosition", new Vector3(-5000, -5000, -5000), new Vector3(5000, 5000, 5000), GuiController.Instance.ThirdPersonCamera.getPosition() + new Vector3(0,600, 2000));
-            GuiController.Instance.Modifiers.addFloat("Ambient", 0, 1, 0.5f);
-            GuiController.Instance.Modifiers.addFloat("Diffuse", 0, 1, 0.6f);
-            GuiController.Instance.Modifiers.addFloat("Specular", 0, 1, 0.5f);
-            GuiController.Instance.Modifiers.addFloat("SpecularPower", 1, 100, 1);
+
 
             lightBox = TgcBox.fromSize(new Vector3(5, 5, 5), Color.Yellow);
 
@@ -274,7 +271,7 @@ namespace AlumnoEjemplos.TheDiscretaBoy
                 effect.SetValue("k_ls", 0.35F);
                 effect.SetValue("fSpecularPower", 10);
 
-                Vector3 waterLightPos = playerShip.Position + new Vector3(0, 600, 2000) - new Vector3(-100, 2, -1800);
+                waterLightPos = !((bool) GuiController.Instance.Modifiers.getValue("tormenta")) ?   playerShip.Position + new Vector3(0, 600, 2000) - new Vector3(-100, 2, -1800) : new Vector3(10000, 10000, 10000);
 
                 lightBox.Position = waterLightPos;
 
